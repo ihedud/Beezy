@@ -24,7 +24,7 @@ class _BoardScreenState extends State<BoardScreen> {
       TextEditingController editingController) {
     ColumnBZ column = ColumnBZ();
     column.id = id;
-    column.columnTitle = columnTitle + (id - 1).toString();
+    column.columnTitle = columnTitle + (id + 1).toString();
     column.isEditingText = isEditingText;
     column.editingController = editingController;
     setState(() {

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\MMT\Documents\GitHub\Beezy\beezy\windows\build\CMakeFiles\f576d349853a757dc7c7f2c6008c9c46\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{55DAF169-6696-3C3B-AE88-B042F6821FDC}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

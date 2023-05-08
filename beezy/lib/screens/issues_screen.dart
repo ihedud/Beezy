@@ -128,7 +128,7 @@ class _IssuesScreenState extends State<IssuesScreen> {
                         Container(
                             padding: const EdgeInsets.all(5),
                             child: SizedBox(
-                                width: 90,
+                                width: 110,
                                 child: DecoratedBox(
                                     decoration: const BoxDecoration(
                                         color:

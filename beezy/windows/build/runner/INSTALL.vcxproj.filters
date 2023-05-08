@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\MMT\Documents\GitHub\Beezy\beezy\windows\build\CMakeFiles\001485d79a9e27145401018b92db371f\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{55DAF169-6696-3C3B-AE88-B042F6821FDC}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

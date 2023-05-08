@@ -1,0 +1,10 @@
+C:/Users/MMT/Documents/GitHub/Beezy/beezy/windows/build/CMakeFiles/INSTALL.dir
+C:/Users/MMT/Documents/GitHub/Beezy/beezy/windows/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/MMT/Documents/GitHub/Beezy/beezy/windows/build/CMakeFiles/ZERO_CHECK.dir
+C:/Users/MMT/Documents/GitHub/Beezy/beezy/windows/build/flutter/CMakeFiles/flutter_wrapper_plugin.dir
+C:/Users/MMT/Documents/GitHub/Beezy/beezy/windows/build/flutter/CMakeFiles/flutter_wrapper_app.dir
+C:/Users/MMT/Documents/GitHub/Beezy/beezy/windows/build/flutter/CMakeFiles/flutter_assemble.dir
+C:/Users/MMT/Documents/GitHub/Beezy/beezy/windows/build/flutter/CMakeFiles/INSTALL.dir
+C:/Users/MMT/Documents/GitHub/Beezy/beezy/windows/build/runner/CMakeFiles/beezy.dir
+C:/Users/MMT/Documents/GitHub/Beezy/beezy/windows/build/runner/CMakeFiles/INSTALL.dir
+C:/Users/MMT/Documents/GitHub/Beezy/beezy/windows/build/runner/CMakeFiles/ALL_BUILD.dir
