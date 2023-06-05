@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/board.dart';
 import 'package:flutter/services.dart';
 
-const List<String> priority = <String>['low', 'middle', 'high'];
+const List<String> priority = <String>['low', 'medium', 'high'];
 const List<String> status = <String>['open', 'closed', 'reopened'];
 
 class TaskScreen extends StatefulWidget {
@@ -18,7 +18,6 @@ class _TaskScreenState extends State<TaskScreen> {
   bool isEditingName = false;
   bool isEditingDescription = false;
   bool isEditingPoints = false;
-  String dropdownValue = priority.first;
 
   @override
   void initState() {
@@ -28,6 +27,10 @@ class _TaskScreenState extends State<TaskScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  String _getDropdownValue() {
+    return priority[widget.selectedTask.priority];
   }
 
   Widget _editTaskName(BuildContext context) {
@@ -118,17 +121,6 @@ class _TaskScreenState extends State<TaskScreen> {
     );
   }
 
-  Widget _setPriority(String value) {
-    if (value == priority[0]) {
-      widget.selectedTask.priority = 0;
-    } else if (value == priority[1]) {
-      widget.selectedTask.priority = 1;
-    } else if (value == priority[2]) {
-      widget.selectedTask.priority = 2;
-    }
-    return Text(value);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -151,7 +143,7 @@ class _TaskScreenState extends State<TaskScreen> {
         Wrap(spacing: 100, children: [
           const Text('Priority:'),
           DropdownButton<String>(
-            value: dropdownValue,
+            value: _getDropdownValue(),
             icon: const Icon(Icons.arrow_drop_down),
             //elevation: 16,
             style: const TextStyle(color: Colors.black),
@@ -161,13 +153,19 @@ class _TaskScreenState extends State<TaskScreen> {
             ),
             onChanged: (String? value) {
               setState(() {
-                dropdownValue = value!;
+                if (value == priority[0]) {
+                  widget.selectedTask.priority = 0;
+                } else if (value == priority[1]) {
+                  widget.selectedTask.priority = 1;
+                } else if (value == priority[2]) {
+                  widget.selectedTask.priority = 2;
+                }
               });
             },
             items: priority.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
-                child: _setPriority(value),
+                child: Text(value),
               );
             }).toList(),
           )

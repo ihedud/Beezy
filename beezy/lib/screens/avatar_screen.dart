@@ -308,7 +308,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
                           icon: const Image(
                               image: AssetImage('assets/food/muffin.png')),
                         )),
-                    Text('Price: 1')
+                    const Text('Price: 1')
                   ],
                 ))),
         Container(
@@ -332,7 +332,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
                           icon: const Image(
                               image: AssetImage('assets/food/soup.png')),
                         )),
-                    Text('Price: 4')
+                    const Text('Price: 4')
                   ],
                 ))),
         Container(
@@ -356,7 +356,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
                           icon: const Image(
                               image: AssetImage('assets/food/spaghetti.png')),
                         )),
-                    Text('Price: 5')
+                    const Text('Price: 5')
                   ],
                 ))),
         Container(
@@ -399,7 +399,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
                             icon: const Image(
                                 image: AssetImage('assets/food/donut.png')),
                           )),
-                      Text('Price: 2')
+                      const Text('Price: 2')
                     ],
                   ))),
           Container(
@@ -423,7 +423,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
                             icon: const Image(
                                 image: AssetImage('assets/food/salad.png')),
                           )),
-                      Text('Price: 4')
+                      const Text('Price: 4')
                     ],
                   ))),
           Container(
@@ -480,7 +480,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
                           icon: const Image(
                               image: AssetImage('assets/toys/ball.png')),
                         )),
-                    Text('Price: 3')
+                    const Text('Price: 3')
                   ],
                 ))),
         Container(
@@ -504,7 +504,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
                           icon: const Image(
                               image: AssetImage('assets/toys/horse.png')),
                         )),
-                    Text('Price: 8')
+                    const Text('Price: 8')
                   ],
                 ))),
         Container(
@@ -555,7 +555,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
                             icon: const Image(
                                 image: AssetImage('assets/toys/doll.png')),
                           )),
-                      Text('Price: 6')
+                      const Text('Price: 6')
                     ],
                   ))),
           Container(

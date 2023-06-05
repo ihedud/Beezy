@@ -23,9 +23,19 @@ class Task {
 }
 
 class Board {
-  List<ColumnBZ> columns = <ColumnBZ>[];
+  List<ColumnBZ> columns = <ColumnBZ>[
+    ColumnBZ()
+      ..id = 0
+      ..columnTitle = 'To Do',
+    ColumnBZ()
+      ..id = 1
+      ..columnTitle = 'In Progress',
+    ColumnBZ()
+      ..id = 2
+      ..columnTitle = 'Done',
+  ];
   List<Task> tasks = <Task>[];
   List<Task> backlogTasks = <Task>[];
-  int columnID = 0;
+  int columnID = 3;
   int taskID = 0;
 }

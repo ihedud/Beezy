@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import '../models/board.dart';
 
 const List<String> sprint = <String>['backlog', 'board'];
+const List<String> priority = <String>['low', 'medium', 'high'];
 const List<String> sprintFilter = <String>['all', 'backlog', 'board'];
 const List<String> statusFilter = <String>['all', 'open', 'closed', 'reopened'];
+const List<String> priorityFilter = <String>['all', 'low', 'medium', 'high'];
 //const List<Widget> boardTag = <Widget>[Text('board')];
 
 class IssuesScreen extends StatefulWidget {
@@ -20,8 +22,9 @@ class _IssuesScreenState extends State<IssuesScreen> {
   final TextEditingController _searchController = TextEditingController();
   //List<bool> _boardTag = <bool>[false];
   String dropdownValueSprint = sprintFilter.first;
-  String dropdownValueStatus = sprintFilter.first;
+  String dropdownValueStatus = statusFilter.first;
   String dropdownValueColumn = 'all';
+  String dropdownValuePriority = priorityFilter.first;
 
   String _dropdownValue(Task task) {
     String dropdownValue = '';
@@ -89,6 +92,17 @@ class _IssuesScreenState extends State<IssuesScreen> {
       }
     }
 
+    if (dropdownValuePriority == priorityFilter[1]) {
+      filteredTasks =
+          filteredTasks.where((task) => task.priority == 0).toList();
+    } else if (dropdownValuePriority == priorityFilter[2]) {
+      filteredTasks =
+          filteredTasks.where((task) => task.priority == 1).toList();
+    } else if (dropdownValuePriority == priorityFilter[3]) {
+      filteredTasks =
+          filteredTasks.where((task) => task.priority == 2).toList();
+    }
+
     for (Task task in filteredTasks) {
       taskWidgets.add(_buildTask(task, context));
     }
@@ -140,6 +154,21 @@ class _IssuesScreenState extends State<IssuesScreen> {
                                         child: Center(
                                             child:
                                                 Text(_dropdownValue(task))))))),
+                        Container(
+                            padding: const EdgeInsets.all(5),
+                            child: SizedBox(
+                                width: 80,
+                                child: DecoratedBox(
+                                    decoration: const BoxDecoration(
+                                        color:
+                                            Color.fromARGB(255, 244, 210, 126),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5))),
+                                    child: Container(
+                                        padding: const EdgeInsets.all(5),
+                                        child: Center(
+                                            child: Text(
+                                                priority[task.priority])))))),
                       ],
                     )))));
   }
@@ -226,6 +255,27 @@ class _IssuesScreenState extends State<IssuesScreen> {
             });
           },
           items: _columnFilter().map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
+        const Text('Priority: '),
+        DropdownButton<String>(
+          value: dropdownValuePriority,
+          icon: const Icon(Icons.arrow_drop_down),
+          style: const TextStyle(color: Colors.black),
+          underline: Container(
+            height: 2,
+            color: Colors.amber,
+          ),
+          onChanged: (String? value) {
+            setState(() {
+              dropdownValuePriority = value!;
+            });
+          },
+          items: priorityFilter.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
               child: Text(value),

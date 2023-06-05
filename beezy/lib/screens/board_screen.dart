@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screens/task_screen.dart';
-//import '../screens/backlog_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/board.dart';
 
 List<Widget> starIcons = <Widget>[
@@ -281,6 +281,15 @@ class _BoardScreenState extends State<BoardScreen> {
         tooltip: 'Create new column',
         backgroundColor: Colors.amber,
         child: const Icon(Icons.add),
+      ),
+      FloatingActionButton(
+        onPressed: () {
+          FirebaseFirestore.instance
+              .collection("/tasks")
+              .add({'name': "new task 1"});
+        },
+        backgroundColor: Colors.amber,
+        child: const Icon(Icons.add_a_photo),
       ),
     ]);
   }
