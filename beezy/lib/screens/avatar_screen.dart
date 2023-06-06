@@ -38,8 +38,20 @@ class AvatarScreen extends StatefulWidget {
 
 class _AvatarScreenState extends State<AvatarScreen> {
   final List<bool> selectedNecessity = <bool>[true, false, false, false];
+  int selectedButtonIndex = 0;
+  List<double> fillAmount = <double>[0.1, 0.5, 0.5, 0.5];
 
-  void _addFood(int id, int foodID, String name, String assetPath, int price) {
+  void selectButton(int index) {
+    setState(() {
+      selectedButtonIndex = index;
+      for (int i = 0; i < selectedNecessity.length; i++) {
+        selectedNecessity[i] = i == index;
+      }
+    });
+  }
+
+  void _addFood(int id, int foodID, String name, String assetPath, int price,
+      double fillAmount) {
     widget.updatePoints(-price);
     for (Food foodItem in widget.avatar.foodList) {
       if (foodItem.foodID == foodID) {
@@ -54,10 +66,27 @@ class _AvatarScreenState extends State<AvatarScreen> {
     food.foodID = foodID;
     food.name = name;
     food.amount = 1;
+    food.fillAmount = fillAmount;
     food.assetPath = assetPath;
     setState(() {
       widget.avatar.foodList.add(food);
     });
+  }
+
+  void _deleteFood(String name) {
+    for (Food foodItem in widget.avatar.foodList) {
+      if (foodItem.name == name) {
+        setState(() {
+          if (foodItem.amount == 1) {
+            widget.avatar.foodList
+                .removeWhere((element) => foodItem == element);
+            return;
+          }
+          foodItem.amount--;
+        });
+        return;
+      }
+    }
   }
 
   void _addToy(int id, int toyID, String name, String assetPath, int price) {
@@ -103,7 +132,16 @@ class _AvatarScreenState extends State<AvatarScreen> {
             SizedBox(
                 width: 65,
                 height: 65,
-                child: FittedBox(child: Image.asset(item.assetPath))),
+                child: FittedBox(
+                    child: Draggable(
+                        data: item,
+                        dragAnchorStrategy: pointerDragAnchorStrategy,
+                        feedback: SizedBox(
+                            width: 65,
+                            height: 65,
+                            child:
+                                FittedBox(child: Image.asset(item.assetPath))),
+                        child: Image.asset(item.assetPath)))),
             SizedBox(
                 width: 20,
                 height: 20,
@@ -302,7 +340,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
                         child: IconButton(
                           onPressed: () {
                             _addFood(widget.avatar.foodID, 1, 'Muffin',
-                                'assets/food/muffin.png', 1);
+                                'assets/food/muffin.png', 1, 0.1);
                             widget.avatar.foodID++;
                           },
                           icon: const Image(
@@ -326,7 +364,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
                         child: IconButton(
                           onPressed: () {
                             _addFood(widget.avatar.foodID, 3, 'Soup',
-                                'assets/food/soup.png', 4);
+                                'assets/food/soup.png', 4, 0.3);
                             widget.avatar.foodID++;
                           },
                           icon: const Image(
@@ -350,7 +388,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
                         child: IconButton(
                           onPressed: () {
                             _addFood(widget.avatar.foodID, 5, 'Spaghetti',
-                                'assets/food/spaghetti.png', 5);
+                                'assets/food/spaghetti.png', 5, 0.5);
                             widget.avatar.foodID++;
                           },
                           icon: const Image(
@@ -393,7 +431,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
                           child: IconButton(
                             onPressed: () {
                               _addFood(widget.avatar.foodID, 2, 'Donut',
-                                  'assets/food/donut.png', 2);
+                                  'assets/food/donut.png', 2, 0.2);
                               widget.avatar.foodID++;
                             },
                             icon: const Image(
@@ -417,7 +455,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
                           child: IconButton(
                             onPressed: () {
                               _addFood(widget.avatar.foodID, 4, 'Salad',
-                                  'assets/food/salad.png', 4);
+                                  'assets/food/salad.png', 4, 0.3);
                               widget.avatar.foodID++;
                             },
                             icon: const Image(
@@ -597,24 +635,66 @@ class _AvatarScreenState extends State<AvatarScreen> {
   }
 
   Widget _necessitiesWidget() {
-    return SizedBox(
-        width: 80,
-        height: 310,
-        child: ToggleButtons(
-            direction: Axis.vertical,
-            onPressed: (int index) {
-              setState(() {
-                for (int i = 0; i < selectedNecessity.length; i++) {
-                  selectedNecessity[i] = i == index;
-                }
-              });
-            },
-            selectedBorderColor: Colors.amber[700],
-            //selectedColor: Colors.amber[100],
-            fillColor: Colors.amber[200],
-            //color: Colors.amber[400],
-            isSelected: selectedNecessity,
-            children: necessitiesImg));
+    return
+        // SizedBox(
+        //     width: 80,
+        //     height: 310,
+        //     child: ToggleButtons(
+        //         direction: Axis.vertical,
+        //         onPressed: (int index) {
+        //           setState(() {
+        //             for (int i = 0; i < selectedNecessity.length; i++) {
+        //               selectedNecessity[i] = i == index;
+        //             }
+        //           });
+        //         },
+        //         selectedBorderColor: Colors.amber[700],
+        //         //selectedColor: Colors.amber[100],
+        //         fillColor: Colors.amber[200],
+        //         //color: Colors.amber[400],
+        //         isSelected: selectedNecessity,
+        //         children: necessitiesImg));
+
+        Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(4, (index) {
+        return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: IntrinsicWidth(
+                child: Row(children: [
+              GestureDetector(
+                onTap: () => selectButton(index),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  width: selectedButtonIndex == index ? 100 : 80,
+                  height: selectedButtonIndex == index ? 100 : 80,
+                  decoration: BoxDecoration(
+                    color: selectedButtonIndex == index
+                        ? Colors.amber
+                        : const Color.fromARGB(220, 245, 216, 157),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Center(child: necessitiesImg[index]),
+                ),
+              ),
+              SizedBox(
+                  width: 150.0,
+                  height: 40.0,
+                  child: Container(
+                      color: Colors.grey,
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(0, 4, 4, 4),
+                        child: FractionallySizedBox(
+                          alignment: Alignment.centerLeft,
+                          widthFactor: fillAmount[index],
+                          child: Container(
+                            color: Colors.amber,
+                          ),
+                        ),
+                      )))
+            ])));
+      }),
+    );
   }
 
   @override
@@ -625,12 +705,31 @@ class _AvatarScreenState extends State<AvatarScreen> {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _necessitiesWidget(),
-          SizedBox(
-              height: 400,
-              width: 300,
-              child: FittedBox(child: Image.asset('assets/bee_avatar_1.png'))),
+          //SizedBox(width: 100),
+          Expanded(child: _necessitiesWidget()),
+          const Spacer(),
+          DragTarget<Item>(onAccept: (item) {
+            setState(() {
+              _deleteFood(item.name);
+              if (fillAmount[selectedButtonIndex] < 1) {
+                fillAmount[selectedButtonIndex] =
+                    fillAmount[selectedButtonIndex] + item.fillAmount;
+                if (fillAmount[selectedButtonIndex] >= 1) {
+                  fillAmount[selectedButtonIndex] = 1;
+                }
+              }
+            });
+          }, builder:
+              (context, List<dynamic> accepted, List<dynamic> rejected) {
+            return SizedBox(
+                height: 400,
+                width: 300,
+                child:
+                    FittedBox(child: Image.asset('assets/bee_avatar_1.png')));
+          }),
+          const Spacer(),
           _shopWidget(),
+          const Spacer()
         ],
       ),
       _inventoryWidget()

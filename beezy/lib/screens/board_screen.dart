@@ -62,7 +62,7 @@ class _BoardScreenState extends State<BoardScreen> {
       'points': 0,
       'status': 0
     });
-    setState(() {});
+    setState(() {}); // No need to call setState here crec
   }
 
   void _deleteColumn(ColumnBZ column) {

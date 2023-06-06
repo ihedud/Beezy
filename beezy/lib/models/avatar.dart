@@ -10,6 +10,7 @@ class Avatar {
 class Item {
   int id = 0;
   int amount = 0;
+  double fillAmount = 1;
   String name = '';
   String assetPath = '';
   bool isRepresented = false;
