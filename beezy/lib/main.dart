@@ -17,6 +17,7 @@ class Beezy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
+
     return MaterialApp(
       title: 'Beezy Prototype',
       theme: ThemeData(
@@ -24,7 +25,8 @@ class Beezy extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: MainScreen(title: 'Welcome to Beezy', user: user.email!),
+      home: MainScreen(
+          title: 'Welcome to Beezy', userEmail: user.email!, userUID: user.uid),
     );
   }
 }

@@ -9,10 +9,15 @@ import 'package:beezy/models/avatar.dart';
 import 'issues_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, required this.title, required this.user});
+  const MainScreen(
+      {super.key,
+      required this.title,
+      required this.userEmail,
+      required this.userUID});
 
   final String title;
-  final String user;
+  final String userEmail;
+  final String userUID;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -70,7 +75,11 @@ class _MainScreenState extends State<MainScreen>
               ]),
             ),
             body: TabBarView(controller: _tabController, children: [
-              BoardScreen(board: board, updatePoints: updatePoints),
+              BoardScreen(
+                  userEmail: widget.userEmail,
+                  userUID: widget.userUID,
+                  board: board,
+                  updatePoints: updatePoints),
               BacklogScreen(board: board, updatePoints: updatePoints),
               IssuesScreen(board: board),
               AvatarScreen(avatar: avatar, updatePoints: updatePoints)

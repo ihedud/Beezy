@@ -49,25 +49,25 @@ class _BacklogScreenState extends State<BacklogScreen> {
   }
 
   void _addBacklogTask(int id, String name) {
-    Task task = Task();
-    task.sprintID = 0;
-    task.id = id;
-    task.columnID = widget.board.columns.first.id;
-    task.name = name;
-    setState(() {
-      widget.board.backlogTasks.add(task);
-    });
+    // Task task = Task();
+    // task.sprintID = 0;
+    // task.id = id;
+    // task.columnID = widget.board.columns.first.id;
+    // task.name = name;
+    // setState(() {
+    //   widget.board.backlogTasks.add(task);
+    // });
   }
 
   void _addBoardTask(int id, String name) {
-    Task task = Task();
-    task.sprintID = 1;
-    task.id = id;
-    task.columnID = widget.board.columns.first.id;
-    task.name = name;
-    setState(() {
-      widget.board.tasks.add(task);
-    });
+    // Task task = Task();
+    // task.sprintID = 1;
+    // task.id = id;
+    // task.columnID = widget.board.columns.first.id;
+    // task.name = name;
+    // setState(() {
+    //   widget.board.tasks.add(task);
+    // });
   }
 
   void _deleteTask(Task task) {
@@ -158,17 +158,17 @@ class _BacklogScreenState extends State<BacklogScreen> {
                               },
                               //tooltip: 'Delete this column',
                               child: const Icon(Icons.remove_circle)),
-                          OutlinedButton(
-                              onPressed: () async {
-                                await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        TaskScreen(selectedTask: task),
-                                  ),
-                                );
-                                setState(() {});
-                              },
-                              child: const Icon(Icons.edit)),
+                          // OutlinedButton(
+                          //     onPressed: () async {
+                          //       await Navigator.of(context).push(
+                          //         MaterialPageRoute(
+                          //           builder: (context) =>
+                          //               TaskScreen(selectedTask: task, userUID: widget.u,),
+                          //         ),
+                          //       );
+                          //       setState(() {});
+                          //     },
+                          //     child: const Icon(Icons.edit)),
                         ],
                       ))))),
     );

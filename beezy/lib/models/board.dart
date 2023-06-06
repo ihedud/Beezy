@@ -8,8 +8,22 @@ class ColumnBZ {
   bool isKey = false;
 }
 
+// class Task {
+//   int id = 0;
+//   int columnID = 0;
+//   int sprintID = 0;
+//   String name = '';
+//   String description = '';
+//   int priority = 0;
+//   int points = 0;
+//   int status = 0;
+//   TextEditingController nameController = TextEditingController();
+//   TextEditingController descriptionController = TextEditingController();
+//   TextEditingController pointsController = TextEditingController();
+// }
+
 class Task {
-  int id = 0;
+  String id = '';
   int columnID = 0;
   int sprintID = 0;
   String name = '';
@@ -20,6 +34,16 @@ class Task {
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController pointsController = TextEditingController();
+
+  Task(
+      {required this.id,
+      required this.columnID,
+      required this.sprintID,
+      required this.name,
+      required this.description,
+      required this.priority,
+      required this.points,
+      required this.status});
 }
 
 class Board {

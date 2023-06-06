@@ -10,8 +10,14 @@ List<Widget> starIcons = <Widget>[
 
 class BoardScreen extends StatefulWidget {
   const BoardScreen(
-      {super.key, required this.board, required this.updatePoints});
+      {super.key,
+      required this.userEmail,
+      required this.userUID,
+      required this.board,
+      required this.updatePoints});
 
+  final String userEmail;
+  final String userUID;
   final Board board;
   final Function(int) updatePoints;
 
@@ -20,6 +26,8 @@ class BoardScreen extends StatefulWidget {
 }
 
 class _BoardScreenState extends State<BoardScreen> {
+  List<Task> taskList = [];
+
   void _addColumn(int id, String columnTitle, bool isEditingText,
       TextEditingController editingController) {
     ColumnBZ column = ColumnBZ();
@@ -33,14 +41,28 @@ class _BoardScreenState extends State<BoardScreen> {
   }
 
   void _addTask(int id, String name, ColumnBZ column) {
-    Task task = Task();
-    task.sprintID = 1;
-    task.id = id;
-    task.columnID = column.id;
-    task.name = name;
-    setState(() {
-      widget.board.tasks.add(task);
+    // Task task = Task();
+    // task.sprintID = 1;
+    // task.id = id;
+    // task.columnID = column.id;
+    // task.name = name;
+    // setState(() {
+    //   widget.board.tasks.add(task);
+    // });
+
+    CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection("/users");
+
+    usersCollection.doc(widget.userUID).collection("tasks").add({
+      'columnID': column.id,
+      'sprintID': 1,
+      'name': 'New Task',
+      'description': '',
+      'priority': 0,
+      'points': 0,
+      'status': 0
     });
+    setState(() {});
   }
 
   void _deleteColumn(ColumnBZ column) {
@@ -49,9 +71,25 @@ class _BoardScreenState extends State<BoardScreen> {
     });
   }
 
-  void _deleteTask(Task task) {
+  // void _deleteTask(Task task) {
+  //   setState(() {
+  //     widget.board.tasks.removeWhere((item) => item.id == task.id);
+  //   });
+  // }
+
+  void _deleteTask(String taskId) async {
+    CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
+
+    CollectionReference tasksCollection =
+        usersCollection.doc(widget.userUID).collection('tasks');
+
+    DocumentReference taskDocRef = tasksCollection.doc(taskId);
+
+    await taskDocRef.delete();
+
     setState(() {
-      widget.board.tasks.removeWhere((item) => item.id == task.id);
+      taskList.removeWhere((task) => task.id == taskId);
     });
   }
 
@@ -216,7 +254,7 @@ class _BoardScreenState extends State<BoardScreen> {
                       Text(task.name),
                       OutlinedButton(
                           onPressed: () {
-                            _deleteTask(task);
+                            _deleteTask(task.id);
                           },
                           //tooltip: 'Delete this column',
                           child: const Icon(Icons.remove_circle)),
@@ -224,8 +262,9 @@ class _BoardScreenState extends State<BoardScreen> {
                           onPressed: () async {
                             await Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    TaskScreen(selectedTask: task),
+                                builder: (context) => TaskScreen(
+                                    selectedTask: task,
+                                    userUID: widget.userUID),
                               ),
                             );
                             setState(() {});
@@ -244,9 +283,19 @@ class _BoardScreenState extends State<BoardScreen> {
     return columnWidgets;
   }
 
+  // List<Widget> _getTasks(ColumnBZ column, BuildContext context) {
+  //   final List<Widget> taskWidgets = <Widget>[];
+  //   for (Task task in widget.board.tasks) {
+  //     if (column.id == task.columnID) {
+  //       taskWidgets.add(_buildTask(task, context));
+  //     }
+  //   }
+  //   return taskWidgets;
+  // }
+
   List<Widget> _getTasks(ColumnBZ column, BuildContext context) {
     final List<Widget> taskWidgets = <Widget>[];
-    for (Task task in widget.board.tasks) {
+    for (Task task in taskList) {
       if (column.id == task.columnID) {
         taskWidgets.add(_buildTask(task, context));
       }
@@ -254,8 +303,35 @@ class _BoardScreenState extends State<BoardScreen> {
     return taskWidgets;
   }
 
+  void getTasks() async {
+    CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
+
+    CollectionReference tasksCollection =
+        usersCollection.doc(widget.userUID).collection('tasks');
+
+    QuerySnapshot querySnapshot = await tasksCollection.get();
+
+    setState(() {
+      taskList = querySnapshot.docs.map((doc) {
+        Map<String, dynamic> data = (doc.data() as Map<String, dynamic>);
+        return Task(
+          id: doc.id,
+          columnID: data['columnID'],
+          sprintID: data['sprintID'],
+          name: data['name'],
+          description: data['description'],
+          priority: data['priority'],
+          points: data['points'],
+          status: data['status'],
+        );
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    getTasks();
     return Row(children: [
       Expanded(
         child: ReorderableListView(
@@ -283,11 +359,7 @@ class _BoardScreenState extends State<BoardScreen> {
         child: const Icon(Icons.add),
       ),
       FloatingActionButton(
-        onPressed: () {
-          FirebaseFirestore.instance
-              .collection("/tasks")
-              .add({'name': "new task 1"});
-        },
+        onPressed: () {},
         backgroundColor: Colors.amber,
         child: const Icon(Icons.add_a_photo),
       ),
