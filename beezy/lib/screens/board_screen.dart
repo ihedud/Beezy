@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../screens/task_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/board.dart';
 
 List<Widget> starIcons = <Widget>[
@@ -26,7 +25,15 @@ class BoardScreen extends StatefulWidget {
 }
 
 class _BoardScreenState extends State<BoardScreen> {
-  List<Task> taskList = [];
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   void _addColumn(int id, String columnTitle, bool isEditingText,
       TextEditingController editingController) {
@@ -41,28 +48,32 @@ class _BoardScreenState extends State<BoardScreen> {
   }
 
   void _addTask(int id, String name, ColumnBZ column) {
-    // Task task = Task();
-    // task.sprintID = 1;
-    // task.id = id;
-    // task.columnID = column.id;
-    // task.name = name;
-    // setState(() {
-    //   widget.board.tasks.add(task);
-    // });
-
-    CollectionReference usersCollection =
-        FirebaseFirestore.instance.collection("/users");
-
-    usersCollection.doc(widget.userUID).collection("tasks").add({
-      'columnID': column.id,
-      'sprintID': 1,
-      'name': 'New Task',
-      'description': '',
-      'priority': 0,
-      'points': 0,
-      'status': 0
+    Task task = Task(
+        id: 'task$id',
+        columnID: column.id,
+        sprintID: 1,
+        name: name,
+        description: '',
+        priority: 0,
+        points: 0,
+        status: 0);
+    setState(() {
+      widget.board.tasks.add(task);
     });
-    setState(() {}); // No need to call setState here crec
+
+    // CollectionReference usersCollection =
+    //     FirebaseFirestore.instance.collection("/users");
+
+    // usersCollection.doc(widget.userUID).collection("tasks").add({
+    //   'columnID': column.id,
+    //   'sprintID': 1,
+    //   'name': 'New Task',
+    //   'description': '',
+    //   'priority': 0,
+    //   'points': 0,
+    //   'status': 0
+    // });
+    // setState(() {}); // No need to call setState here crec
   }
 
   void _deleteColumn(ColumnBZ column) {
@@ -71,27 +82,27 @@ class _BoardScreenState extends State<BoardScreen> {
     });
   }
 
-  // void _deleteTask(Task task) {
-  //   setState(() {
-  //     widget.board.tasks.removeWhere((item) => item.id == task.id);
-  //   });
-  // }
-
-  void _deleteTask(String taskId) async {
-    CollectionReference usersCollection =
-        FirebaseFirestore.instance.collection('users');
-
-    CollectionReference tasksCollection =
-        usersCollection.doc(widget.userUID).collection('tasks');
-
-    DocumentReference taskDocRef = tasksCollection.doc(taskId);
-
-    await taskDocRef.delete();
-
+  void _deleteTask(Task task) {
     setState(() {
-      taskList.removeWhere((task) => task.id == taskId);
+      widget.board.tasks.removeWhere((item) => item.id == task.id);
     });
   }
+
+  // void _deleteTask(String taskId) async {
+  //   CollectionReference usersCollection =
+  //       FirebaseFirestore.instance.collection('users');
+
+  //   CollectionReference tasksCollection =
+  //       usersCollection.doc(widget.userUID).collection('tasks');
+
+  //   DocumentReference taskDocRef = tasksCollection.doc(taskId);
+
+  //   await taskDocRef.delete();
+
+  //   setState(() {
+  //     taskList.removeWhere((task) => task.id == taskId);
+  //   });
+  // }
 
   void _editKey(ColumnBZ currentColumn) {
     // if (currentColumn.isKey) {
@@ -254,7 +265,7 @@ class _BoardScreenState extends State<BoardScreen> {
                       Text(task.name),
                       OutlinedButton(
                           onPressed: () {
-                            _deleteTask(task.id);
+                            _deleteTask(task);
                           },
                           //tooltip: 'Delete this column',
                           child: const Icon(Icons.remove_circle)),
@@ -283,19 +294,9 @@ class _BoardScreenState extends State<BoardScreen> {
     return columnWidgets;
   }
 
-  // List<Widget> _getTasks(ColumnBZ column, BuildContext context) {
-  //   final List<Widget> taskWidgets = <Widget>[];
-  //   for (Task task in widget.board.tasks) {
-  //     if (column.id == task.columnID) {
-  //       taskWidgets.add(_buildTask(task, context));
-  //     }
-  //   }
-  //   return taskWidgets;
-  // }
-
   List<Widget> _getTasks(ColumnBZ column, BuildContext context) {
     final List<Widget> taskWidgets = <Widget>[];
-    for (Task task in taskList) {
+    for (Task task in widget.board.tasks) {
       if (column.id == task.columnID) {
         taskWidgets.add(_buildTask(task, context));
       }
@@ -303,35 +304,8 @@ class _BoardScreenState extends State<BoardScreen> {
     return taskWidgets;
   }
 
-  void getTasks() async {
-    CollectionReference usersCollection =
-        FirebaseFirestore.instance.collection('users');
-
-    CollectionReference tasksCollection =
-        usersCollection.doc(widget.userUID).collection('tasks');
-
-    QuerySnapshot querySnapshot = await tasksCollection.get();
-
-    setState(() {
-      taskList = querySnapshot.docs.map((doc) {
-        Map<String, dynamic> data = (doc.data() as Map<String, dynamic>);
-        return Task(
-          id: doc.id,
-          columnID: data['columnID'],
-          sprintID: data['sprintID'],
-          name: data['name'],
-          description: data['description'],
-          priority: data['priority'],
-          points: data['points'],
-          status: data['status'],
-        );
-      }).toList();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    getTasks();
     return Row(children: [
       Expanded(
         child: ReorderableListView(

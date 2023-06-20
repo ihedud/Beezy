@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../models/board.dart';
 import 'package:flutter/services.dart';
@@ -21,13 +20,12 @@ class _TaskScreenState extends State<TaskScreen> {
   bool isEditingName = false;
   bool isEditingDescription = false;
   bool isEditingPoints = false;
-  late DocumentReference taskDocRef;
-  late DocumentSnapshot? taskSnapshot;
+  //late DocumentReference taskDocRef;
+  //late DocumentSnapshot? taskSnapshot;
 
   @override
   void initState() {
     super.initState();
-    getDocRef();
   }
 
   @override
@@ -35,23 +33,17 @@ class _TaskScreenState extends State<TaskScreen> {
     super.dispose();
   }
 
-  void getDocRef() async {
-    taskDocRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.userUID)
-        .collection('tasks')
-        .doc(widget.selectedTask.id);
-    taskSnapshot = await taskDocRef.get();
-  }
+  // void getDocRef() async {
+  //   taskDocRef = FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(widget.userUID)
+  //       .collection('tasks')
+  //       .doc(widget.selectedTask.id);
+  //   taskSnapshot = await taskDocRef.get();
+  // }
 
   String _getDropdownValue() {
-    //print(taskSnapshot.get('priority'));
-    String value = '';
-    if (taskSnapshot!.exists) {
-      dynamic newPriority = taskSnapshot!.get('priority');
-      value = priority[newPriority];
-    }
-    return value;
+    return priority[widget.selectedTask.priority];
   }
 
   Widget _editTaskName(BuildContext context) {
@@ -61,7 +53,7 @@ class _TaskScreenState extends State<TaskScreen> {
         child: TextField(
           onSubmitted: (newValue) {
             setState(() {
-              taskDocRef.update({'name': newValue});
+              //taskDocRef.update({'name': newValue});
               widget.selectedTask.name = newValue;
               isEditingName = false;
             });
