@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../screens/task_screen.dart';
 import '../models/board.dart';
@@ -7,24 +8,70 @@ List<Widget> starIcons = <Widget>[
   const Icon(Icons.star)
 ];
 
-class BoardScreen extends StatefulWidget {
-  const BoardScreen(
-      {super.key,
-      required this.userEmail,
-      required this.userUID,
-      required this.board,
-      required this.updatePoints});
-
+class BoardScreen extends StatelessWidget {
   final String userEmail;
   final String userUID;
   final Board board;
   final Function(int) updatePoints;
 
+  const BoardScreen(
+      {Key? key,
+      required this.userEmail,
+      required this.userUID,
+      required this.board,
+      required this.updatePoints})
+      : super(key: key);
+
   @override
-  State<BoardScreen> createState() => _BoardScreenState();
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: userTaskSnapshots(userUID),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return ErrorWidget(snapshot.error!);
+        }
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          case ConnectionState.active:
+            return _BoardScreen(
+                userEmail: userEmail,
+                userUID: userUID,
+                board: board,
+                updatePoints: updatePoints,
+                tasks: snapshot.data!);
+          case ConnectionState.none:
+            return ErrorWidget("The stream was wrong (connectionState.none)");
+          case ConnectionState.done:
+            return ErrorWidget("The stream has ended??");
+        }
+      },
+    );
+  }
 }
 
-class _BoardScreenState extends State<BoardScreen> {
+class _BoardScreen extends StatefulWidget {
+  const _BoardScreen(
+      {super.key,
+      required this.userEmail,
+      required this.userUID,
+      required this.board,
+      required this.updatePoints,
+      required this.tasks});
+
+  final String userEmail;
+  final String userUID;
+  final Board board;
+  final Function(int) updatePoints;
+  final List<Task> tasks;
+
+  @override
+  State<_BoardScreen> createState() => _BoardScreenState();
+}
+
+class _BoardScreenState extends State<_BoardScreen> {
   @override
   void initState() {
     super.initState();
@@ -33,6 +80,17 @@ class _BoardScreenState extends State<BoardScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future<void> moveTask(String taskID, int newColumnID) async {
+    try {
+      DocumentReference taskRef = FirebaseFirestore.instance
+          .doc('/users/${widget.userUID}/tasks/$taskID');
+
+      await taskRef.update({'columnID': newColumnID});
+    } catch (e) {
+      print('Error moving task: $e');
+    }
   }
 
   void _addColumn(int id, String columnTitle, bool isEditingText,
@@ -47,32 +105,29 @@ class _BoardScreenState extends State<BoardScreen> {
     });
   }
 
-  void _addTask(int id, String name, ColumnBZ column) {
-    Task task = Task(
-        id: 'task$id',
-        columnID: column.id,
-        sprintID: 1,
-        name: name,
-        description: '',
-        priority: 0,
-        points: 0,
-        status: 0);
-    setState(() {
-      widget.board.tasks.add(task);
-    });
-
-    // CollectionReference usersCollection =
-    //     FirebaseFirestore.instance.collection("/users");
-
-    // usersCollection.doc(widget.userUID).collection("tasks").add({
-    //   'columnID': column.id,
-    //   'sprintID': 1,
-    //   'name': 'New Task',
-    //   'description': '',
-    //   'priority': 0,
-    //   'points': 0,
-    //   'status': 0
+  void _addTask(/*int id,*/ String userUID, String name, ColumnBZ column) {
+    // Task task = Task(
+    //     id: 'task$id',
+    //     columnID: column.id,
+    //     sprintID: 1,
+    //     name: name,
+    //     description: '',
+    //     priority: 0,
+    //     points: 0,
+    //     status: 0);
+    // setState(() {
+    //   widget.board.tasks.add(task);
     // });
+
+    FirebaseFirestore.instance.collection("/users/$userUID/tasks").add({
+      'columnID': column.id,
+      'sprintID': 1,
+      'name': 'New Task',
+      'description': '',
+      'priority': 0,
+      'points': 0,
+      'status': 0
+    });
     // setState(() {}); // No need to call setState here crec
   }
 
@@ -82,27 +137,15 @@ class _BoardScreenState extends State<BoardScreen> {
     });
   }
 
-  void _deleteTask(Task task) {
-    setState(() {
-      widget.board.tasks.removeWhere((item) => item.id == task.id);
-    });
-  }
-
-  // void _deleteTask(String taskId) async {
-  //   CollectionReference usersCollection =
-  //       FirebaseFirestore.instance.collection('users');
-
-  //   CollectionReference tasksCollection =
-  //       usersCollection.doc(widget.userUID).collection('tasks');
-
-  //   DocumentReference taskDocRef = tasksCollection.doc(taskId);
-
-  //   await taskDocRef.delete();
-
+  // void _deleteTask(Task task) {
   //   setState(() {
-  //     taskList.removeWhere((task) => task.id == taskId);
+  //     widget.board.tasks.removeWhere((item) => item.id == task.id);
   //   });
   // }
+
+  void _deleteTask(String userUID, String taskID) {
+    FirebaseFirestore.instance.doc('/users/$userUID/tasks/$taskID').delete();
+  }
 
   void _editKey(ColumnBZ currentColumn) {
     // if (currentColumn.isKey) {
@@ -162,17 +205,17 @@ class _BoardScreenState extends State<BoardScreen> {
     return DragTarget<Task>(
         key: ValueKey(column),
         onAccept: (task) {
-          setState(() {
-            task.columnID = column.id;
-            if (column.isKey) {
-              if (task.status == 0) {
-                widget.updatePoints(task.points);
-              }
-              task.status = 1;
-            } else {
-              if (task.status == 1) task.status = 2;
+          //setState(() {
+          moveTask(task.id, column.id);
+          if (column.isKey) {
+            if (task.status == 0) {
+              widget.updatePoints(task.points);
             }
-          });
+            task.status = 1;
+          } else {
+            if (task.status == 1) task.status = 2;
+          }
+          //});
         },
         builder: (context, List<dynamic> accepted, List<dynamic> rejected) {
           return Container(
@@ -200,9 +243,9 @@ class _BoardScreenState extends State<BoardScreen> {
                                   !column.isKey
                                       ? OutlinedButton(
                                           onPressed: () {
-                                            _addTask(widget.board.taskID,
-                                                'New Task', column);
-                                            widget.board.taskID++;
+                                            _addTask(widget.userUID, 'New Task',
+                                                column);
+                                            //widget.board.taskID++;
                                           },
                                           child: const Icon(Icons.add))
                                       : Container(),
@@ -265,7 +308,7 @@ class _BoardScreenState extends State<BoardScreen> {
                       Text(task.name),
                       OutlinedButton(
                           onPressed: () {
-                            _deleteTask(task);
+                            _deleteTask(widget.userUID, task.id);
                           },
                           //tooltip: 'Delete this column',
                           child: const Icon(Icons.remove_circle)),
@@ -274,11 +317,11 @@ class _BoardScreenState extends State<BoardScreen> {
                             await Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) => TaskScreen(
-                                    selectedTask: task,
+                                    taskID: task.id,
                                     userUID: widget.userUID),
                               ),
                             );
-                            setState(() {});
+                            //setState(() {});
                           },
                           child: const Icon(Icons.edit)),
                     ],
@@ -296,7 +339,7 @@ class _BoardScreenState extends State<BoardScreen> {
 
   List<Widget> _getTasks(ColumnBZ column, BuildContext context) {
     final List<Widget> taskWidgets = <Widget>[];
-    for (Task task in widget.board.tasks) {
+    for (Task task in widget.tasks) {
       if (column.id == task.columnID) {
         taskWidgets.add(_buildTask(task, context));
       }

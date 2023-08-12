@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../models/board.dart';
 import 'package:flutter/services.dart';
@@ -5,23 +6,58 @@ import 'package:flutter/services.dart';
 const List<String> priority = <String>['low', 'medium', 'high'];
 const List<String> status = <String>['open', 'closed', 'reopened'];
 
-class TaskScreen extends StatefulWidget {
+class TaskScreen extends StatelessWidget {
+  final String taskID;
+  final String userUID;
+
   const TaskScreen(
+      {Key? key,
+      required this.taskID,
+      required this.userUID})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: userTaskSnapshot(userUID, taskID),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return ErrorWidget(snapshot.error!);
+        }
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          case ConnectionState.active:
+            return _TaskScreen(
+                userUID: userUID,
+                selectedTask: snapshot.data!);
+          case ConnectionState.none:
+            return ErrorWidget("The stream was wrong (connectionState.none)");
+          case ConnectionState.done:
+            return ErrorWidget("The stream has ended??");
+        }
+      },
+    );
+  }
+}
+
+class _TaskScreen extends StatefulWidget {
+  const _TaskScreen(
       {super.key, required this.selectedTask, required this.userUID});
 
   final Task selectedTask;
   final String userUID;
 
   @override
-  State<TaskScreen> createState() => _TaskScreenState();
+  State<_TaskScreen> createState() => _TaskScreenState();
 }
 
-class _TaskScreenState extends State<TaskScreen> {
+class _TaskScreenState extends State<_TaskScreen> {
   bool isEditingName = false;
   bool isEditingDescription = false;
   bool isEditingPoints = false;
-  //late DocumentReference taskDocRef;
-  //late DocumentSnapshot? taskSnapshot;
 
   @override
   void initState() {
@@ -42,6 +78,39 @@ class _TaskScreenState extends State<TaskScreen> {
   //   taskSnapshot = await taskDocRef.get();
   // }
 
+  Future<void> updateName(String newName) async {
+    try {
+      DocumentReference taskRef = FirebaseFirestore.instance
+          .doc('/users/${widget.userUID}/tasks/${widget.selectedTask.id}');
+
+      await taskRef.update({'name': newName});
+    } catch (e) {
+      print('Error updating name: $e');
+    }
+  }
+
+  Future<void> updateDescription(String newText) async {
+    try {
+      DocumentReference taskRef = FirebaseFirestore.instance
+          .doc('/users/${widget.userUID}/tasks/${widget.selectedTask.id}');
+
+      await taskRef.update({'description': newText});
+    } catch (e) {
+      print('Error updating name: $e');
+    }
+  }
+
+  Future<void> updatePoints(int newValue) async {
+    try {
+      DocumentReference taskRef = FirebaseFirestore.instance
+          .doc('/users/${widget.userUID}/tasks/${widget.selectedTask.id}');
+
+      await taskRef.update({'points': newValue});
+    } catch (e) {
+      print('Error updating name: $e');
+    }
+  }
+
   String _getDropdownValue() {
     return priority[widget.selectedTask.priority];
   }
@@ -52,9 +121,10 @@ class _TaskScreenState extends State<TaskScreen> {
         constraints: const BoxConstraints(maxHeight: 50, maxWidth: 260),
         child: TextField(
           onSubmitted: (newValue) {
+            updateName(newValue);
             setState(() {
               //taskDocRef.update({'name': newValue});
-              widget.selectedTask.name = newValue;
+              //widget.selectedTask.name = newValue;
               isEditingName = false;
             });
           },
@@ -70,7 +140,7 @@ class _TaskScreenState extends State<TaskScreen> {
             isEditingName = true;
           });
         },
-        child: Text(widget.selectedTask.name));
+        child: Text(isEditingName ? widget.selectedTask.nameController.text : widget.selectedTask.name));
   }
 
   Widget _editTaskDescription(BuildContext context) {
@@ -80,9 +150,9 @@ class _TaskScreenState extends State<TaskScreen> {
         child: TextField(
           focusNode: FocusNode(onKey: (node, event) {
             if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
+              updateDescription(widget.selectedTask.descriptionController.text);
               setState(() {
-                widget.selectedTask.description =
-                    widget.selectedTask.descriptionController.text;
+                //widget.selectedTask.description = widget.selectedTask.descriptionController.text;
                 isEditingDescription = false;
                 node.unfocus();
               });
@@ -100,7 +170,7 @@ class _TaskScreenState extends State<TaskScreen> {
       );
     }
     return SizedBox(
-        height: 200, width: 300, child: Text(widget.selectedTask.description));
+        height: 200, width: 300, child: Text(isEditingDescription ? widget.selectedTask.descriptionController.text : widget.selectedTask.description));
   }
 
   Widget _editTaskPoints(BuildContext context) {
@@ -109,8 +179,9 @@ class _TaskScreenState extends State<TaskScreen> {
         constraints: const BoxConstraints(maxHeight: 100, maxWidth: 260),
         child: TextField(
           onSubmitted: (newValue) {
+            updatePoints(int.parse(newValue));
             setState(() {
-              widget.selectedTask.points = int.parse(newValue);
+              //widget.selectedTask.points = int.parse(newValue);
               isEditingPoints = false;
             });
           },
@@ -128,7 +199,7 @@ class _TaskScreenState extends State<TaskScreen> {
           isEditingPoints = true;
         });
       },
-      child: Text(
+      child: Text(isEditingPoints ? widget.selectedTask.pointsController.text :
         widget.selectedTask.points.toString(),
         //style: Theme.of(context).textTheme.headlineMedium,
       ),
@@ -167,6 +238,7 @@ class _TaskScreenState extends State<TaskScreen> {
               color: Colors.amber,
             ),
             onChanged: (String? value) {
+              // cal canviar a funció updatePriority is treure setState
               setState(() {
                 if (value == priority[0]) {
                   widget.selectedTask.priority = 0;

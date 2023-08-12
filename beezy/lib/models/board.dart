@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ColumnBZ {
@@ -43,7 +44,51 @@ class Task {
       required this.description,
       required this.priority,
       required this.points,
-      required this.status});
+      required this.status}) {
+    nameController.text = name;
+    descriptionController.text = description;
+    pointsController.text = points.toString();
+  }
+
+  Task.fromFirestore(this.id, Map<String, dynamic> json)
+      : columnID = json['columnID'],
+        sprintID = json['sprintID'],
+        name = json['name'],
+        description = json['description'],
+        priority = json['priority'],
+        points = json['points'],
+        status = json['status']{
+    nameController.text = name;
+    descriptionController.text = description;
+    pointsController.text = points.toString();
+  }
+
+}
+
+Stream<List<Task>> userTaskSnapshots(String userUID) {
+  final db = FirebaseFirestore.instance;
+  final stream = db.collection("/users/$userUID/tasks").snapshots();
+  return stream.map((query) {
+    List<Task> tasks = [];
+    for (final doc in query.docs) {
+      tasks.add(Task.fromFirestore(doc.id, doc.data()));
+    }
+    return tasks;
+  });
+}
+
+Stream<Task?> userTaskSnapshot(String userUID, String taskID) {
+  final db = FirebaseFirestore.instance;
+  final stream = db.doc("/users/$userUID/tasks/$taskID").snapshots();
+  return stream.map((doc) {
+    if (doc.exists) {
+      Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+      if (data != null) {
+        return Task.fromFirestore(doc.id, data);
+      }
+    }
+    return null;
+  });
 }
 
 class Board {

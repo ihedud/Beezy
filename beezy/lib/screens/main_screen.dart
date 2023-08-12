@@ -9,20 +9,20 @@ import 'package:beezy/models/avatar.dart';
 
 import 'issues_screen.dart';
 
-class MyObserver extends WidgetsBindingObserver {
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      // Call your method here before the application is closed
-      myMethod();
-    }
-  }
+// class MyObserver extends WidgetsBindingObserver {
+//   @override
+//   void didChangeAppLifecycleState(AppLifecycleState state) {
+//     if (state == AppLifecycleState.paused) {
+//       // Call your method here before the application is closed
+//       myMethod();
+//     }
+//   }
 
-  void myMethod() {
-    // Your code logic here
-    print('Method called before closing the application');
-  }
-}
+//   void myMethod() {
+//     // Your code logic here
+//     print('Method called before closing the application');
+//   }
+// }
 
 class MainScreen extends StatefulWidget {
   const MainScreen(
@@ -45,7 +45,7 @@ class _MainScreenState extends State<MainScreen>
   Avatar avatar = Avatar();
   int points = 0;
   late TabController _tabController;
-  MyObserver myObserver = MyObserver();
+  //MyObserver myObserver = MyObserver();
 
   @override
   void initState() {
@@ -53,13 +53,13 @@ class _MainScreenState extends State<MainScreen>
     Firebase.initializeApp();
     getTasks();
     _tabController = TabController(length: 4, vsync: this);
-    WidgetsBinding.instance!.addObserver(myObserver);
+    //WidgetsBinding.instance!.addObserver(myObserver);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    WidgetsBinding.instance!.removeObserver(myObserver);
+    //WidgetsBinding.instance!.removeObserver(myObserver);
     print('updating...');
     updateTasks();
     super.dispose();
