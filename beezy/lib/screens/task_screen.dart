@@ -10,10 +10,7 @@ class TaskScreen extends StatelessWidget {
   final String taskID;
   final String userUID;
 
-  const TaskScreen(
-      {Key? key,
-      required this.taskID,
-      required this.userUID})
+  const TaskScreen({Key? key, required this.taskID, required this.userUID})
       : super(key: key);
 
   @override
@@ -30,9 +27,7 @@ class TaskScreen extends StatelessWidget {
               body: Center(child: CircularProgressIndicator()),
             );
           case ConnectionState.active:
-            return _TaskScreen(
-                userUID: userUID,
-                selectedTask: snapshot.data!);
+            return _TaskScreen(userUID: userUID, selectedTask: snapshot.data!);
           case ConnectionState.none:
             return ErrorWidget("The stream was wrong (connectionState.none)");
           case ConnectionState.done:
@@ -44,8 +39,7 @@ class TaskScreen extends StatelessWidget {
 }
 
 class _TaskScreen extends StatefulWidget {
-  const _TaskScreen(
-      {super.key, required this.selectedTask, required this.userUID});
+  const _TaskScreen({required this.selectedTask, required this.userUID});
 
   final Task selectedTask;
   final String userUID;
@@ -69,19 +63,10 @@ class _TaskScreenState extends State<_TaskScreen> {
     super.dispose();
   }
 
-  // void getDocRef() async {
-  //   taskDocRef = FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(widget.userUID)
-  //       .collection('tasks')
-  //       .doc(widget.selectedTask.id);
-  //   taskSnapshot = await taskDocRef.get();
-  // }
-
   Future<void> updateName(String newName) async {
     try {
       DocumentReference taskRef = FirebaseFirestore.instance
-          .doc('/users/${widget.userUID}/tasks/${widget.selectedTask.id}');
+          .doc('/users/${widget.userUID}/PMTinfo/PMTinfo/tasks/${widget.selectedTask.id}');
 
       await taskRef.update({'name': newName});
     } catch (e) {
@@ -92,22 +77,40 @@ class _TaskScreenState extends State<_TaskScreen> {
   Future<void> updateDescription(String newText) async {
     try {
       DocumentReference taskRef = FirebaseFirestore.instance
-          .doc('/users/${widget.userUID}/tasks/${widget.selectedTask.id}');
+          .doc('/users/${widget.userUID}/PMTinfo/PMTinfo/tasks/${widget.selectedTask.id}');
 
       await taskRef.update({'description': newText});
     } catch (e) {
-      print('Error updating name: $e');
+      print('Error updating description: $e');
     }
   }
 
   Future<void> updatePoints(int newValue) async {
     try {
       DocumentReference taskRef = FirebaseFirestore.instance
-          .doc('/users/${widget.userUID}/tasks/${widget.selectedTask.id}');
+          .doc('/users/${widget.userUID}/PMTinfo/PMTinfo/tasks/${widget.selectedTask.id}');
 
       await taskRef.update({'points': newValue});
     } catch (e) {
-      print('Error updating name: $e');
+      print('Error updating points: $e');
+    }
+  }
+
+  Future<void> updatePriority(String value) async {
+    try {
+      DocumentReference taskRef = FirebaseFirestore.instance
+          .doc('/users/${widget.userUID}/PMTinfo/PMTinfo/tasks/${widget.selectedTask.id}');
+      late int newValue;
+      if (value == priority[0]) {
+        newValue = 0;
+      } else if (value == priority[1]) {
+        newValue = 1;
+      } else if (value == priority[2]) {
+        newValue = 2;
+      }
+      await taskRef.update({'priority': newValue});
+    } catch (e) {
+      print('Error updating priority: $e');
     }
   }
 
@@ -123,8 +126,6 @@ class _TaskScreenState extends State<_TaskScreen> {
           onSubmitted: (newValue) {
             updateName(newValue);
             setState(() {
-              //taskDocRef.update({'name': newValue});
-              //widget.selectedTask.name = newValue;
               isEditingName = false;
             });
           },
@@ -140,7 +141,9 @@ class _TaskScreenState extends State<_TaskScreen> {
             isEditingName = true;
           });
         },
-        child: Text(isEditingName ? widget.selectedTask.nameController.text : widget.selectedTask.name));
+        child: Text(isEditingName
+            ? widget.selectedTask.nameController.text
+            : widget.selectedTask.name));
   }
 
   Widget _editTaskDescription(BuildContext context) {
@@ -152,7 +155,6 @@ class _TaskScreenState extends State<_TaskScreen> {
             if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
               updateDescription(widget.selectedTask.descriptionController.text);
               setState(() {
-                //widget.selectedTask.description = widget.selectedTask.descriptionController.text;
                 isEditingDescription = false;
                 node.unfocus();
               });
@@ -170,7 +172,11 @@ class _TaskScreenState extends State<_TaskScreen> {
       );
     }
     return SizedBox(
-        height: 200, width: 300, child: Text(isEditingDescription ? widget.selectedTask.descriptionController.text : widget.selectedTask.description));
+        height: 200,
+        width: 300,
+        child: Text(isEditingDescription
+            ? widget.selectedTask.descriptionController.text
+            : widget.selectedTask.description));
   }
 
   Widget _editTaskPoints(BuildContext context) {
@@ -181,13 +187,11 @@ class _TaskScreenState extends State<_TaskScreen> {
           onSubmitted: (newValue) {
             updatePoints(int.parse(newValue));
             setState(() {
-              //widget.selectedTask.points = int.parse(newValue);
               isEditingPoints = false;
             });
           },
           autofocus: true,
           controller: widget.selectedTask.pointsController,
-          //style: Theme.of(context).textTheme.headlineMedium,
         ),
       );
     } else if (widget.selectedTask.status != 0) {
@@ -199,19 +203,20 @@ class _TaskScreenState extends State<_TaskScreen> {
           isEditingPoints = true;
         });
       },
-      child: Text(isEditingPoints ? widget.selectedTask.pointsController.text :
-        widget.selectedTask.points.toString(),
-        //style: Theme.of(context).textTheme.headlineMedium,
+      child: Text(
+        isEditingPoints
+            ? widget.selectedTask.pointsController.text
+            : widget.selectedTask.points.toString(),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    //getDocRef();
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Color.fromARGB(255, 230, 146, 38),
+        //backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: _editTaskName(context),
       ),
       body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -231,23 +236,13 @@ class _TaskScreenState extends State<_TaskScreen> {
           DropdownButton<String>(
             value: _getDropdownValue(),
             icon: const Icon(Icons.arrow_drop_down),
-            //elevation: 16,
             style: const TextStyle(color: Colors.black),
             underline: Container(
               height: 2,
-              color: Colors.amber,
+              color: Color.fromARGB(255, 230, 146, 38),
             ),
             onChanged: (String? value) {
-              // cal canviar a funció updatePriority is treure setState
-              setState(() {
-                if (value == priority[0]) {
-                  widget.selectedTask.priority = 0;
-                } else if (value == priority[1]) {
-                  widget.selectedTask.priority = 1;
-                } else if (value == priority[2]) {
-                  widget.selectedTask.priority = 2;
-                }
-              });
+              updatePriority(value!);
             },
             items: priority.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(

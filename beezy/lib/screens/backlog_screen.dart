@@ -1,22 +1,65 @@
-import '../screens/task_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../models/board.dart';
 
-class BacklogScreen extends StatefulWidget {
-  const BacklogScreen(
-      {super.key, required this.board, required this.updatePoints});
+class BacklogScreen extends StatelessWidget {
+  final String userUID;
+  final Function(int) updatePoints;
 
-  final Board board;
+  const BacklogScreen(
+      {Key? key,
+      required this.userUID,
+      required this.updatePoints})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: userPMTinfoSnapshots(userUID),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return ErrorWidget(snapshot.error!);
+        }
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          case ConnectionState.active:
+            return _BacklogScreen(
+              info: snapshot.data!,
+              userUID: userUID,
+              updatePoints: updatePoints,
+            );
+          case ConnectionState.none:
+            return ErrorWidget("The stream was wrong (connectionState.none)");
+          case ConnectionState.done:
+            return ErrorWidget("The stream has ended??");
+        }
+      },
+    );
+  }
+}
+
+class _BacklogScreen extends StatefulWidget {
+  const _BacklogScreen({
+    required this.info,
+    required this.userUID,
+    required this.updatePoints,
+  });
+
+  final PMTinfo info;
+  final String userUID;
   final Function(int) updatePoints;
 
   @override
-  State<BacklogScreen> createState() => _BacklogScreenState();
+  State<_BacklogScreen> createState() => _BacklogScreenState();
 }
 
-class _BacklogScreenState extends State<BacklogScreen> {
+class _BacklogScreenState extends State<_BacklogScreen> {
   String _dropdownValue(Task task) {
     String dropdownValue = '';
-    for (ColumnBZ column in widget.board.columns) {
+    for (ColumnBZ column in widget.info.columns) {
       if (column.id == task.columnID) {
         dropdownValue = column.columnTitle;
       }
@@ -24,73 +67,89 @@ class _BacklogScreenState extends State<BacklogScreen> {
     return dropdownValue;
   }
 
+  Future<void> moveTask(String taskID, int newSprintID) async {
+    try {
+      DocumentReference taskRef = FirebaseFirestore.instance
+          .doc('/users/${widget.userUID}/PMTinfo/PMTinfo/tasks/$taskID');
+
+      await taskRef.update({'sprintID': newSprintID});
+    } catch (e) {
+      print('Error moving task: $e');
+    }
+  }
+
+  Future<void> updateStatus(int newValue, String taskID) async {
+    try {
+      DocumentReference taskRef = FirebaseFirestore.instance
+          .doc('/users/${widget.userUID}/PMTinfo/PMTinfo/tasks/$taskID');
+
+      await taskRef.update({'status': newValue});
+    } catch (e) {
+      print('Error updating status: $e');
+    }
+  }
+
   List<String> _status() {
     List<String> status = <String>[];
-    for (ColumnBZ column in widget.board.columns) {
+    for (ColumnBZ column in widget.info.columns) {
       status.add(column.columnTitle);
     }
     return status;
   }
 
-  void _setStatus(String value, Task task) {
-    for (ColumnBZ column in widget.board.columns) {
-      if (column.columnTitle == value) {
-        task.columnID = column.id;
-        if (column.isKey && widget.board.tasks.contains(task)) {
-          task.status = 1;
-          widget.updatePoints(task.points);
-        } else {
-          if (task.status != 0) {
-            task.status = 2;
-          }
-        }
-      }
+  Future<void> updateColumn(String value, Task task) async {
+    try {
+      DocumentReference taskRef = FirebaseFirestore.instance
+          .doc('/users/${widget.userUID}/PMTinfo/PMTinfo/tasks/${task.id}');
+
+      await taskRef.update({'columnID': value});
+    } catch (e) {
+      print('Error setting status: $e');
     }
   }
 
-  void _addBacklogTask(int id, String name) {
-    // Task task = Task();
-    // task.sprintID = 0;
-    // task.id = id;
-    // task.columnID = widget.board.columns.first.id;
-    // task.name = name;
-    // setState(() {
-    //   widget.board.backlogTasks.add(task);
-    // });
-  }
-
-  void _addBoardTask(int id, String name) {
-    // Task task = Task();
-    // task.sprintID = 1;
-    // task.id = id;
-    // task.columnID = widget.board.columns.first.id;
-    // task.name = name;
-    // setState(() {
-    //   widget.board.tasks.add(task);
-    // });
-  }
-
-  void _deleteTask(Task task) {
-    setState(() {
-      if (widget.board.tasks.contains(task)) {
-        widget.board.tasks.removeWhere((item) => item.id == task.id);
-      } else if (widget.board.backlogTasks.contains(task)) {
-        widget.board.backlogTasks.removeWhere((item) => item.id == task.id);
-      }
+  void _addBacklogTask(String userUID, String name) {
+    FirebaseFirestore.instance.collection("/users/$userUID/PMTinfo/PMTinfo/tasks").add({
+      'columnID': widget.info.columns.first.id,
+      'sprintID': 0,
+      'name': name,
+      'description': '',
+      'priority': 0,
+      'points': 0,
+      'status': 0
     });
+  }
+
+  void _addBoardTask(String userUID, String name) {
+    FirebaseFirestore.instance.collection("/users/$userUID/PMTinfo/PMTinfo/tasks").add({
+      'columnID': widget.info.columns.first.id,
+      'sprintID': 1,
+      'name': name,
+      'description': '',
+      'priority': 0,
+      'points': 0,
+      'status': 0
+    });
+  }
+
+  void _deleteTask(String userUID, String taskID) {
+    FirebaseFirestore.instance.doc('/users/$userUID/PMTinfo/PMTinfo/tasks/$taskID').delete();
   }
 
   List<Widget> _getSprintTasks(BuildContext context) {
     final List<Widget> taskWidgets = <Widget>[];
-    for (Task task in widget.board.tasks) {
-      taskWidgets.add(_buildTask(task, context));
+    for (Task task in widget.info.tasks) {
+      if (task.sprintID != 0) {
+        taskWidgets.add(_buildTask(task, context));
+      }
     }
     return taskWidgets;
   }
 
   List<Widget> _getBacklogTasks(BuildContext context) {
     final List<Widget> taskWidgets = <Widget>[];
-    for (Task task in widget.board.backlogTasks) {
+    for (Task task
+        in widget.info.tasks.where((task) => task.sprintID == 0).toList()) {
       taskWidgets.add(_buildTask(task, context));
     }
     return taskWidgets;
@@ -107,7 +166,7 @@ class _BacklogScreenState extends State<BacklogScreen> {
               height: 100,
               child: DecoratedBox(
                   decoration: const BoxDecoration(
-                      color: Color.fromARGB(143, 205, 150, 10),
+                      color: Color.fromARGB(255, 175, 117, 41),
                       borderRadius: BorderRadius.all(Radius.circular(20))),
                   child: Align(
                     alignment: Alignment.center,
@@ -122,7 +181,7 @@ class _BacklogScreenState extends State<BacklogScreen> {
               height: 50,
               child: DecoratedBox(
                   decoration: const BoxDecoration(
-                      color: Color.fromARGB(255, 254, 187, 15),
+                      color: Color.fromARGB(255, 230, 146, 38),
                       borderRadius: BorderRadius.all(Radius.circular(10))),
                   child: Container(
                       padding: const EdgeInsets.all(5),
@@ -133,16 +192,28 @@ class _BacklogScreenState extends State<BacklogScreen> {
                           DropdownButton<String>(
                             value: _dropdownValue(task),
                             icon: const Icon(Icons.arrow_drop_down),
-                            //elevation: 16,
                             style: const TextStyle(color: Colors.black),
                             underline: Container(
                               height: 2,
-                              color: Colors.amber,
+                              color: Color.fromARGB(255, 230, 146, 38),
                             ),
                             onChanged: (String? value) {
-                              setState(() {
-                                _setStatus(value!, task);
-                              });
+                              for (ColumnBZ column in widget.info.columns) {
+                                if (column.columnTitle == value) {
+                                  updateColumn(column.id, task);
+                                  if (column.isKey &&
+                                      widget.info.tasks.contains(task)) {
+                                    if (task.status == 0) {
+                                      widget.updatePoints(task.points);
+                                    }
+                                    updateStatus(1, task.id);
+                                  } else {
+                                    if (task.status != 0) {
+                                      updateStatus(2, task.id);
+                                    }
+                                  }
+                                }
+                              }
                             },
                             items: _status()
                                 .map<DropdownMenuItem<String>>((String value) {
@@ -154,7 +225,7 @@ class _BacklogScreenState extends State<BacklogScreen> {
                           ),
                           OutlinedButton(
                               onPressed: () {
-                                _deleteTask(task);
+                                _deleteTask(widget.userUID, task.id);
                               },
                               //tooltip: 'Delete this column',
                               child: const Icon(Icons.remove_circle)),
@@ -178,19 +249,15 @@ class _BacklogScreenState extends State<BacklogScreen> {
   Widget build(BuildContext context) {
     return ListView(children: [
       DragTarget<Task>(onAccept: (task) {
-        setState(() {
-          widget.board.backlogTasks.remove(task);
-          widget.board.tasks.add(task);
-          task.sprintID = 1;
-          for (ColumnBZ column in widget.board.columns) {
-            if (task.columnID == column.id && column.isKey) {
-              if (task.status == 0) {
-                widget.updatePoints(task.points);
-              }
-              task.status = 1;
+        moveTask(task.id, 1);
+        for (ColumnBZ column in widget.info.columns) {
+          if (task.columnID == column.id && column.isKey) {
+            if (task.status == 0) {
+              widget.updatePoints(task.points);
             }
+            updateStatus(1, task.id);
           }
-        });
+        }
       }, builder: (context, List<dynamic> accepted, List<dynamic> rejected) {
         return Container(
             padding: const EdgeInsets.all(10),
@@ -213,21 +280,15 @@ class _BacklogScreenState extends State<BacklogScreen> {
                               ),
                               OutlinedButton(
                                   onPressed: () {
-                                    _addBoardTask(
-                                        widget.board.taskID, 'New Task');
-                                    widget.board.taskID++;
+                                    _addBoardTask(widget.userUID, 'New Task');
                                   },
                                   child: const Icon(Icons.add)),
                             ])))));
       }),
       DragTarget<Task>(onAccept: (task) {
-        setState(() {
-          if (task.status != 1) {
-            widget.board.tasks.remove(task);
-            widget.board.backlogTasks.add(task);
-            task.sprintID = 0;
-          }
-        });
+        if (task.status != 1) {
+          moveTask(task.id, 0);
+        }
       }, builder: (context, List<dynamic> accepted, List<dynamic> rejected) {
         return Container(
             padding: const EdgeInsets.all(10),
@@ -250,9 +311,7 @@ class _BacklogScreenState extends State<BacklogScreen> {
                               ),
                               OutlinedButton(
                                   onPressed: () {
-                                    _addBacklogTask(
-                                        widget.board.taskID, 'New Task');
-                                    widget.board.taskID++;
+                                    _addBacklogTask(widget.userUID, 'New Task');
                                   },
                                   child: const Icon(Icons.add)),
                             ])))));

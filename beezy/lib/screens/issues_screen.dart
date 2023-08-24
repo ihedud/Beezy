@@ -6,21 +6,52 @@ const List<String> priority = <String>['low', 'medium', 'high'];
 const List<String> sprintFilter = <String>['all', 'backlog', 'board'];
 const List<String> statusFilter = <String>['all', 'open', 'closed', 'reopened'];
 const List<String> priorityFilter = <String>['all', 'low', 'medium', 'high'];
-//const List<Widget> boardTag = <Widget>[Text('board')];
 
-class IssuesScreen extends StatefulWidget {
-  const IssuesScreen({super.key, required this.board});
+class IssuesScreen extends StatelessWidget {
+  //final Board board;
+  final String userUID;
 
-  final Board board;
+  const IssuesScreen({Key? key, /*required this.board,*/ required this.userUID})
+      : super(key: key);
 
   @override
-  State<IssuesScreen> createState() => _IssuesScreenState();
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: userPMTinfoSnapshots(userUID),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return ErrorWidget(snapshot.error!);
+        }
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          case ConnectionState.active:
+            return _IssuesScreen(info: snapshot.data!/*, allTasks: snapshot.data!*/);
+          case ConnectionState.none:
+            return ErrorWidget("The stream was wrong (connectionState.none)");
+          case ConnectionState.done:
+            return ErrorWidget("The stream has ended??");
+        }
+      },
+    );
+  }
 }
 
-class _IssuesScreenState extends State<IssuesScreen> {
+class _IssuesScreen extends StatefulWidget {
+  const _IssuesScreen({required this.info/*, required this.allTasks*/});
+
+  final PMTinfo info;
+  //final List<Task> allTasks;
+
+  @override
+  State<_IssuesScreen> createState() => _IssuesScreenState();
+}
+
+class _IssuesScreenState extends State<_IssuesScreen> {
   String _searchText = '';
   final TextEditingController _searchController = TextEditingController();
-  //List<bool> _boardTag = <bool>[false];
   String dropdownValueSprint = sprintFilter.first;
   String dropdownValueStatus = statusFilter.first;
   String dropdownValueColumn = 'all';
@@ -28,7 +59,7 @@ class _IssuesScreenState extends State<IssuesScreen> {
 
   String _dropdownValue(Task task) {
     String dropdownValue = '';
-    for (ColumnBZ column in widget.board.columns) {
+    for (ColumnBZ column in widget.info.columns) {
       if (column.id == task.columnID) {
         dropdownValue = column.columnTitle;
       }
@@ -39,7 +70,7 @@ class _IssuesScreenState extends State<IssuesScreen> {
   List<String> _columnFilter() {
     List<String> status = <String>[];
     status.add('all');
-    for (ColumnBZ column in widget.board.columns) {
+    for (ColumnBZ column in widget.info.columns) {
       status.add(column.columnTitle);
     }
     return status;
@@ -48,21 +79,15 @@ class _IssuesScreenState extends State<IssuesScreen> {
   List<Widget> _getTasks(BuildContext context) {
     final List<Widget> taskWidgets = <Widget>[];
     List<Task> filteredTasks;
-    final List<Task> allTasks = widget.board.tasks + widget.board.backlogTasks;
 
     if (_searchText.isEmpty) {
-      filteredTasks = allTasks;
+      filteredTasks = widget.info.tasks;
     } else {
-      filteredTasks = allTasks
+      filteredTasks = widget.info.tasks
           .where((task) =>
               task.name.toLowerCase().contains(_searchText.toLowerCase()))
           .toList();
     }
-
-    // if (_boardTag[0]) {
-    //   filteredTasks =
-    //       filteredTasks.where((task) => task.sprintID == 1).toList();
-    // }
 
     if (dropdownValueSprint == sprintFilter[1]) {
       filteredTasks =
@@ -80,15 +105,16 @@ class _IssuesScreenState extends State<IssuesScreen> {
       filteredTasks = filteredTasks.where((task) => task.status == 2).toList();
     }
 
-    late int columnID;
+    late String columnID;
     for (String columnSTR in _columnFilter()) {
       if (dropdownValueColumn == columnSTR && columnSTR != 'all') {
-        columnID = widget.board.columns
+        columnID = widget.info.columns
             .where((column) => column.columnTitle == columnSTR)
             .first
             .id;
-        filteredTasks =
-            filteredTasks.where((task) => task.columnID == columnID).toList();
+        filteredTasks = filteredTasks
+            .where((task) => task.columnID.toString() == columnID)
+            .toList();
       }
     }
 
@@ -116,7 +142,7 @@ class _IssuesScreenState extends State<IssuesScreen> {
             height: 50,
             child: DecoratedBox(
                 decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 254, 187, 15),
+                    color: Color.fromARGB(255, 230, 146, 38),
                     borderRadius: BorderRadius.all(Radius.circular(10))),
                 child: Container(
                     padding: const EdgeInsets.all(5),
@@ -205,7 +231,7 @@ class _IssuesScreenState extends State<IssuesScreen> {
           style: const TextStyle(color: Colors.black),
           underline: Container(
             height: 2,
-            color: Colors.amber,
+            color: Color.fromARGB(255, 230, 146, 38),
           ),
           onChanged: (String? value) {
             setState(() {
@@ -226,7 +252,7 @@ class _IssuesScreenState extends State<IssuesScreen> {
           style: const TextStyle(color: Colors.black),
           underline: Container(
             height: 2,
-            color: Colors.amber,
+            color: Color.fromARGB(255, 230, 146, 38),
           ),
           onChanged: (String? value) {
             setState(() {
@@ -247,7 +273,7 @@ class _IssuesScreenState extends State<IssuesScreen> {
           style: const TextStyle(color: Colors.black),
           underline: Container(
             height: 2,
-            color: Colors.amber,
+            color: Color.fromARGB(255, 230, 146, 38),
           ),
           onChanged: (String? value) {
             setState(() {
@@ -268,7 +294,7 @@ class _IssuesScreenState extends State<IssuesScreen> {
           style: const TextStyle(color: Colors.black),
           underline: Container(
             height: 2,
-            color: Colors.amber,
+            color: Color.fromARGB(255, 230, 146, 38),
           ),
           onChanged: (String? value) {
             setState(() {
@@ -282,27 +308,6 @@ class _IssuesScreenState extends State<IssuesScreen> {
             );
           }).toList(),
         )
-        // Container(
-        //     padding: EdgeInsets.all(5),
-        //     child: ToggleButtons(
-        //       direction: Axis.horizontal,
-        //       onPressed: (int i) {
-        //         setState(() {
-        //           _boardTag[i] = !_boardTag[i];
-        //         });
-        //       },
-        //       borderRadius: const BorderRadius.all(Radius.circular(8)),
-        //       selectedBorderColor: Colors.amber[700],
-        //       selectedColor: Colors.white,
-        //       fillColor: Colors.amber[200],
-        //       color: Colors.amber[400],
-        //       constraints: const BoxConstraints(
-        //         minHeight: 20.0,
-        //         minWidth: 80.0,
-        //       ),
-        //       isSelected: _boardTag,
-        //       children: boardTag,
-        //     )),
       ]),
       Expanded(
           child: SingleChildScrollView(

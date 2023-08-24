@@ -21,8 +21,31 @@ class AuthGate extends StatelessWidget {
           if (!userDocSnapshot.exists) {
             transaction.set(
               usersCollection.doc(user.uid),
-              {'email': user.email},
+              {'email': user.email, 'points' : 0},
             );
+            CollectionReference info =
+                usersCollection.doc(user.uid).collection("PMTinfo");
+            CollectionReference columns =
+                info.doc(info.id).collection("columns");
+            columns.add({
+              'columnTitle': 'To Do',
+              'displayOrder' : 0,
+              'isKey': false,
+              'isEditingText': false
+            });
+            columns.add({
+              'columnTitle': 'In Progress',
+              'displayOrder' : 1,
+              'isKey': false,
+              'isEditingText': false
+            });
+            columns.add({
+              'columnTitle': 'Done',
+              'displayOrder' : 2,
+              'isKey': true,
+              'isEditingText': false
+            });
+            info.doc(info.id).set({'columnID' : 0});
           }
         })
         .then((value) => print('User document created successfully'))
