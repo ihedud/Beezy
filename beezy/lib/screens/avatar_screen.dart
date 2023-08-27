@@ -303,7 +303,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
   Widget _shopWidget() {
     return SizedBox(
         width: 160,
-        height: 475,
+        height: 350,
         child: DecoratedBox(
             decoration: const BoxDecoration(color: Colors.amber),
             child: Container(
@@ -327,7 +327,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
       Column(children: [
         Container(
             width: 75,
-            height: 85,
+            height: 75,
             padding: const EdgeInsets.all(5),
             child: DecoratedBox(
                 decoration: const BoxDecoration(
@@ -346,12 +346,12 @@ class _AvatarScreenState extends State<AvatarScreen> {
                           icon: const Image(
                               image: AssetImage('assets/food/muffin.png')),
                         )),
-                    const Text('Price: 1')
+                    //const Text('Price: 1')
                   ],
                 ))),
         Container(
             width: 75,
-            height: 85,
+            height: 75,
             padding: const EdgeInsets.all(5),
             child: DecoratedBox(
                 decoration: const BoxDecoration(
@@ -370,12 +370,12 @@ class _AvatarScreenState extends State<AvatarScreen> {
                           icon: const Image(
                               image: AssetImage('assets/food/soup.png')),
                         )),
-                    const Text('Price: 4')
+                    //const Text('Price: 4')
                   ],
                 ))),
         Container(
             width: 75,
-            height: 85,
+            height: 75,
             padding: const EdgeInsets.all(5),
             child: DecoratedBox(
                 decoration: const BoxDecoration(
@@ -394,31 +394,23 @@ class _AvatarScreenState extends State<AvatarScreen> {
                           icon: const Image(
                               image: AssetImage('assets/food/spaghetti.png')),
                         )),
-                    const Text('Price: 5')
+                    //const Text('Price: 5')
                   ],
                 ))),
         Container(
             width: 75,
-            height: 85,
+            height: 75,
             padding: const EdgeInsets.all(5),
             child: const DecoratedBox(
               decoration:
                   BoxDecoration(color: Color.fromARGB(220, 245, 216, 157)),
-            )),
-        Container(
-            width: 75,
-            height: 85,
-            padding: const EdgeInsets.all(5),
-            child: const DecoratedBox(
-              decoration:
-                  BoxDecoration(color: Color.fromARGB(220, 245, 216, 157)),
-            )),
+            ))
       ]),
       Column(
         children: [
           Container(
               width: 75,
-              height: 85,
+              height: 75,
               padding: const EdgeInsets.all(5),
               child: DecoratedBox(
                   decoration: const BoxDecoration(
@@ -437,12 +429,12 @@ class _AvatarScreenState extends State<AvatarScreen> {
                             icon: const Image(
                                 image: AssetImage('assets/food/donut.png')),
                           )),
-                      const Text('Price: 2')
+                      //const Text('Price: 2')
                     ],
                   ))),
           Container(
               width: 75,
-              height: 85,
+              height: 75,
               padding: const EdgeInsets.all(5),
               child: DecoratedBox(
                   decoration: const BoxDecoration(
@@ -461,12 +453,12 @@ class _AvatarScreenState extends State<AvatarScreen> {
                             icon: const Image(
                                 image: AssetImage('assets/food/salad.png')),
                           )),
-                      const Text('Price: 4')
+                      //const Text('Price: 4')
                     ],
                   ))),
           Container(
               width: 75,
-              height: 85,
+              height: 75,
               padding: const EdgeInsets.all(5),
               child: const DecoratedBox(
                 decoration:
@@ -474,20 +466,12 @@ class _AvatarScreenState extends State<AvatarScreen> {
               )),
           Container(
               width: 75,
-              height: 85,
+              height: 75,
               padding: const EdgeInsets.all(5),
               child: const DecoratedBox(
                 decoration:
                     BoxDecoration(color: Color.fromARGB(220, 245, 216, 157)),
-              )),
-          Container(
-              width: 75,
-              height: 85,
-              padding: const EdgeInsets.all(5),
-              child: const DecoratedBox(
-                decoration:
-                    BoxDecoration(color: Color.fromARGB(220, 245, 216, 157)),
-              )),
+              ))
         ],
       )
     ];
@@ -499,7 +483,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
       Column(children: [
         Container(
             width: 75,
-            height: 85,
+            height: 75,
             padding: const EdgeInsets.all(5),
             child: DecoratedBox(
                 decoration: const BoxDecoration(
@@ -518,12 +502,12 @@ class _AvatarScreenState extends State<AvatarScreen> {
                           icon: const Image(
                               image: AssetImage('assets/toys/ball.png')),
                         )),
-                    const Text('Price: 3')
+                    //const Text('Price: 3')
                   ],
                 ))),
         Container(
             width: 75,
-            height: 85,
+            height: 75,
             padding: const EdgeInsets.all(5),
             child: DecoratedBox(
                 decoration: const BoxDecoration(
@@ -542,12 +526,12 @@ class _AvatarScreenState extends State<AvatarScreen> {
                           icon: const Image(
                               image: AssetImage('assets/toys/horse.png')),
                         )),
-                    const Text('Price: 8')
+                    //const Text('Price: 8')
                   ],
                 ))),
         Container(
             width: 75,
-            height: 85,
+            height: 75,
             padding: const EdgeInsets.all(5),
             child: const DecoratedBox(
               decoration:
@@ -555,26 +539,18 @@ class _AvatarScreenState extends State<AvatarScreen> {
             )),
         Container(
             width: 75,
-            height: 85,
+            height: 75,
             padding: const EdgeInsets.all(5),
             child: const DecoratedBox(
               decoration:
                   BoxDecoration(color: Color.fromARGB(220, 245, 216, 157)),
-            )),
-        Container(
-            width: 75,
-            height: 85,
-            padding: const EdgeInsets.all(5),
-            child: const DecoratedBox(
-              decoration:
-                  BoxDecoration(color: Color.fromARGB(220, 245, 216, 157)),
-            )),
+            ))
       ]),
       Column(
         children: [
           Container(
               width: 75,
-              height: 85,
+              height: 75,
               padding: const EdgeInsets.all(5),
               child: DecoratedBox(
                   decoration: const BoxDecoration(
@@ -593,12 +569,12 @@ class _AvatarScreenState extends State<AvatarScreen> {
                             icon: const Image(
                                 image: AssetImage('assets/toys/doll.png')),
                           )),
-                      const Text('Price: 6')
+                      //const Text('Price: 6')
                     ],
                   ))),
           Container(
               width: 75,
-              height: 85,
+              height: 75,
               padding: const EdgeInsets.all(5),
               child: const DecoratedBox(
                 decoration:
@@ -606,7 +582,7 @@ class _AvatarScreenState extends State<AvatarScreen> {
               )),
           Container(
               width: 75,
-              height: 85,
+              height: 75,
               padding: const EdgeInsets.all(5),
               child: const DecoratedBox(
                 decoration:
@@ -614,20 +590,12 @@ class _AvatarScreenState extends State<AvatarScreen> {
               )),
           Container(
               width: 75,
-              height: 85,
+              height: 75,
               padding: const EdgeInsets.all(5),
               child: const DecoratedBox(
                 decoration:
                     BoxDecoration(color: Color.fromARGB(220, 245, 216, 157)),
-              )),
-          Container(
-              width: 75,
-              height: 85,
-              padding: const EdgeInsets.all(5),
-              child: const DecoratedBox(
-                decoration:
-                    BoxDecoration(color: Color.fromARGB(220, 245, 216, 157)),
-              )),
+              ))
         ],
       )
     ];
@@ -666,8 +634,8 @@ class _AvatarScreenState extends State<AvatarScreen> {
                 onTap: () => selectButton(index),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  width: selectedButtonIndex == index ? 100 : 80,
-                  height: selectedButtonIndex == index ? 100 : 80,
+                  width: selectedButtonIndex == index ? 80 : 65,
+                  height: selectedButtonIndex == index ? 80 : 65,
                   decoration: BoxDecoration(
                     color: selectedButtonIndex == index
                         ? Colors.amber
@@ -702,13 +670,15 @@ class _AvatarScreenState extends State<AvatarScreen> {
     return Center(
         child:
             Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+              Expanded(child: 
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           //SizedBox(width: 100),
           Expanded(child: _necessitiesWidget()),
           const Spacer(),
-          DragTarget<Item>(onAccept: (item) {
+          Expanded(
+              child: DragTarget<Item>(onAccept: (item) {
             setState(() {
               _deleteFood(item.name);
               if (fillAmount[selectedButtonIndex] < 1) {
@@ -720,18 +690,17 @@ class _AvatarScreenState extends State<AvatarScreen> {
               }
             });
           }, builder:
-              (context, List<dynamic> accepted, List<dynamic> rejected) {
+                  (context, List<dynamic> accepted, List<dynamic> rejected) {
             return SizedBox(
                 height: 400,
                 width: 300,
                 child:
                     FittedBox(child: Image.asset('assets/bee_avatar_1.png')));
-          }),
+          })),
           const Spacer(),
           _shopWidget(),
-          const Spacer()
         ],
-      ),
+      )),
       _inventoryWidget()
     ]));
   }

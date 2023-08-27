@@ -1,5 +1,5 @@
 class Avatar {
-  String name = '';
+  //String name = '';
   int satisfactionLevel = 100;
   List<Food> foodList = <Food>[];
   List<Toy> toyList = <Toy>[];

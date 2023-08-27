@@ -222,20 +222,10 @@ class _BoardScreenState extends State<_BoardScreen> {
     FirebaseFirestore.instance.doc('$tasksPath/$taskID').delete();
   }
 
-  // void _editKey(ColumnBZ currentColumn) {
-  //   for (ColumnBZ column in widget.board.columns) {
-  //     if (column.isKey) return;
-  //   }
-  //   setState(() {
-  //     currentColumn.isKey = true;
-  //   });
-  // }
-
   Widget _getKey(ColumnBZ column) {
     if (column.isKey && !column.isEditingText) {
       return starIcons.first;
     } else {
-      //return starIcons.last;
       return Container();
     }
   }
@@ -249,7 +239,6 @@ class _BoardScreenState extends State<_BoardScreen> {
           onSubmitted: (newValue) {
             updateName(newValue, column.id);
             setState(() {
-              //column.columnTitle = newValue;
               column.isEditingText = false;
             });
           },
@@ -379,7 +368,7 @@ class _BoardScreenState extends State<_BoardScreen> {
               height: 100,
               child: DecoratedBox(
                   decoration: const BoxDecoration(
-                      color: Color.fromARGB(143, 46, 35, 6),
+                      color: Color.fromARGB(255, 175, 117, 41),
                       borderRadius: BorderRadius.all(Radius.circular(20))),
                   child: Align(
                     alignment: Alignment.center,
