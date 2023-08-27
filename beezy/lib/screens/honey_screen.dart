@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/honey.dart';
@@ -19,6 +21,7 @@ class _HoneyScreenState extends State<HoneyScreen> {
     HoneyProfile(name: "Biel", avatarTypePath: "bee_avatar_6.png", lifes: 1),
     HoneyProfile(name: "Nora", avatarTypePath: "bee_avatar_7.png", lifes: 3),
   ];
+  List<HoneyCard> allCards = [];
   List<HoneyCard> generatedCards = [];
   List<bool> generatedSlots = [true, true, true];
   HoneyState state = HoneyState();
@@ -26,33 +29,37 @@ class _HoneyScreenState extends State<HoneyScreen> {
   bool isEditingDiary = false;
   String diaryText = 'Write your thoughts...';
   List<HoneyCard> playedCards = [];
+  bool hasRolled = false;
 
+  @override
   void initState() {
     super.initState();
 
-    generatedCards = [
-    HoneyCard(
-        imagePath: "cards/flower_patch.png",
-        description: "Generate 2 honey.",
-        price: 3,
-        effect: () {
-          state.honey += 2;
-        }),
-    HoneyCard(
-        imagePath: "cards/flower_patch.png",
-        description: "Generate 2 honey.",
-        price: 3,
-        effect: () {
-          state.honey += 2;
-        }),
-    HoneyCard(
-        imagePath: "cards/flower_patch.png",
-        description: "Generate 2 honey.",
-        price: 3,
-        effect: () {
-          state.honey += 2;
-        })
-  ];
+    allCards = [
+      HoneyCard(
+          imagePath: "cards/flower_patch.png",
+          description: "Generate 2 honey.",
+          price: 3,
+          effect: () {
+            state.honey += 2;
+          }),
+      HoneyCard(
+          imagePath: "cards/flower_field.png",
+          description: "Generate 3 honey.",
+          price: 3,
+          effect: () {
+            state.honey += 3;
+          }),
+      HoneyCard(
+          imagePath: "cards/pollen.png",
+          description: "Generate 1 honey.",
+          price: 3,
+          effect: () {
+            state.honey += 1;
+          })
+    ];
+
+    generatedCards = [allCards[0], allCards[1], allCards[2]];
   }
 
   List<Widget> getProfiles() {
@@ -392,7 +399,9 @@ class _HoneyScreenState extends State<HoneyScreen> {
           width: 120,
           height: 18,
           decoration: BoxDecoration(
-              color: state.honey == 100 ? Color.fromARGB(255, 230, 146, 38) : Color.fromARGB(255, 252, 241, 191),
+              color: state.honey == 100
+                  ? Color.fromARGB(255, 230, 146, 38)
+                  : Color.fromARGB(255, 252, 241, 191),
               border: Border.all(color: Colors.black, width: 3),
               borderRadius: BorderRadius.circular(10.0)),
         ),
@@ -400,7 +409,9 @@ class _HoneyScreenState extends State<HoneyScreen> {
           width: 120,
           height: 18,
           decoration: BoxDecoration(
-              color: state.honey >= 90 ? Color.fromARGB(255, 230, 146, 38) : Color.fromARGB(255, 252, 241, 191),
+              color: state.honey >= 90
+                  ? Color.fromARGB(255, 230, 146, 38)
+                  : Color.fromARGB(255, 252, 241, 191),
               border: Border.all(color: Colors.black, width: 3),
               borderRadius: BorderRadius.circular(10.0)),
         ),
@@ -408,7 +419,9 @@ class _HoneyScreenState extends State<HoneyScreen> {
           width: 160,
           height: 18,
           decoration: BoxDecoration(
-              color: state.honey >= 80 ? Color.fromARGB(255, 240, 172, 84) : Color.fromARGB(255, 252, 241, 191),
+              color: state.honey >= 80
+                  ? Color.fromARGB(255, 240, 172, 84)
+                  : Color.fromARGB(255, 252, 241, 191),
               border: Border.all(color: Colors.black, width: 3),
               borderRadius: BorderRadius.circular(10.0)),
         ),
@@ -416,7 +429,9 @@ class _HoneyScreenState extends State<HoneyScreen> {
           width: 160,
           height: 18,
           decoration: BoxDecoration(
-              color: state.honey >= 70 ? Color.fromARGB(255, 240, 172, 84) : Color.fromARGB(255, 252, 241, 191),
+              color: state.honey >= 70
+                  ? Color.fromARGB(255, 240, 172, 84)
+                  : Color.fromARGB(255, 252, 241, 191),
               border: Border.all(color: Colors.black, width: 3),
               borderRadius: BorderRadius.circular(10.0)),
         ),
@@ -424,7 +439,9 @@ class _HoneyScreenState extends State<HoneyScreen> {
           width: 200,
           height: 18,
           decoration: BoxDecoration(
-              color: state.honey >= 60 ? Color.fromARGB(255, 230, 146, 38) : Color.fromARGB(255, 252, 241, 191),
+              color: state.honey >= 60
+                  ? Color.fromARGB(255, 230, 146, 38)
+                  : Color.fromARGB(255, 252, 241, 191),
               border: Border.all(color: Colors.black, width: 3),
               borderRadius: BorderRadius.circular(10.0)),
         ),
@@ -432,7 +449,9 @@ class _HoneyScreenState extends State<HoneyScreen> {
           width: 200,
           height: 18,
           decoration: BoxDecoration(
-              color: state.honey >= 50 ? Color.fromARGB(255, 230, 146, 38) : Color.fromARGB(255, 252, 241, 191),
+              color: state.honey >= 50
+                  ? Color.fromARGB(255, 230, 146, 38)
+                  : Color.fromARGB(255, 252, 241, 191),
               border: Border.all(color: Colors.black, width: 3),
               borderRadius: BorderRadius.circular(10.0)),
         ),
@@ -440,7 +459,9 @@ class _HoneyScreenState extends State<HoneyScreen> {
           width: 160,
           height: 18,
           decoration: BoxDecoration(
-              color: state.honey >= 40 ? Color.fromARGB(255, 240, 172, 84) : Color.fromARGB(255, 252, 241, 191),
+              color: state.honey >= 40
+                  ? Color.fromARGB(255, 240, 172, 84)
+                  : Color.fromARGB(255, 252, 241, 191),
               border: Border.all(color: Colors.black, width: 3),
               borderRadius: BorderRadius.circular(10.0)),
         ),
@@ -448,7 +469,9 @@ class _HoneyScreenState extends State<HoneyScreen> {
           width: 160,
           height: 18,
           decoration: BoxDecoration(
-              color: state.honey >= 30 ? Color.fromARGB(255, 240, 172, 84) : Color.fromARGB(255, 252, 241, 191),
+              color: state.honey >= 30
+                  ? Color.fromARGB(255, 240, 172, 84)
+                  : Color.fromARGB(255, 252, 241, 191),
               border: Border.all(color: Colors.black, width: 3),
               borderRadius: BorderRadius.circular(10.0)),
         ),
@@ -456,7 +479,9 @@ class _HoneyScreenState extends State<HoneyScreen> {
           width: 120,
           height: 18,
           decoration: BoxDecoration(
-              color: state.honey >= 20 ? Color.fromARGB(255, 230, 146, 38) : Color.fromARGB(255, 252, 241, 191),
+              color: state.honey >= 20
+                  ? Color.fromARGB(255, 230, 146, 38)
+                  : Color.fromARGB(255, 252, 241, 191),
               border: Border.all(color: Colors.black, width: 3),
               borderRadius: BorderRadius.circular(10.0)),
         ),
@@ -464,7 +489,9 @@ class _HoneyScreenState extends State<HoneyScreen> {
           width: 120,
           height: 18,
           decoration: BoxDecoration(
-              color: state.honey >= 10 ? Color.fromARGB(255, 230, 146, 38) : Color.fromARGB(255, 252, 241, 191),
+              color: state.honey >= 10
+                  ? Color.fromARGB(255, 230, 146, 38)
+                  : Color.fromARGB(255, 252, 241, 191),
               border: Border.all(color: Colors.black, width: 3),
               borderRadius: BorderRadius.circular(10.0)),
         )
@@ -543,31 +570,40 @@ class _HoneyScreenState extends State<HoneyScreen> {
   }
 
   Widget getPlayedCards() {
-    return Row(
-      children: [
-        playedCard(playedCards.length > 0, 0),
-        SizedBox(width: 10),
-        playedCard(playedCards.length > 1, 1),
-        SizedBox(width: 10),
-        playedCard(playedCards.length > 2, 2)
-      ],
-    );
+    return Stack(children: [
+      Container(
+          width: 400,
+          child: Row(
+            children: [
+              Spacer(),
+              playedCard(playedCards.length > 0, 0),
+              SizedBox(width: 10),
+              playedCard(playedCards.length > 1, 1),
+              SizedBox(width: 10),
+              playedCard(playedCards.length > 2, 2),
+              Spacer()
+            ],
+          )),
+      Positioned(top: 20, left: 0, child: dicesButtonOld())
+    ]);
   }
 
   Widget playedCard(bool active, int slot) {
     if (active) {
-      return Container(
-          width: 70,
-          height: 90,
-          decoration: BoxDecoration(
-              color: Color.fromARGB(255, 255, 251, 239),
-              border: Border.all(color: Colors.black, width: 3),
-              borderRadius: BorderRadius.circular(10.0)),
-          child: Padding(
-              padding: EdgeInsets.all(10),
-              child: Container(
-                  height: 60,
-                  child: Image.asset(playedCards[slot].imagePath))));
+      return Tooltip(
+          message: playedCards[slot].description,
+          child: Container(
+              width: 70,
+              height: 90,
+              decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 255, 251, 239),
+                  border: Border.all(color: Colors.black, width: 3),
+                  borderRadius: BorderRadius.circular(10.0)),
+              child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Container(
+                      height: 60,
+                      child: Image.asset(playedCards[slot].imagePath)))));
     }
     return Container(
       width: 70,
@@ -577,6 +613,148 @@ class _HoneyScreenState extends State<HoneyScreen> {
           border: Border.all(color: Colors.black, width: 3),
           borderRadius: BorderRadius.circular(10.0)),
     );
+  }
+
+  Widget cardsButton() {
+    return Row(children: [
+      ElevatedButton(
+          onPressed: () {
+            setState(() {
+              generateCards();
+              widget.updatePoints(-2);
+            });
+          },
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Color.fromARGB(255, 255, 245, 202),
+              shape: CircleBorder(),
+              padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0)),
+          child: Container(
+              width: 50,
+              height: 50,
+              child: Stack(children: [
+                Image.asset("restart.png"),
+                Positioned(
+                    top: 10,
+                    right: 10,
+                    child:
+                        Container(width: 30, child: Image.asset("cards.png")))
+              ]))),
+      SizedBox(width: 15),
+      Text("2", style: TextStyle(fontSize: 16)),
+      Container(width: 30, child: Image.asset("points.png"))
+    ]);
+  }
+
+  Widget dicesButtonOld() {
+    return ElevatedButton(
+        onPressed: () {
+          if (!hasRolled) {
+            showDice();
+          }
+        },
+        style: ElevatedButton.styleFrom(
+            backgroundColor: Color.fromARGB(255, 255, 245, 202),
+            shape: CircleBorder(),
+            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0)),
+        child: Container(
+            width: 50,
+            height: 50,
+            child: Stack(children: [
+              Image.asset("restart.png"),
+              Positioned(
+                  top: 12,
+                  right: 12,
+                  child: Container(width: 25, child: Image.asset("dices.png")))
+            ])));
+  }
+
+  Widget dicesButton() {
+    return Row(children: [
+      Container(
+          width: 50,
+          height: 50,
+          child: Stack(children: [
+            Image.asset("restart.png"),
+            Positioned(
+                top: 12,
+                right: 12,
+                child: Container(width: 25, child: Image.asset("dices.png")))
+          ])),
+      SizedBox(width: 15),
+      Text("2", style: TextStyle(fontSize: 20)),
+      Container(width: 40, child: Image.asset("points.png")),
+    ]);
+  }
+
+  void generateCards() {
+    generatedCards.clear();
+    int randomNumber1 = Random().nextInt(allCards.length);
+    int randomNumber2 = Random().nextInt(allCards.length);
+    int randomNumber3 = Random().nextInt(allCards.length);
+
+    generatedCards.add(allCards[randomNumber1]);
+    generatedCards.add(allCards[randomNumber2]);
+    generatedCards.add(allCards[randomNumber3]);
+  }
+
+  void rollDice() {
+    int randomNumber = Random().nextInt(6) + 1;
+    state.nectar = randomNumber;
+  }
+
+  void updateNectar(int newValue) {
+    state.nectar += newValue;
+  }
+
+  Future<dynamic> showDice() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('How much nectar do I get today?'),
+            content: Container(
+                height: 150,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(width: 90, child: Image.asset("dices.png")),
+                      Text(state.nectar.toString(),
+                          style: TextStyle(fontSize: 30))
+                    ])),
+            actions: [
+              hasRolled
+                  ? Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                      TextButton(
+                        onPressed: () {
+                          rollDice();
+                          widget.updatePoints(-2);
+                          Navigator.of(context).pop();
+                          showDice();
+                        },
+                        child: dicesButton(),
+                      ),
+                      SizedBox(width: 20),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Continue', style: TextStyle(fontSize: 22)),
+                      )
+                    ])
+                  : TextButton(
+                      onPressed: () {
+                        setState(() {
+                          rollDice();
+                          hasRolled = true;
+                          Navigator.of(context).pop();
+                          showDice();
+                        });
+                      },
+                      child: Text('Roll', style: TextStyle(fontSize: 22)),
+                    ),
+            ],
+          );
+        });
   }
 
   @override
@@ -594,7 +772,16 @@ class _HoneyScreenState extends State<HoneyScreen> {
         const Spacer(),
         Column(children: [
           dayNight(),
-          honeycomb(),
+          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            Row(children: [
+              SizedBox(width: 30),
+              Text(state.nectar.toString(), style: TextStyle(fontSize: 22)),
+              Container(width: 40, child: Image.asset("nectar.png"))
+            ]),
+            SizedBox(width: 30),
+            honeycomb(),
+            cardsButton()
+          ]),
           Spacer(),
           getPlayedCards(),
           Spacer(),

@@ -9,6 +9,7 @@ class HoneyProfile {
 class HoneyState {
   bool daytime = true;
   int honey = 0;
+  int nectar = 0;
   List<String> narrative = ['story 1', 'story 2', 'story 3', 'story 4', 'story 5'];
 }
 
