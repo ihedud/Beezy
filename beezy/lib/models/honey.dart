@@ -2,8 +2,10 @@ class HoneyProfile {
   String name = '';
   String avatarTypePath = '';
   int lifes = 3;
+  int playedCards = 0;
+  bool hasHoneyFever = false;
 
-  HoneyProfile({required this.name, required this.avatarTypePath, required this.lifes});
+  HoneyProfile({required this.name, required this.avatarTypePath, required this.lifes, required this.playedCards});
 }
 
 class HoneyState {

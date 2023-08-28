@@ -14,12 +14,36 @@ class HoneyScreen extends StatefulWidget {
 
 class _HoneyScreenState extends State<HoneyScreen> {
   List<HoneyProfile> npcList = [
-    HoneyProfile(name: "Laura", avatarTypePath: "bee_avatar_2.png", lifes: 3),
-    HoneyProfile(name: "Pol", avatarTypePath: "bee_avatar_3.png", lifes: 2),
-    HoneyProfile(name: "Laia", avatarTypePath: "bee_avatar_4.png", lifes: 3),
-    HoneyProfile(name: "Júlia", avatarTypePath: "bee_avatar_5.png", lifes: 0),
-    HoneyProfile(name: "Biel", avatarTypePath: "bee_avatar_6.png", lifes: 1),
-    HoneyProfile(name: "Nora", avatarTypePath: "bee_avatar_7.png", lifes: 3),
+    HoneyProfile(
+        name: "Laura",
+        avatarTypePath: "bee_avatar_2.png",
+        lifes: 3,
+        playedCards: 1),
+    HoneyProfile(
+        name: "Pol",
+        avatarTypePath: "bee_avatar_3.png",
+        lifes: 2,
+        playedCards: 0),
+    HoneyProfile(
+        name: "Laia",
+        avatarTypePath: "bee_avatar_4.png",
+        lifes: 3,
+        playedCards: 2),
+    HoneyProfile(
+        name: "Júlia",
+        avatarTypePath: "bee_avatar_5.png",
+        lifes: 0,
+        playedCards: 1),
+    HoneyProfile(
+        name: "Biel",
+        avatarTypePath: "bee_avatar_6.png",
+        lifes: 1,
+        playedCards: 2),
+    HoneyProfile(
+        name: "Nora",
+        avatarTypePath: "bee_avatar_7.png",
+        lifes: 3,
+        playedCards: 3),
   ];
   List<HoneyCard> allCards = [];
   List<HoneyCard> generatedCards = [];
@@ -30,6 +54,7 @@ class _HoneyScreenState extends State<HoneyScreen> {
   String diaryText = 'Write your thoughts...';
   List<HoneyCard> playedCards = [];
   bool hasRolled = false;
+  int temporaryNectar = 0;
 
   @override
   void initState() {
@@ -39,7 +64,7 @@ class _HoneyScreenState extends State<HoneyScreen> {
       HoneyCard(
           imagePath: "cards/flower_patch.png",
           description: "Generate 2 honey.",
-          price: 3,
+          price: 2,
           effect: () {
             state.honey += 2;
           }),
@@ -53,13 +78,21 @@ class _HoneyScreenState extends State<HoneyScreen> {
       HoneyCard(
           imagePath: "cards/pollen.png",
           description: "Generate 1 honey.",
-          price: 3,
+          price: 1,
           effect: () {
             state.honey += 1;
           })
     ];
 
     generatedCards = [allCards[0], allCards[1], allCards[2]];
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDice();
+    });
   }
 
   List<Widget> getProfiles() {
@@ -74,7 +107,6 @@ class _HoneyScreenState extends State<HoneyScreen> {
     return Container(
         padding: const EdgeInsets.symmetric(vertical: 5.0),
         child: Container(
-            //width: 200,
             height: 100,
             decoration: BoxDecoration(
                 color: profile.lifes == 0
@@ -99,21 +131,48 @@ class _HoneyScreenState extends State<HoneyScreen> {
                 )
               ]),
               Spacer(),
-              SizedBox(
-                  width: 30,
-                  child: Image.asset(profile.lifes == 0
-                      ? 'heart_empty.png'
-                      : 'heart_full.png')),
-              SizedBox(
-                  width: 30,
-                  child: Image.asset(profile.lifes >= 2
-                      ? 'heart_full.png'
-                      : 'heart_empty.png')),
-              SizedBox(
-                  width: 30,
-                  child: Image.asset(profile.lifes == 3
-                      ? 'heart_full.png'
-                      : 'heart_empty.png')),
+              state.daytime && profile.lifes > 0
+                  ? Container(
+                      child: Column(children: [
+                      Container(
+                          height: 40,
+                          child: Row(children: [
+                            SizedBox(
+                                width: 30,
+                                child: Image.asset(profile.lifes == 0
+                                    ? 'heart_empty.png'
+                                    : 'heart_full.png')),
+                            SizedBox(
+                                width: 30,
+                                child: Image.asset(profile.lifes >= 2
+                                    ? 'heart_full.png'
+                                    : 'heart_empty.png')),
+                            SizedBox(
+                                width: 30,
+                                child: Image.asset(profile.lifes == 3
+                                    ? 'heart_full.png'
+                                    : 'heart_empty.png'))
+                          ])),
+                      getNPCPlayedCards(profile.playedCards)
+                    ]))
+                  : Container(
+                      child: Row(children: [
+                      SizedBox(
+                          width: 30,
+                          child: Image.asset(profile.lifes == 0
+                              ? 'heart_empty.png'
+                              : 'heart_full.png')),
+                      SizedBox(
+                          width: 30,
+                          child: Image.asset(profile.lifes >= 2
+                              ? 'heart_full.png'
+                              : 'heart_empty.png')),
+                      SizedBox(
+                          width: 30,
+                          child: Image.asset(profile.lifes == 3
+                              ? 'heart_full.png'
+                              : 'heart_empty.png'))
+                    ])),
               Spacer()
             ])));
   }
@@ -526,14 +585,28 @@ class _HoneyScreenState extends State<HoneyScreen> {
     );
   }
 
+  Widget getRandomCards() {
+    return Row(
+      children: [
+        randomCard(0),
+        SizedBox(width: 10),
+        randomCard(1),
+        SizedBox(width: 10),
+        randomCard(2)
+      ],
+    );
+  }
+
   Widget card(int slot) {
     if (generatedSlots[slot]) {
       return ElevatedButton(
           onPressed: () {
             setState(() {
-              playedCards.add(generatedCards[slot]);
-              generatedSlots[slot] = false;
-              generatedCards[slot].effect();
+              if (updateNectar(-generatedCards[slot].price)) {
+                playedCards.add(generatedCards[slot]);
+                generatedSlots[slot] = false;
+                generatedCards[slot].effect();
+              }
             });
           },
           style: ElevatedButton.styleFrom(
@@ -548,16 +621,24 @@ class _HoneyScreenState extends State<HoneyScreen> {
                   color: Color.fromARGB(255, 255, 251, 239),
                   border: Border.all(color: Colors.black, width: 3),
                   borderRadius: BorderRadius.circular(10.0)),
-              child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Column(children: [
-                    Container(
-                        height: 80,
-                        child: Image.asset(generatedCards[slot].imagePath)),
-                    Spacer(),
-                    Text(generatedCards[slot].description,
-                        textAlign: TextAlign.center)
-                  ]))));
+              child: Stack(children: [
+                Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Column(children: [
+                      Container(
+                          height: 80,
+                          child: Image.asset(generatedCards[slot].imagePath)),
+                      Spacer(),
+                      Text(generatedCards[slot].description,
+                          textAlign: TextAlign.center)
+                    ])),
+                Positioned(
+                    top: 5,
+                    right: 5,
+                    child: Text(generatedCards[slot].price.toString(),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)))
+              ])));
     }
     return Container(
       width: 140,
@@ -569,10 +650,30 @@ class _HoneyScreenState extends State<HoneyScreen> {
     );
   }
 
+  Widget randomCard(int slot) {
+    return Container(
+        width: 140,
+        height: 180,
+        decoration: BoxDecoration(
+            color: Color.fromARGB(255, 255, 251, 239),
+            border: Border.all(color: Colors.black, width: 3),
+            borderRadius: BorderRadius.circular(10.0)),
+        child: Padding(
+            padding: EdgeInsets.all(10),
+            child: Column(children: [
+              Container(
+                  height: 80,
+                  child: Image.asset(generatedCards[slot].imagePath)),
+              Spacer(),
+              Text(generatedCards[slot].description,
+                  textAlign: TextAlign.center)
+            ])));
+  }
+
   Widget getPlayedCards() {
     return Stack(children: [
       Container(
-          width: 400,
+          width: 450,
           child: Row(
             children: [
               Spacer(),
@@ -584,8 +685,30 @@ class _HoneyScreenState extends State<HoneyScreen> {
               Spacer()
             ],
           )),
-      Positioned(top: 20, left: 0, child: dicesButtonOld())
+      Positioned(
+        top: 20,
+        left: 0,
+        child: Row(children: [
+          SizedBox(width: 30),
+          Text(state.nectar.toString(), style: TextStyle(fontSize: 22)),
+          Container(width: 40, child: Image.asset("nectar.png"))
+        ]),
+      )
     ]);
+  }
+
+  Widget getNPCPlayedCards(int playedCardsNPC) {
+    return Container(
+        height: 45,
+        child: Row(
+          children: [
+            playedCardNPC(playedCardsNPC > 0),
+            SizedBox(width: 2),
+            playedCardNPC(playedCardsNPC > 1),
+            SizedBox(width: 2),
+            playedCardNPC(playedCardsNPC > 2),
+          ],
+        ));
   }
 
   Widget playedCard(bool active, int slot) {
@@ -615,6 +738,23 @@ class _HoneyScreenState extends State<HoneyScreen> {
     );
   }
 
+  Widget playedCardNPC(bool active) {
+    if (active) {
+      return Container(
+        width: 28,
+        height: 40,
+        decoration: BoxDecoration(
+            color: Color.fromARGB(255, 255, 251, 239),
+            border: Border.all(color: Colors.black, width: 1),
+            borderRadius: BorderRadius.circular(5.0)),
+      );
+    }
+    return const SizedBox(
+      width: 35,
+      height: 45,
+    );
+  }
+
   Widget cardsButton() {
     return Row(children: [
       ElevatedButton(
@@ -640,33 +780,33 @@ class _HoneyScreenState extends State<HoneyScreen> {
                         Container(width: 30, child: Image.asset("cards.png")))
               ]))),
       SizedBox(width: 15),
-      Text("2", style: TextStyle(fontSize: 16)),
-      Container(width: 30, child: Image.asset("points.png"))
+      Text("2", style: TextStyle(fontSize: 20)),
+      Container(width: 40, child: Image.asset("points.png"))
     ]);
   }
 
-  Widget dicesButtonOld() {
-    return ElevatedButton(
-        onPressed: () {
-          if (!hasRolled) {
-            showDice();
-          }
-        },
-        style: ElevatedButton.styleFrom(
-            backgroundColor: Color.fromARGB(255, 255, 245, 202),
-            shape: CircleBorder(),
-            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0)),
-        child: Container(
-            width: 50,
-            height: 50,
-            child: Stack(children: [
-              Image.asset("restart.png"),
-              Positioned(
-                  top: 12,
-                  right: 12,
-                  child: Container(width: 25, child: Image.asset("dices.png")))
-            ])));
-  }
+  // Widget dicesButtonOld() {
+  //   return ElevatedButton(
+  //       onPressed: () {
+  //         if (!hasRolled) {
+  //           showDice();
+  //         }
+  //       },
+  //       style: ElevatedButton.styleFrom(
+  //           backgroundColor: Color.fromARGB(255, 255, 245, 202),
+  //           shape: CircleBorder(),
+  //           padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0)),
+  //       child: Container(
+  //           width: 50,
+  //           height: 50,
+  //           child: Stack(children: [
+  //             Image.asset("restart.png"),
+  //             Positioned(
+  //                 top: 12,
+  //                 right: 12,
+  //                 child: Container(width: 25, child: Image.asset("dices.png")))
+  //           ])));
+  // }
 
   Widget dicesButton() {
     return Row(children: [
@@ -699,11 +839,17 @@ class _HoneyScreenState extends State<HoneyScreen> {
 
   void rollDice() {
     int randomNumber = Random().nextInt(6) + 1;
-    state.nectar = randomNumber;
+    temporaryNectar = randomNumber;
   }
 
-  void updateNectar(int newValue) {
-    state.nectar += newValue;
+  bool updateNectar(int newValue) {
+    if (newValue >= 0 || state.nectar >= -newValue) {
+      setState(() {
+        state.nectar += newValue;
+      });
+      return true;
+    }
+    return false;
   }
 
   Future<dynamic> showDice() {
@@ -718,7 +864,7 @@ class _HoneyScreenState extends State<HoneyScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(width: 90, child: Image.asset("dices.png")),
-                      Text(state.nectar.toString(),
+                      Text(temporaryNectar.toString(),
                           style: TextStyle(fontSize: 30))
                     ])),
             actions: [
@@ -726,17 +872,21 @@ class _HoneyScreenState extends State<HoneyScreen> {
                   ? Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       TextButton(
                         onPressed: () {
-                          rollDice();
-                          widget.updatePoints(-2);
-                          Navigator.of(context).pop();
-                          showDice();
+                          setState(() {
+                            rollDice();
+                            widget.updatePoints(-2);
+                            Navigator.of(context).pop();
+                            showDice();
+                          });
                         },
                         child: dicesButton(),
                       ),
                       SizedBox(width: 20),
                       TextButton(
                         onPressed: () {
+                          updateNectar(temporaryNectar);
                           Navigator.of(context).pop();
+                          showCards();
                         },
                         child: Text('Continue', style: TextStyle(fontSize: 22)),
                       )
@@ -757,6 +907,39 @@ class _HoneyScreenState extends State<HoneyScreen> {
         });
   }
 
+  Future<dynamic> showCards() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Which cards can I play today?'),
+            content: getRandomCards(),
+            actions: [
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      generateCards();
+                      widget.updatePoints(-2);
+                      Navigator.of(context).pop();
+                      showCards();
+                    });
+                  },
+                  child: cardsButton(),
+                ),
+                SizedBox(width: 20),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Continue', style: TextStyle(fontSize: 22)),
+                )
+              ])
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -772,16 +955,11 @@ class _HoneyScreenState extends State<HoneyScreen> {
         const Spacer(),
         Column(children: [
           dayNight(),
-          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Row(children: [
-              SizedBox(width: 30),
-              Text(state.nectar.toString(), style: TextStyle(fontSize: 22)),
-              Container(width: 40, child: Image.asset("nectar.png"))
-            ]),
-            SizedBox(width: 30),
-            honeycomb(),
-            cardsButton()
-          ]),
+          //Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          //dicesButtonOld(),
+          //SizedBox(width: 30),
+          honeycomb(),
+          //]),
           Spacer(),
           getPlayedCards(),
           Spacer(),
