@@ -674,7 +674,6 @@ class _AvatarScreenState extends State<AvatarScreen> {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          //SizedBox(width: 100),
           Expanded(child: _necessitiesWidget()),
           const Spacer(),
           Expanded(

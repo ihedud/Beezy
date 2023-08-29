@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +48,54 @@ class AuthGate extends StatelessWidget {
               'isEditingText': false
             });
             info.doc(info.id).set({'columnID' : 0});
+
+            CollectionReference honeyRush =
+                usersCollection.doc(user.uid).collection("honeyRush");
+                CollectionReference profiles =
+                honeyRush.doc(honeyRush.id).collection("profiles");
+            profiles.add({
+              'name': 'Laura',
+              'avatarTypePath' : 'bee_avatar_2.png',
+              'lifes': Random().nextInt(4),
+              'playedCards': Random().nextInt(4),
+              'hasHoneyFever': false
+            });
+            profiles.add({
+              'name': 'Pol',
+              'avatarTypePath' : 'bee_avatar_3.png',
+              'lifes': Random().nextInt(4),
+              'playedCards': Random().nextInt(4),
+              'hasHoneyFever': false
+            });
+            profiles.add({
+              'name': 'Laia',
+              'avatarTypePath' : 'bee_avatar_4.png',
+              'lifes': Random().nextInt(4),
+              'playedCards': Random().nextInt(4),
+              'hasHoneyFever': false
+            });
+            profiles.add({
+              'name': 'Júlia',
+              'avatarTypePath' : 'bee_avatar_5.png',
+              'lifes': Random().nextInt(4),
+              'playedCards': Random().nextInt(4),
+              'hasHoneyFever': false
+            });
+            profiles.add({
+              'name': 'Biel',
+              'avatarTypePath' : 'bee_avatar_6.png',
+              'lifes': Random().nextInt(4),
+              'playedCards': Random().nextInt(4),
+              'hasHoneyFever': false
+            });
+            profiles.add({
+              'name': 'Nora',
+              'avatarTypePath' : 'bee_avatar_7.png',
+              'lifes': Random().nextInt(4),
+              'playedCards': Random().nextInt(4),
+              'hasHoneyFever': false
+            });
+            honeyRush.doc(honeyRush.id).set({'daytime' : true});
           }
         })
         .then((value) => print('User document created successfully'))

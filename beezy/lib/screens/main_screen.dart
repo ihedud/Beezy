@@ -135,7 +135,7 @@ class _MainScreenState extends State<_MainScreen>
                   userUID: widget.userUID, updatePoints: updatePoints),
               IssuesScreen(userUID: widget.userUID),
               AvatarScreen(avatar: avatar, updatePoints: updatePoints),
-              HoneyScreen(updatePoints: updatePoints)
+              HoneyScreen(updatePoints: updatePoints, userUID: widget.userUID)
             ])),
       ),
     );
