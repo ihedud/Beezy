@@ -219,13 +219,15 @@ Stream<Task?> userTaskSnapshot(String userUID, String taskID) {
 class UserInfo {
   String userEmail = '';
   int points = 0;
+  int step = 0;
 
   UserInfo.fromFirestore(Map<String, dynamic> json)
       : userEmail = json['email'],
-      points = json['points'];
+      points = json['points'],
+      step = json['step'];
 }
 
-Stream<int> userPointsSnapshot(String userUID) {
+Stream<UserInfo?> userInfoSnapshot(String userUID) {
   final db = FirebaseFirestore.instance;
   final stream =
       db.doc("/users/$userUID").snapshots();
@@ -233,9 +235,9 @@ Stream<int> userPointsSnapshot(String userUID) {
     if (doc.exists) {
       Map<String, dynamic>? data = doc.data();
       if (data != null) {
-        return UserInfo.fromFirestore(data).points;
+        return UserInfo.fromFirestore(data);
       }
     }
-    return 0;
+    return null;
   });
 }

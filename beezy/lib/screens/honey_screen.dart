@@ -56,39 +56,99 @@ class _HoneyScreen extends StatefulWidget {
   State<_HoneyScreen> createState() => _HoneyScreenState();
 }
 
+Future<void> updateHasHoneyFever(
+    String userUID, bool newValue, String profileID) async {
+  try {
+    DocumentReference profileRef = FirebaseFirestore.instance
+        .doc('/users/$userUID/honeyRush/honeyRush/profiles/$profileID');
+    await profileRef.update({'hasHoneyFever': newValue});
+  } catch (e) {
+    print('Error updating hasHoneyFever: $e');
+  }
+}
+
+Future<void> updateDaysPassed(
+    String userUID, int newValue, String profileID) async {
+  try {
+    DocumentReference profileRef = FirebaseFirestore.instance
+        .doc('/users/$userUID/honeyRush/honeyRush/profiles/$profileID');
+    await profileRef.update({'daysPassed': newValue});
+  } catch (e) {
+    print('Error updating hasHoneyFever: $e');
+  }
+}
+
+Future<void> updateDaytime(String userUID) async {
+  try {
+    DocumentReference daytimeRef =
+        FirebaseFirestore.instance.doc('/users/$userUID/honeyRush/honeyRush');
+    final daytimeSnap = await daytimeRef.get();
+    await daytimeRef.update({'daytime': !daytimeSnap['daytime']});
+    if (daytimeSnap['daytime']) {
+      updateHasRolled(userUID, false);
+    }
+  } catch (e) {
+    print('Error updating hasHoneyFever: $e');
+  }
+}
+
+Future<void> updateHasRolled(String userUID, bool newValue) async {
+  try {
+    DocumentReference hasRolledRef =
+        FirebaseFirestore.instance.doc('/users/$userUID/honeyRush/honeyRush');
+    await hasRolledRef.update({'hasRolled': newValue});
+  } catch (e) {
+    print('Error updating hasRolled: $e');
+  }
+}
+
+Future<void> updateIsRolling(String userUID, bool newValue) async {
+  try {
+    DocumentReference hasRolledRef =
+        FirebaseFirestore.instance.doc('/users/$userUID/honeyRush/honeyRush');
+    await hasRolledRef.update({'isRolling': newValue});
+  } catch (e) {
+    print('Error updating isRolling: $e');
+  }
+}
+
+Future<void> updateTemporaryNectar(String userUID, int newValue) async {
+  try {
+    DocumentReference hasRolledRef =
+        FirebaseFirestore.instance.doc('/users/$userUID/honeyRush/honeyRush');
+    await hasRolledRef.update({'temporaryNectar': newValue});
+  } catch (e) {
+    print('Error updating temporaryNectar: $e');
+  }
+}
+
+Future<void> updateNectar(String userUID, int newValue) async {
+  try {
+    DocumentReference hasRolledRef =
+        FirebaseFirestore.instance.doc('/users/$userUID/honeyRush/honeyRush');
+    await hasRolledRef.update({'nectar': newValue});
+  } catch (e) {
+    print('Error updating nectar: $e');
+  }
+}
+
+Future<void> updateHoneyFeverState(String userUID) async {
+  final profileRef = await FirebaseFirestore.instance
+      .collection('/users/$userUID/honeyRush/honeyRush/profiles')
+      .get();
+  for (final doc in profileRef.docs) {
+    if (doc.get('hasHoneyFever') == true) {
+      if (doc.get('daysPassed') >= 3) {
+        updateHasHoneyFever(userUID, false, doc.id);
+        updateDaysPassed(userUID, 0, doc.id);
+      } else {
+        updateDaysPassed(userUID, doc.get('daysPassed') + 1, doc.id);
+      }
+    }
+  }
+}
+
 class _HoneyScreenState extends State<_HoneyScreen> {
-  //List<HoneyProfile> npcList = [
-  // HoneyProfile(
-  //     name: "Laura",
-  //     avatarTypePath: "bee_avatar_2.png",
-  //     lifes: 3,
-  //     playedCards: 1),
-  // HoneyProfile(
-  //     name: "Pol",
-  //     avatarTypePath: "bee_avatar_3.png",
-  //     lifes: 2,
-  //     playedCards: 0),
-  // HoneyProfile(
-  //     name: "Laia",
-  //     avatarTypePath: "bee_avatar_4.png",
-  //     lifes: 3,
-  //     playedCards: 2),
-  // HoneyProfile(
-  //     name: "Júlia",
-  //     avatarTypePath: "bee_avatar_5.png",
-  //     lifes: 0,
-  //     playedCards: 1),
-  // HoneyProfile(
-  //     name: "Biel",
-  //     avatarTypePath: "bee_avatar_6.png",
-  //     lifes: 1,
-  //     playedCards: 2),
-  // HoneyProfile(
-  //     name: "Nora",
-  //     avatarTypePath: "bee_avatar_7.png",
-  //     lifes: 3,
-  //     playedCards: 3),
-  //];
   List<HoneyCard> allCards = [];
   List<HoneyCard> generatedCards = [];
   List<bool> generatedSlots = [true, true, true];
@@ -97,14 +157,13 @@ class _HoneyScreenState extends State<_HoneyScreen> {
   bool isEditingDiary = false;
   String diaryText = 'Write your thoughts...';
   List<HoneyCard> playedCards = [];
-  bool hasRolled = false;
-  int temporaryNectar = 0;
+  //bool hasRolled = false;
+  //int temporaryNectar = 0;
   int selectedNPC = 9;
 
   @override
   void initState() {
     super.initState();
-    widget.honeyRush.allProfiles[1].hasHoneyFever = true;
     allCards = [
       HoneyCard(
           imagePath: "cards/flower_patch.png",
@@ -136,20 +195,24 @@ class _HoneyScreenState extends State<_HoneyScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      showVoting();
+      if (!widget.honeyRush.hasRolled && widget.honeyRush.daytime) {
+        showVoting();
+      }
+      if (widget.honeyRush.isRolling) {
+        showDice();
+      }
     });
   }
 
-  Future<void> updateHasHoneyFever(bool newValue, String profileID) async {
-    try {
-      DocumentReference profileRef = FirebaseFirestore.instance.doc(
-          '/users/${widget.userUID}/honeyRush/honeyRush/profiles/$profileID');
-
-      await profileRef.update({'hasHoneyFever': newValue});
-    } catch (e) {
-      print('Error updating hasHoneyFever: $e');
-    }
-  }
+  // Future<void> updateHasHoneyFever(bool newValue, String profileID) async {
+  //   try {
+  //     DocumentReference profileRef = FirebaseFirestore.instance.doc(
+  //         '/users/${widget.userUID}/honeyRush/honeyRush/profiles/$profileID');
+  //     await profileRef.update({'hasHoneyFever': newValue});
+  //   } catch (e) {
+  //     print('Error updating hasHoneyFever: $e');
+  //   }
+  // }
 
   List<Widget> getProfiles() {
     List<Widget> allProfiles = [];
@@ -189,7 +252,9 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                 )
               ]),
               Spacer(),
-              state.daytime && profile.lifes > 0 && !profile.hasHoneyFever
+              widget.honeyRush.daytime &&
+                      profile.lifes > 0 &&
+                      !profile.hasHoneyFever
                   ? Container(
                       child: Column(children: [
                       Container(
@@ -457,7 +522,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                         ),
                       )
                     ]))),
-            state.daytime
+            widget.honeyRush.daytime
                 ? Positioned(
                     left: 90,
                     child: SizedBox(width: 70, child: Image.asset('sun.png')))
@@ -499,7 +564,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                         ),
                       ),
                     ]))),
-            state.daytime
+            widget.honeyRush.daytime
                 ? Container()
                 : Positioned(
                     right: 95,
@@ -660,7 +725,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
       return ElevatedButton(
           onPressed: () {
             setState(() {
-              if (updateNectar(-generatedCards[slot].price)) {
+              if (updateMyNectar(-generatedCards[slot].price)) {
                 playedCards.add(generatedCards[slot]);
                 generatedSlots[slot] = false;
                 generatedCards[slot].effect();
@@ -748,7 +813,8 @@ class _HoneyScreenState extends State<_HoneyScreen> {
         left: 0,
         child: Row(children: [
           SizedBox(width: 30),
-          Text(state.nectar.toString(), style: TextStyle(fontSize: 22)),
+          Text(widget.honeyRush.nectar.toString(),
+              style: TextStyle(fontSize: 22)),
           Container(width: 40, child: Image.asset("nectar.png"))
         ]),
       )
@@ -876,7 +942,8 @@ class _HoneyScreenState extends State<_HoneyScreen> {
 
   void rollDice() {
     int randomNumber = Random().nextInt(6) + 1;
-    temporaryNectar = randomNumber;
+    updateTemporaryNectar(widget.userUID, randomNumber);
+    widget.honeyRush.temporaryNectar = randomNumber;
   }
 
   void randomizeHoneyFever(int slot) {
@@ -885,38 +952,46 @@ class _HoneyScreenState extends State<_HoneyScreen> {
       if ((widget.honeyRush.allProfiles[random].lifes == 0 ||
               widget.honeyRush.allProfiles[random].hasHoneyFever) &&
           random != 0) {
-        updateHasHoneyFever(true, widget.honeyRush.allProfiles[random - 1].id);
+        updateHasHoneyFever(
+            widget.userUID, true, widget.honeyRush.allProfiles[random - 1].id);
       } else if ((widget.honeyRush.allProfiles[random].lifes == 0 ||
               widget.honeyRush.allProfiles[random].hasHoneyFever) &&
           random == 0) {
-        updateHasHoneyFever(true, widget.honeyRush.allProfiles[5].id);
+        updateHasHoneyFever(
+            widget.userUID, true, widget.honeyRush.allProfiles[5].id);
       } else {
-        updateHasHoneyFever(true, widget.honeyRush.allProfiles[random].id);
+        updateHasHoneyFever(
+            widget.userUID, true, widget.honeyRush.allProfiles[random].id);
       }
     } else {
-      updateHasHoneyFever(
-          Random().nextDouble() < 0.8, widget.honeyRush.allProfiles[slot].id);
-      if (!widget.honeyRush.allProfiles[slot].hasHoneyFever) {
+      bool getsHoneyFever = Random().nextDouble() < 0.8;
+      if (!getsHoneyFever) {
         int random = Random().nextInt(6);
         if (widget.honeyRush.allProfiles[random].lifes == 0 ||
             widget.honeyRush.allProfiles[random].hasHoneyFever) {
-          updateHasHoneyFever(true, widget.honeyRush.allProfiles[slot].id);
+          updateHasHoneyFever(
+              widget.userUID, true, widget.honeyRush.allProfiles[slot].id);
         } else {
-          updateHasHoneyFever(true, widget.honeyRush.allProfiles[random].id);
+          updateHasHoneyFever(
+              widget.userUID, true, widget.honeyRush.allProfiles[random].id);
         }
+      } else {
+        updateHasHoneyFever(
+            widget.userUID, true, widget.honeyRush.allProfiles[slot].id);
       }
     }
   }
 
-  bool updateNectar(int newValue) {
-    if (newValue >= 0 || state.nectar >= -newValue) {
-      setState(() {
-        if (100 - state.nectar <= newValue) {
-          state.nectar = 100;
-        } else {
-          state.nectar += newValue;
-        }
-      });
+  bool updateMyNectar(int newValue) {
+    if (newValue >= 0 || widget.honeyRush.nectar >= -newValue) {
+      //setState(() {
+      // if (100 - state.nectar <= newValue) {
+      //   state.nectar = 100;
+      // } else {
+      updateNectar(widget.userUID, widget.honeyRush.nectar + newValue);
+      //state.nectar += newValue;
+      //}
+      //});
       return true;
     }
     return false;
@@ -934,27 +1009,30 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(width: 90, child: Image.asset("dices.png")),
-                      Text(temporaryNectar.toString(),
+                      Text(widget.honeyRush.temporaryNectar.toString(),
                           style: TextStyle(fontSize: 30))
                     ])),
             actions: [
-              hasRolled
+              widget.honeyRush.hasRolled
                   ? Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       TextButton(
                         onPressed: () {
-                          setState(() {
-                            rollDice();
-                            widget.updatePoints(-2);
-                            Navigator.of(context).pop();
-                            showDice();
-                          });
+                          //setState(() {
+                          updateIsRolling(widget.userUID, true);
+                          widget.honeyRush.isRolling = true;
+                          rollDice();
+                          Navigator.of(context).pop();
+                          //showDice();
+                          widget.updatePoints(-2);
+                          //});
                         },
                         child: dicesButton(),
                       ),
                       SizedBox(width: 20),
                       TextButton(
                         onPressed: () {
-                          updateNectar(temporaryNectar);
+                          updateIsRolling(widget.userUID, false);
+                          updateMyNectar(widget.honeyRush.temporaryNectar);
                           generateCards();
                           Navigator.of(context).pop();
                           showCards();
@@ -964,12 +1042,11 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                     ])
                   : TextButton(
                       onPressed: () {
-                        setState(() {
-                          rollDice();
-                          hasRolled = true;
-                          Navigator.of(context).pop();
-                          showDice();
-                        });
+                        rollDice();
+                        updateHasRolled(widget.userUID, true);
+                        widget.honeyRush.hasRolled = true;
+                        Navigator.of(context).pop();
+                        showDice();
                       },
                       child: Text('Roll', style: TextStyle(fontSize: 22)),
                     ),
@@ -1480,9 +1557,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
               SizedBox(width: 20),
               TextButton(
                 onPressed: () {
-                  setState(() {
-                    randomizeHoneyFever(selectedNPC);
-                  });
+                  randomizeHoneyFever(selectedNPC);
                   Navigator.of(context).pop();
                   showDice();
                 },

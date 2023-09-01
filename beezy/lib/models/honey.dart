@@ -3,10 +3,20 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HoneyRush {
+  bool daytime = true;
+  bool hasRolled = false;
+  bool isRolling = false;
+  int temporaryNectar = 0;
+  int nectar = 0;
   List<HoneyProfile> allProfiles = <HoneyProfile>[];
 
   HoneyRush.fromFirestore(
-      Map<String, dynamic> json, List<HoneyProfile> allProfilesData) {
+      Map<String, dynamic> json, List<HoneyProfile> allProfilesData)
+      : daytime = json['daytime'],
+        hasRolled = json['hasRolled'],
+        isRolling = json['isRolling'],
+        temporaryNectar = json['temporaryNectar'],
+        nectar = json['nectar'] {
     allProfiles = allProfilesData;
   }
 }
@@ -18,27 +28,25 @@ class HoneyProfile {
   int lifes = 3;
   int playedCards = 0;
   bool hasHoneyFever = false;
-
-  // HoneyProfile(
-  //     {required this.name,
-  //     required this.avatarTypePath,
-  //     required this.lifes,
-  //     required this.playedCards});
+  int daysPassed = 0;
 
   HoneyProfile.fromFirestore(this.id, Map<String, dynamic> json)
       : name = json['name'],
         avatarTypePath = json['avatarTypePath'],
         lifes = json['lifes'],
         playedCards = json['playedCards'],
-        hasHoneyFever = json['hasHoneyFever'] {print(name + ' ' + hasHoneyFever.toString() + ' ' + lifes.toString());}
+        daysPassed = json['daysPassed'],
+        hasHoneyFever = json['hasHoneyFever'];
 }
 
 Stream<HoneyRush> userHoneyRushSnapshots(String userUID) {
   final db = FirebaseFirestore.instance;
 
-  final profilesStream = db
-      .collection("/users/$userUID/honeyRush/honeyRush/profiles")
-      .snapshots();
+  final profilesStream =
+      db.collection("/users/$userUID/honeyRush/honeyRush/profiles").snapshots();
+
+  final honeyRushStream =
+      db.doc("/users/$userUID/honeyRush/honeyRush").snapshots();
 
   final controller = StreamController<HoneyRush>();
 
@@ -47,8 +55,13 @@ Stream<HoneyRush> userHoneyRushSnapshots(String userUID) {
   profilesStream.listen((queryProfiles) {
     profiles.clear();
     for (final profileDoc in queryProfiles.docs) {
-      profiles.add(HoneyProfile.fromFirestore(profileDoc.id, profileDoc.data()));
+      profiles
+          .add(HoneyProfile.fromFirestore(profileDoc.id, profileDoc.data()));
     }
+    updateController(controller, profiles, userUID);
+  });
+
+  honeyRushStream.listen((honeyRushDoc) {
     updateController(controller, profiles, userUID);
   });
 
@@ -71,9 +84,9 @@ void updateController(StreamController<HoneyRush> controller,
 }
 
 class HoneyState {
-  bool daytime = true;
+  //bool daytime = true;
   int honey = 0;
-  int nectar = 0;
+  //int nectar = 0;
   List<String> narrative = [
     'story 1',
     'story 2',

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:beezy/screens/avatar_screen.dart';
 import 'package:beezy/screens/honey_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +8,6 @@ import 'package:beezy/screens/board_screen.dart';
 import 'package:beezy/screens/backlog_screen.dart';
 import 'package:beezy/models/avatar.dart';
 import 'package:beezy/models/board.dart';
-
 import 'issues_screen.dart';
 
 class MainScreen extends StatelessWidget {
@@ -25,7 +25,7 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: userPointsSnapshot(userUID),
+      stream: userInfoSnapshot(userUID),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return ErrorWidget(snapshot.error!);
@@ -40,7 +40,7 @@ class MainScreen extends StatelessWidget {
                 userEmail: userEmail,
                 userUID: userUID,
                 title: title,
-                points: snapshot.data!);
+                userInfo: snapshot.data!);
           case ConnectionState.none:
             return ErrorWidget("The stream was wrong (connectionState.none)");
           case ConnectionState.done:
@@ -57,12 +57,12 @@ class _MainScreen extends StatefulWidget {
       required this.title,
       required this.userEmail,
       required this.userUID,
-      required this.points});
+      required this.userInfo});
 
   final String title;
   final String userEmail;
   final String userUID;
-  final int points;
+  final UserInfo userInfo;
 
   @override
   State<_MainScreen> createState() => _MainScreenState();
@@ -91,10 +91,149 @@ class _MainScreenState extends State<_MainScreen>
       DocumentReference userRef =
           FirebaseFirestore.instance.doc('/users/${widget.userUID}');
 
-      await userRef.update({'points': widget.points + newPoints});
+      await userRef.update({'points': widget.userInfo.points + newPoints});
     } catch (e) {
-      print('Error updating title: $e');
+      print('Error updating points: $e');
     }
+  }
+
+  Future<void> setPoints(int newPoints) async {
+    try {
+      DocumentReference userRef =
+          FirebaseFirestore.instance.doc('/users/${widget.userUID}');
+
+      await userRef.update({'points': newPoints});
+    } catch (e) {
+      print('Error setting points: $e');
+    }
+  }
+
+  Future<void> setStep(int newStep) async {
+    try {
+      DocumentReference userRef =
+          FirebaseFirestore.instance.doc('/users/${widget.userUID}');
+
+      await userRef.update({'step': newStep});
+    } catch (e) {
+      print('Error setting step: $e');
+    }
+  }
+
+  Future<void> reset() async {
+    final userDoc = FirebaseFirestore.instance.doc("/users/${widget.userUID}");
+    // final oldHoneyRush = userDoc.collection("honeyRush");
+    // final oldPMTinfo = userDoc.collection("PMTinfo");
+
+    //QuerySnapshot honeyRushDocs = await oldHoneyRush.get();
+    //print(honeyRushDocs.docs.length);
+    //for (var docSnapshot in honeyRushDocs.docs) {
+    //await docSnapshot.reference.delete();
+    //}
+    //print(honeyRushDocs.docs.length);
+
+    QuerySnapshot honeyRushDocs = await FirebaseFirestore.instance
+        .collection("/users/${widget.userUID}/honeyRush/honeyRush/profiles")
+        .get();
+    for (var docSnapshot in honeyRushDocs.docs) {
+      await docSnapshot.reference.delete();
+    }
+
+    QuerySnapshot columnsDocs = await FirebaseFirestore.instance
+        .collection("/users/${widget.userUID}/PMTinfo/PMTinfo/columns")
+        .get();
+    for (var docSnapshot in columnsDocs.docs) {
+      await docSnapshot.reference.delete();
+    }
+
+    QuerySnapshot tasksDocs = await FirebaseFirestore.instance
+        .collection("/users/${widget.userUID}/PMTinfo/PMTinfo/tasks")
+        .get();
+    for (var docSnapshot in tasksDocs.docs) {
+      await docSnapshot.reference.delete();
+    }
+
+    CollectionReference info = userDoc.collection("PMTinfo");
+    CollectionReference columns = info.doc(info.id).collection("columns");
+    columns.add({
+      'columnTitle': 'To Do',
+      'displayOrder': 0,
+      'isKey': false,
+      'isEditingText': false
+    });
+    columns.add({
+      'columnTitle': 'In Progress',
+      'displayOrder': 1,
+      'isKey': false,
+      'isEditingText': false
+    });
+    columns.add({
+      'columnTitle': 'Done',
+      'displayOrder': 2,
+      'isKey': true,
+      'isEditingText': false
+    });
+    info.doc(info.id).set({'columnID': 0});
+
+    CollectionReference honeyRush = userDoc.collection("honeyRush");
+    CollectionReference profiles =
+        honeyRush.doc(honeyRush.id).collection("profiles");
+    profiles.add({
+      'name': 'Laura',
+      'avatarTypePath': 'bee_avatar_2.png',
+      'lifes': Random().nextInt(3) + 1,
+      'playedCards': Random().nextInt(4),
+      'hasHoneyFever': false,
+      'daysPassed': 0
+    });
+    profiles.add({
+      'name': 'Pol',
+      'avatarTypePath': 'bee_avatar_3.png',
+      'lifes': Random().nextInt(3) + 1,
+      'playedCards': Random().nextInt(4),
+      'hasHoneyFever': false,
+      'daysPassed': 0
+    });
+    profiles.add({
+      'name': 'Laia',
+      'avatarTypePath': 'bee_avatar_4.png',
+      'lifes': Random().nextInt(3) + 1,
+      'playedCards': Random().nextInt(4),
+      'hasHoneyFever': false,
+      'daysPassed': 0
+    });
+    profiles.add({
+      'name': 'Júlia',
+      'avatarTypePath': 'bee_avatar_5.png',
+      'lifes': Random().nextInt(3) + 1,
+      'playedCards': Random().nextInt(4),
+      'hasHoneyFever': false,
+      'daysPassed': 0
+    });
+    profiles.add({
+      'name': 'Biel',
+      'avatarTypePath': 'bee_avatar_6.png',
+      'lifes': Random().nextInt(3) + 1,
+      'playedCards': Random().nextInt(4),
+      'hasHoneyFever': false,
+      'daysPassed': 0
+    });
+    profiles.add({
+      'name': 'Nora',
+      'avatarTypePath': 'bee_avatar_7.png',
+      'lifes': Random().nextInt(3) + 1,
+      'playedCards': Random().nextInt(4),
+      'hasHoneyFever': false,
+      'daysPassed': 0
+    });
+    honeyRush.doc(honeyRush.id).set({
+      'daytime': true,
+      'hasRolled': false,
+      'isRolling': false,
+      'temporaryNectar': 0,
+      'nectar': 0
+    });
+    setPoints(0);
+    setStep(0);
   }
 
   @override
@@ -115,7 +254,22 @@ class _MainScreenState extends State<_MainScreen>
               title: Row(children: [
                 Text(widget.title),
                 const Spacer(),
-                Text(widget.points.toString()),
+                OutlinedButton(
+                    onPressed: () {
+                      reset();
+                    },
+                    child: Text("<< Restart")),
+                OutlinedButton(
+                    onPressed: () {
+                      if (widget.userInfo.step < 9) {
+                        updateDaytime(widget.userUID);
+                        updateHoneyFeverState(widget.userUID);
+                        setStep(widget.userInfo.step + 1);
+                      }
+                    },
+                    child: Text("Forward >>")),
+                const Spacer(),
+                Text(widget.userInfo.points.toString()),
                 SizedBox(width: 35, child: Image.asset("points.png"))
               ]),
               bottom: TabBar(controller: _tabController, tabs: const [

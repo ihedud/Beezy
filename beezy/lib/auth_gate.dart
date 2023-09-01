@@ -23,7 +23,7 @@ class AuthGate extends StatelessWidget {
           if (!userDocSnapshot.exists) {
             transaction.set(
               usersCollection.doc(user.uid),
-              {'email': user.email, 'points' : 0},
+              {'email': user.email, 'points': 0, 'step': 0},
             );
             CollectionReference info =
                 usersCollection.doc(user.uid).collection("PMTinfo");
@@ -31,71 +31,83 @@ class AuthGate extends StatelessWidget {
                 info.doc(info.id).collection("columns");
             columns.add({
               'columnTitle': 'To Do',
-              'displayOrder' : 0,
+              'displayOrder': 0,
               'isKey': false,
               'isEditingText': false
             });
             columns.add({
               'columnTitle': 'In Progress',
-              'displayOrder' : 1,
+              'displayOrder': 1,
               'isKey': false,
               'isEditingText': false
             });
             columns.add({
               'columnTitle': 'Done',
-              'displayOrder' : 2,
+              'displayOrder': 2,
               'isKey': true,
               'isEditingText': false
             });
-            info.doc(info.id).set({'columnID' : 0});
+            info.doc(info.id).set({'columnID': 0});
 
             CollectionReference honeyRush =
                 usersCollection.doc(user.uid).collection("honeyRush");
-                CollectionReference profiles =
+            CollectionReference profiles =
                 honeyRush.doc(honeyRush.id).collection("profiles");
             profiles.add({
               'name': 'Laura',
-              'avatarTypePath' : 'bee_avatar_2.png',
-              'lifes': Random().nextInt(4),
+              'avatarTypePath': 'bee_avatar_2.png',
+              'lifes': Random().nextInt(3) + 1,
               'playedCards': Random().nextInt(4),
-              'hasHoneyFever': false
+              'hasHoneyFever': false,
+              'daysPassed': 0
             });
             profiles.add({
               'name': 'Pol',
-              'avatarTypePath' : 'bee_avatar_3.png',
-              'lifes': Random().nextInt(4),
+              'avatarTypePath': 'bee_avatar_3.png',
+              'lifes': Random().nextInt(3) + 1,
               'playedCards': Random().nextInt(4),
-              'hasHoneyFever': false
+              'hasHoneyFever': false,
+              'daysPassed': 0
             });
             profiles.add({
               'name': 'Laia',
-              'avatarTypePath' : 'bee_avatar_4.png',
-              'lifes': Random().nextInt(4),
+              'avatarTypePath': 'bee_avatar_4.png',
+              'lifes': Random().nextInt(3) + 1,
               'playedCards': Random().nextInt(4),
-              'hasHoneyFever': false
+              'hasHoneyFever': false,
+              'daysPassed': 0
             });
             profiles.add({
               'name': 'Júlia',
-              'avatarTypePath' : 'bee_avatar_5.png',
-              'lifes': Random().nextInt(4),
+              'avatarTypePath': 'bee_avatar_5.png',
+              'lifes': Random().nextInt(3) + 1,
               'playedCards': Random().nextInt(4),
-              'hasHoneyFever': false
+              'hasHoneyFever': false,
+              'daysPassed': 0
             });
             profiles.add({
               'name': 'Biel',
-              'avatarTypePath' : 'bee_avatar_6.png',
-              'lifes': Random().nextInt(4),
+              'avatarTypePath': 'bee_avatar_6.png',
+              'lifes': Random().nextInt(3) + 1,
               'playedCards': Random().nextInt(4),
-              'hasHoneyFever': false
+              'hasHoneyFever': false,
+              'daysPassed': 0
             });
             profiles.add({
               'name': 'Nora',
-              'avatarTypePath' : 'bee_avatar_7.png',
-              'lifes': Random().nextInt(4),
+              'avatarTypePath': 'bee_avatar_7.png',
+              'lifes': Random().nextInt(3) + 1,
               'playedCards': Random().nextInt(4),
-              'hasHoneyFever': false
+              'hasHoneyFever': false,
+              'daysPassed': 0
             });
-            honeyRush.doc(honeyRush.id).set({'daytime' : true});
+            honeyRush.doc(honeyRush.id).set({
+              'daytime': true,
+              'hasRolled': false,
+              'isRolling': false,
+              'temporaryNectar': 0,
+              'nectar': 0
+            });
           }
         })
         .then((value) => print('User document created successfully'))
