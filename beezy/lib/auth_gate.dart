@@ -106,7 +106,18 @@ class AuthGate extends StatelessWidget {
               'hasRolled': false,
               'isRolling': false,
               'temporaryNectar': 0,
-              'nectar': 0
+              'nectar': 0,
+              'honey' : Random().nextInt(21) + 60,
+              'diaryText' : 'Write your thoughts...',
+              'narrativeSpot' : Random().nextInt(4),
+              'card1' : 0,
+              'card2' : 0,
+              'card3' : 0,
+              'cardSlot1' : false,
+              'cardSlot2' : false,
+              'cardSlot3' : false,
+              'isCarding' : false,
+              'playedCardsNum' : 0
             });
           }
         })

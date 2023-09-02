@@ -1,6 +1,6 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class HoneyRush {
   bool daytime = true;
@@ -8,7 +8,19 @@ class HoneyRush {
   bool isRolling = false;
   int temporaryNectar = 0;
   int nectar = 0;
+  int honey = 0;
+  int narrativeSpot = 0;
+  int card1 = 0;
+  int card2 = 0;
+  int card3 = 0;
+  bool cardSlot1 = false;
+  bool cardSlot2 = false;
+  bool cardSlot3 = false;
+  bool isCarding = false;
+  int playedCardsNum = 0;
+  String diaryText = '';
   List<HoneyProfile> allProfiles = <HoneyProfile>[];
+  TextEditingController textController = TextEditingController();
 
   HoneyRush.fromFirestore(
       Map<String, dynamic> json, List<HoneyProfile> allProfilesData)
@@ -16,8 +28,20 @@ class HoneyRush {
         hasRolled = json['hasRolled'],
         isRolling = json['isRolling'],
         temporaryNectar = json['temporaryNectar'],
-        nectar = json['nectar'] {
+        nectar = json['nectar'],
+        honey = json['honey'],
+        diaryText = json['diaryText'],
+        cardSlot1 = json['cardSlot1'],
+        cardSlot2 = json['cardSlot2'],
+        cardSlot3 = json['cardSlot3'],
+        card1 = json['card1'],
+        card2 = json['card2'],
+        card3 = json['card3'],
+        isCarding = json['isCarding'],
+        playedCardsNum = json['playedCardsNum'],
+        narrativeSpot = json['narrativeSpot'] {
     allProfiles = allProfilesData;
+    textController.text = diaryText;
   }
 }
 
@@ -84,16 +108,16 @@ void updateController(StreamController<HoneyRush> controller,
 }
 
 class HoneyState {
-  //bool daytime = true;
-  int honey = 0;
-  //int nectar = 0;
-  List<String> narrative = [
-    'story 1',
-    'story 2',
-    'story 3',
-    'story 4',
-    'story 5'
-  ];
+  String narrative1 = 'Suddenly, the wasp found a really beautiful ';
+  String narrative2 =
+      ' flower, which caught its attention. It was magestic. Its color was vibrant and bright, but it still looked delicate somehow. After spending some time playing around it, the wasp, seeing as it was a ';
+  String narrative3 =
+      ' decided to rest next to a field. However, lucky as it was, there were some kids playing ';
+  String narrative4 =
+      ' on it. They seemed to be having an exceptional time running around and laughing. It was at that moment that it knew. It was time to sting somebody.';
+  List<String> spot1 = ['blue', 'red', 'yellow', 'pink'];
+  List<String> spot2 = ['aries', 'piscis', 'scorpio', 'taurus'];
+  List<String> spot3 = ['basketball', 'tennis', 'soccer', 'baseball'];
 }
 
 class HoneyCard {

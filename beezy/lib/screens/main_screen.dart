@@ -53,8 +53,7 @@ class MainScreen extends StatelessWidget {
 
 class _MainScreen extends StatefulWidget {
   const _MainScreen(
-      {super.key,
-      required this.title,
+      {required this.title,
       required this.userEmail,
       required this.userUID,
       required this.userInfo});
@@ -121,16 +120,6 @@ class _MainScreenState extends State<_MainScreen>
 
   Future<void> reset() async {
     final userDoc = FirebaseFirestore.instance.doc("/users/${widget.userUID}");
-    // final oldHoneyRush = userDoc.collection("honeyRush");
-    // final oldPMTinfo = userDoc.collection("PMTinfo");
-
-    //QuerySnapshot honeyRushDocs = await oldHoneyRush.get();
-    //print(honeyRushDocs.docs.length);
-    //for (var docSnapshot in honeyRushDocs.docs) {
-    //await docSnapshot.reference.delete();
-    //}
-    //print(honeyRushDocs.docs.length);
-
     QuerySnapshot honeyRushDocs = await FirebaseFirestore.instance
         .collection("/users/${widget.userUID}/honeyRush/honeyRush/profiles")
         .get();
@@ -230,7 +219,18 @@ class _MainScreenState extends State<_MainScreen>
       'hasRolled': false,
       'isRolling': false,
       'temporaryNectar': 0,
-      'nectar': 0
+      'nectar': 0,
+      'honey': Random().nextInt(21) + 60,
+      'diaryText': 'Write your thoughts...',
+      'narrativeSpot': Random().nextInt(4),
+      'card1': 0,
+      'card2': 0,
+      'card3': 0,
+      'cardSlot1': false,
+      'cardSlot2': false,
+      'cardSlot3': false,
+      'isCarding': false,
+      'playedCardsNum': 0
     });
     setPoints(0);
     setStep(0);
@@ -241,8 +241,8 @@ class _MainScreenState extends State<_MainScreen>
     return MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Color.fromARGB(255, 20, 14, 3),
-            background: Color.fromARGB(255, 255, 245, 202)),
+            seedColor: const Color.fromARGB(255, 20, 14, 3),
+            background: const Color.fromARGB(255, 255, 245, 202)),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
@@ -250,7 +250,7 @@ class _MainScreenState extends State<_MainScreen>
         length: 5,
         child: Scaffold(
             appBar: AppBar(
-              backgroundColor: Color.fromARGB(255, 230, 146, 38),
+              backgroundColor: const Color.fromARGB(255, 230, 146, 38),
               title: Row(children: [
                 Text(widget.title),
                 const Spacer(),
@@ -258,7 +258,16 @@ class _MainScreenState extends State<_MainScreen>
                     onPressed: () {
                       reset();
                     },
-                    child: Text("<< Restart")),
+                    style: ButtonStyle(
+                      side: MaterialStateProperty.all<BorderSide>(
+                        const BorderSide(
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                    child: const Text("<< Restart",
+                        style: TextStyle(color: Colors.black))),
+                const SizedBox(width: 10),
                 OutlinedButton(
                     onPressed: () {
                       if (widget.userInfo.step < 9) {
@@ -267,7 +276,15 @@ class _MainScreenState extends State<_MainScreen>
                         setStep(widget.userInfo.step + 1);
                       }
                     },
-                    child: Text("Forward >>")),
+                    style: ButtonStyle(
+                      side: MaterialStateProperty.all<BorderSide>(
+                        const BorderSide(
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                    child: const Text("Forward >>",
+                        style: TextStyle(color: Colors.black))),
                 const Spacer(),
                 Text(widget.userInfo.points.toString()),
                 SizedBox(width: 35, child: Image.asset("points.png"))
