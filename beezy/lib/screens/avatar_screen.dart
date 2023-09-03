@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:beezy/models/avatar.dart';
 
@@ -8,21 +9,71 @@ List<Widget> necessitiesImg = <Widget>[
   const Icon(Icons.bed, color: Color.fromARGB(143, 20, 14, 5), size: 50),
 ];
 
-class AvatarScreen extends StatefulWidget {
+class AvatarScreen extends StatelessWidget {
+  final String userUID;
+  final Function(int) updatePoints;
+
   const AvatarScreen(
-      {super.key, required this.avatar, required this.updatePoints});
+      {Key? key, required this.userUID, required this.updatePoints})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: userBeeboSnapshot(userUID),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return ErrorWidget(snapshot.error!);
+        }
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          case ConnectionState.active:
+            return _AvatarScreen(
+                userUID: userUID,
+                avatar: snapshot.data!,
+                updatePoints: updatePoints);
+          case ConnectionState.none:
+            return ErrorWidget("The stream was wrong (connectionState.none)");
+          case ConnectionState.done:
+            return ErrorWidget("The stream has ended??");
+        }
+      },
+    );
+  }
+}
+
+class _AvatarScreen extends StatefulWidget {
+  const _AvatarScreen(
+      {required this.avatar,
+      required this.updatePoints,
+      required this.userUID});
 
   final Avatar avatar;
+  final String userUID;
   final Function(int) updatePoints;
 
   @override
-  State<AvatarScreen> createState() => _AvatarScreenState();
+  State<_AvatarScreen> createState() => _AvatarScreenState();
 }
 
-class _AvatarScreenState extends State<AvatarScreen> {
+class _AvatarScreenState extends State<_AvatarScreen> {
   final List<bool> selectedNecessity = <bool>[true, false, false, false];
   int selectedButtonIndex = 0;
-  List<double> fillAmount = <double>[0.1, 0.5, 0.5, 0.5];
+  //List<double> fillAmount = <double>[0.1, 0.5, 0.5, 0.5];
+
+  Future<void> updateFillAmount(
+      String userUID, double newValue, String type) async {
+    try {
+      DocumentReference beeboRef =
+          FirebaseFirestore.instance.doc('/users/$userUID/beebo/beebo');
+      await beeboRef.update({type: newValue});
+    } catch (e) {
+      print('Error updating honey: $e');
+    }
+  }
 
   void selectButton(int index) {
     setState(() {
@@ -93,11 +144,11 @@ class _AvatarScreenState extends State<AvatarScreen> {
     }
   }
 
-  void _addFood(int id, int foodID, String name, String assetPath, int price,
-      double fillAmount) {
+  void _addFood(/*int id, int foodID,*/ String name, String assetPath,
+      int price, double fillAmount) {
     if (widget.updatePoints(-price)) {
       for (Food foodItem in widget.avatar.foodList) {
-        if (foodItem.foodID == foodID) {
+        if (foodItem.name == name) {
           setState(() {
             foodItem.amount++;
           });
@@ -105,8 +156,8 @@ class _AvatarScreenState extends State<AvatarScreen> {
         }
       }
       Food food = Food();
-      food.id = id;
-      food.foodID = foodID;
+      //food.id = id;
+      //food.foodID = foodID;
       food.name = name;
       food.amount = 1;
       food.fillAmount = fillAmount;
@@ -117,11 +168,11 @@ class _AvatarScreenState extends State<AvatarScreen> {
     }
   }
 
-  void _addHygiene(int id, int hygieneID, String name, String assetPath,
+  void _addHygiene(/*int id, int hygieneID, */ String name, String assetPath,
       int price, double fillAmount) {
     if (widget.updatePoints(-price)) {
       for (Hygiene hygieneItem in widget.avatar.hygieneList) {
-        if (hygieneItem.hygieneID == hygieneID) {
+        if (hygieneItem.name == name) {
           setState(() {
             hygieneItem.amount++;
           });
@@ -129,8 +180,8 @@ class _AvatarScreenState extends State<AvatarScreen> {
         }
       }
       Hygiene hygiene = Hygiene();
-      hygiene.id = id;
-      hygiene.hygieneID = hygieneID;
+      //hygiene.id = id;
+      //hygiene.hygieneID = hygieneID;
       hygiene.name = name;
       hygiene.amount = 1;
       hygiene.fillAmount = fillAmount;
@@ -141,11 +192,11 @@ class _AvatarScreenState extends State<AvatarScreen> {
     }
   }
 
-  void _addToy(int id, int toyID, String name, String assetPath, int price,
+  void _addToy(/*int id,  int toyID, */String name, String assetPath, int price,
       double fillAmount) {
     if (widget.updatePoints(-price)) {
       for (Toy toyItem in widget.avatar.toyList) {
-        if (toyItem.toyID == toyID) {
+        if (toyItem.name == name) {
           setState(() {
             toyItem.amount++;
           });
@@ -153,8 +204,8 @@ class _AvatarScreenState extends State<AvatarScreen> {
         }
       }
       Toy toy = Toy();
-      toy.id = id;
-      toy.toyID = toyID;
+      //toy.id = id;
+      //toy.toyID = toyID;
       toy.name = name;
       toy.amount = 1;
       toy.fillAmount = fillAmount;
@@ -165,11 +216,11 @@ class _AvatarScreenState extends State<AvatarScreen> {
     }
   }
 
-  void _addSleep(int id, int sleepID, String name, String assetPath, int price,
-      double fillAmount) {
+  void _addSleep(/*int id,  int sleepID,*/ String name, String assetPath,
+      int price, double fillAmount) {
     if (widget.updatePoints(-price)) {
       for (Sleep sleepItem in widget.avatar.sleepList) {
-        if (sleepItem.sleepID == sleepID) {
+        if (sleepItem.name == name) {
           setState(() {
             sleepItem.amount++;
           });
@@ -177,8 +228,8 @@ class _AvatarScreenState extends State<AvatarScreen> {
         }
       }
       Sleep sleep = Sleep();
-      sleep.id = id;
-      sleep.sleepID = sleepID;
+      //sleep.id = id;
+      //sleep.sleepID = sleepID;
       sleep.name = name;
       sleep.amount = 1;
       sleep.fillAmount = fillAmount;
@@ -331,9 +382,13 @@ class _AvatarScreenState extends State<AvatarScreen> {
                         Row(
                             children: selectedNecessity[0]
                                 ? _getFoodShop()
-                                : selectedNecessity[1] ? _getHygieneShop() : selectedNecessity[2]
-                                    ? _getToysShop()
-                                    : selectedNecessity[3] ? _getSleepShop() : List.empty())
+                                : selectedNecessity[1]
+                                    ? _getHygieneShop()
+                                    : selectedNecessity[2]
+                                        ? _getToysShop()
+                                        : selectedNecessity[3]
+                                            ? _getSleepShop()
+                                            : List.empty())
                       ],
                     ))),
           ),
@@ -377,9 +432,9 @@ class _AvatarScreenState extends State<AvatarScreen> {
                       height: 60,
                       child: IconButton(
                         onPressed: () {
-                          _addFood(widget.avatar.foodID, foodID, name,
+                          _addFood(/*widget.avatar.foodID, foodID, */name,
                               assetPath, price, fillAmount);
-                          widget.avatar.foodID++;
+                          //widget.avatar.foodID++;
                         },
                         icon: Image(image: AssetImage(assetPath)),
                       ))),
@@ -406,9 +461,9 @@ class _AvatarScreenState extends State<AvatarScreen> {
                       height: 60,
                       child: IconButton(
                         onPressed: () {
-                          _addHygiene(widget.avatar.hygieneID, hygieneID, name,
-                              assetPath, price, fillAmount);
-                          widget.avatar.hygieneID++;
+                          _addHygiene(/*widget.avatar.hygieneID, hygieneID,*/
+                              name, assetPath, price, fillAmount);
+                          //widget.avatar.hygieneID++;
                         },
                         icon: Image(image: AssetImage(assetPath)),
                       ))),
@@ -416,8 +471,8 @@ class _AvatarScreenState extends State<AvatarScreen> {
             ])));
   }
 
-  Widget _getToySpot(int sleepID, String name, String assetPath, int price,
-      double fillAmount) {
+  Widget _getToySpot(
+      int toyID, String name, String assetPath, int price, double fillAmount) {
     return Container(
         width: 75,
         height: 75,
@@ -435,9 +490,9 @@ class _AvatarScreenState extends State<AvatarScreen> {
                       height: 60,
                       child: IconButton(
                         onPressed: () {
-                          _addToy(widget.avatar.toyID, sleepID, name, assetPath,
-                              price, fillAmount);
-                          widget.avatar.toyID++;
+                          _addToy(/*widget.avatar.toyID,  toyID,*/ name,
+                              assetPath, price, fillAmount);
+                          //widget.avatar.toyID++;
                         },
                         icon: Image(image: AssetImage(assetPath)),
                       ))),
@@ -464,9 +519,9 @@ class _AvatarScreenState extends State<AvatarScreen> {
                       height: 60,
                       child: IconButton(
                         onPressed: () {
-                          _addSleep(widget.avatar.sleepID, sleepID, name,
+                          _addSleep(/*widget.avatar.sleepID, sleepID, */ name,
                               assetPath, price, fillAmount);
-                          widget.avatar.sleepID++;
+                          //widget.avatar.sleepID++;
                         },
                         icon: Image(image: AssetImage(assetPath)),
                       ))),
@@ -507,11 +562,12 @@ class _AvatarScreenState extends State<AvatarScreen> {
     return foodWidgets;
   }
 
-List<Widget> _getHygieneShop() {
+  List<Widget> _getHygieneShop() {
     final List<Widget> hygieneWidgets = <Widget>[
       Column(children: [
         _getHygieneSpot(1, 'Soap', 'assets/hygiene/soap.png', 3, 0.1),
-        _getHygieneSpot(3, 'Toothbrush', 'assets/hygiene/toothbrush.png', 7, 0.4),
+        _getHygieneSpot(
+            3, 'Toothbrush', 'assets/hygiene/toothbrush.png', 7, 0.4),
         _getEmptySpot(),
         _getEmptySpot()
       ]),
@@ -547,7 +603,7 @@ List<Widget> _getHygieneShop() {
     return toysWidgets;
   }
 
-List<Widget> _getSleepShop() {
+  List<Widget> _getSleepShop() {
     final List<Widget> sleepWidgets = <Widget>[
       Column(children: [
         _getSleepSpot(1, 'Tea', 'assets/sleep/tea.png', 6, 0.2),
@@ -594,7 +650,15 @@ List<Widget> _getSleepShop() {
                               padding: const EdgeInsets.fromLTRB(0, 4, 4, 4),
                               child: FractionallySizedBox(
                                 alignment: Alignment.centerLeft,
-                                widthFactor: fillAmount[index],
+                                widthFactor: index == 0
+                                    ? widget.avatar.food
+                                    : index == 1
+                                        ? widget.avatar.hygiene
+                                        : index == 2
+                                            ? widget.avatar.toys
+                                            : index == 3
+                                                ? widget.avatar.sleep
+                                                : 0,
                                 child: Container(
                                   color:
                                       const Color.fromARGB(255, 230, 146, 38),
@@ -641,14 +705,48 @@ List<Widget> _getSleepShop() {
               child: DragTarget<Item>(onAccept: (item) {
             setState(() {
               _deleteItem(item.name);
-              if (fillAmount[selectedButtonIndex] < 1) {
-                fillAmount[selectedButtonIndex] =
-                    fillAmount[selectedButtonIndex] + item.fillAmount;
-                if (fillAmount[selectedButtonIndex] >= 1) {
-                  fillAmount[selectedButtonIndex] = 1;
+            });
+            if (selectedButtonIndex == 0) {
+              if (widget.avatar.food < 1) {
+                updateFillAmount(widget.userUID,
+                    widget.avatar.food + item.fillAmount, 'food');
+                //widget.avatar.food = widget.avatar.food + item.fillAmount;
+                if (widget.avatar.food >= 1) {
+                  updateFillAmount(widget.userUID, 1, 'food');
+                  //widget.avatar.food = 1;
                 }
               }
-            });
+            } else if (selectedButtonIndex == 1) {
+              if (widget.avatar.hygiene < 1) {
+                updateFillAmount(widget.userUID,
+                    widget.avatar.hygiene + item.fillAmount, 'hygiene');
+                //widget.avatar.food = widget.avatar.food + item.fillAmount;
+                if (widget.avatar.hygiene >= 1) {
+                  updateFillAmount(widget.userUID, 1, 'hygiene');
+                  //widget.avatar.food = 1;
+                }
+              }
+            } else if (selectedButtonIndex == 2) {
+              if (widget.avatar.toys < 1) {
+                updateFillAmount(widget.userUID,
+                    widget.avatar.toys + item.fillAmount, 'toys');
+                //widget.avatar.food = widget.avatar.food + item.fillAmount;
+                if (widget.avatar.toys >= 1) {
+                  updateFillAmount(widget.userUID, 1, 'toys');
+                  //widget.avatar.food = 1;
+                }
+              }
+            } else if (selectedButtonIndex == 3) {
+              if (widget.avatar.sleep < 1) {
+                updateFillAmount(widget.userUID,
+                    widget.avatar.sleep + item.fillAmount, 'sleep');
+                //widget.avatar.food = widget.avatar.food + item.fillAmount;
+                if (widget.avatar.sleep >= 1) {
+                  updateFillAmount(widget.userUID, 1, 'sleep');
+                  //widget.avatar.food = 1;
+                }
+              }
+            }
           }, builder:
                   (context, List<dynamic> accepted, List<dynamic> rejected) {
             return SizedBox(

@@ -119,6 +119,14 @@ class AuthGate extends StatelessWidget {
               'isCarding' : false,
               'playedCardsNum' : 0
             });
+            CollectionReference beebo =
+                usersCollection.doc(user.uid).collection("beebo");
+                beebo.doc(beebo.id).set({
+              'food' : Random().nextDouble(),
+              'hygiene' : Random().nextDouble(),
+              'toys' : Random().nextDouble(),
+              'sleep' : Random().nextDouble(),
+            });
           }
         })
         .then((value) => print('User document created successfully'))

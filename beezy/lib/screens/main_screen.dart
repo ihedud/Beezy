@@ -6,7 +6,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:beezy/screens/board_screen.dart';
 import 'package:beezy/screens/backlog_screen.dart';
-import 'package:beezy/models/avatar.dart';
 import 'package:beezy/models/board.dart';
 import 'issues_screen.dart';
 
@@ -69,7 +68,7 @@ class _MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<_MainScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  Avatar avatar = Avatar();
+  //Avatar avatar = Avatar();
   late TabController _tabController;
 
   @override
@@ -148,6 +147,13 @@ class _MainScreenState extends State<_MainScreen>
     for (var docSnapshot in honeyRushDocs.docs) {
       await docSnapshot.reference.delete();
     }
+
+    // QuerySnapshot beeboDocs = await FirebaseFirestore.instance
+    //     .collection("/users/${widget.userUID}/beebo/honeyRush/profiles")
+    //     .get();
+    // for (var docSnapshot in honeyRushDocs.docs) {
+    //   await docSnapshot.reference.delete();
+    // }
 
     QuerySnapshot columnsDocs = await FirebaseFirestore.instance
         .collection("/users/${widget.userUID}/PMTinfo/PMTinfo/columns")
@@ -254,6 +260,14 @@ class _MainScreenState extends State<_MainScreen>
       'isCarding': false,
       'playedCardsNum': 0
     });
+    CollectionReference beebo =
+                userDoc.collection("beebo");
+                beebo.doc(beebo.id).set({
+              'food' : Random().nextDouble(),
+              'hygiene' : Random().nextDouble(),
+              'toys' : Random().nextDouble(),
+              'sleep' : Random().nextDouble(),
+            });
     setPoints(0);
     setStep(0);
   }
@@ -369,7 +383,7 @@ class _MainScreenState extends State<_MainScreen>
               BacklogScreen(
                   userUID: widget.userUID, updatePoints: updatePoints),
               IssuesScreen(userUID: widget.userUID),
-              AvatarScreen(avatar: avatar, updatePoints: updatePoints),
+              AvatarScreen(userUID: widget.userUID,/*avatar: avatar, */updatePoints: updatePoints),
               HoneyScreen(
                   updatePoints: updatePoints,
                   userUID: widget.userUID,
