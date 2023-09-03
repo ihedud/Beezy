@@ -68,7 +68,6 @@ class _MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<_MainScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
-  //Avatar avatar = Avatar();
   late TabController _tabController;
 
   @override
@@ -148,12 +147,33 @@ class _MainScreenState extends State<_MainScreen>
       await docSnapshot.reference.delete();
     }
 
-    // QuerySnapshot beeboDocs = await FirebaseFirestore.instance
-    //     .collection("/users/${widget.userUID}/beebo/honeyRush/profiles")
-    //     .get();
-    // for (var docSnapshot in honeyRushDocs.docs) {
-    //   await docSnapshot.reference.delete();
-    // }
+    QuerySnapshot foodDocs = await FirebaseFirestore.instance
+        .collection("/users/${widget.userUID}/beebo/beebo/foodList")
+        .get();
+    for (var docSnapshot in foodDocs.docs) {
+      await docSnapshot.reference.delete();
+    }
+
+    QuerySnapshot hygieneDocs = await FirebaseFirestore.instance
+        .collection("/users/${widget.userUID}/beebo/beebo/hygieneList")
+        .get();
+    for (var docSnapshot in hygieneDocs.docs) {
+      await docSnapshot.reference.delete();
+    }
+
+    QuerySnapshot toyDocs = await FirebaseFirestore.instance
+        .collection("/users/${widget.userUID}/beebo/beebo/toysList")
+        .get();
+    for (var docSnapshot in toyDocs.docs) {
+      await docSnapshot.reference.delete();
+    }
+
+    QuerySnapshot sleepDocs = await FirebaseFirestore.instance
+        .collection("/users/${widget.userUID}/beebo/beebo/sleepList")
+        .get();
+    for (var docSnapshot in sleepDocs.docs) {
+      await docSnapshot.reference.delete();
+    }
 
     QuerySnapshot columnsDocs = await FirebaseFirestore.instance
         .collection("/users/${widget.userUID}/PMTinfo/PMTinfo/columns")
@@ -267,6 +287,7 @@ class _MainScreenState extends State<_MainScreen>
               'hygiene' : Random().nextDouble(),
               'toys' : Random().nextDouble(),
               'sleep' : Random().nextDouble(),
+              'selectedButtonIndex' : 0
             });
     setPoints(0);
     setStep(0);

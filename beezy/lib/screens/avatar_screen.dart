@@ -60,201 +60,246 @@ class _AvatarScreen extends StatefulWidget {
 }
 
 class _AvatarScreenState extends State<_AvatarScreen> {
-  final List<bool> selectedNecessity = <bool>[true, false, false, false];
-  int selectedButtonIndex = 0;
-  //List<double> fillAmount = <double>[0.1, 0.5, 0.5, 0.5];
+  //int selectedButtonIndex = 0;
+  late List<String> path;
 
-  Future<void> updateFillAmount(
-      String userUID, double newValue, String type) async {
+  @override
+  void initState() {
+    super.initState();
+    path = [
+      '/users/${widget.userUID}/beebo/beebo/foodList',
+      '/users/${widget.userUID}/beebo/beebo/hygieneList',
+      '/users/${widget.userUID}/beebo/beebo/toysList',
+      '/users/${widget.userUID}/beebo/beebo/sleepList'
+    ];
+  }
+
+  Future<void> updateFillAmount(double newValue, String type) async {
     try {
-      DocumentReference beeboRef =
-          FirebaseFirestore.instance.doc('/users/$userUID/beebo/beebo');
+      DocumentReference beeboRef = FirebaseFirestore.instance
+          .doc('/users/${widget.userUID}/beebo/beebo');
       await beeboRef.update({type: newValue});
     } catch (e) {
-      print('Error updating honey: $e');
+      print('Error updating fillAmount: $e');
+    }
+  }
+
+  Future<void> updateSelectedButtonIndex(int newValue) async {
+    try {
+      DocumentReference beeboRef = FirebaseFirestore.instance
+          .doc('/users/${widget.userUID}/beebo/beebo');
+      await beeboRef.update({'selectedButtonIndex': newValue});
+    } catch (e) {
+      print('Error updating selectedButtonIndez: $e');
+    }
+  }
+
+  Future<void> updateAmount(double newValue, String id, int type) async {
+    try {
+      DocumentReference itemRef =
+          FirebaseFirestore.instance.doc('${path[type]}/$id');
+
+      await itemRef.update({'amount': newValue});
+    } catch (e) {
+      print('Error updating amount: $e');
     }
   }
 
   void selectButton(int index) {
+    // setState(() {
+    //   selectedButtonIndex = index;
+    // });
+    updateSelectedButtonIndex(index);
     setState(() {
-      selectedButtonIndex = index;
-      for (int i = 0; i < selectedNecessity.length; i++) {
-        selectedNecessity[i] = i == index;
-      }
+      widget.avatar.selectedButtonIndex = index;
     });
   }
 
   void _deleteItem(String name) {
-    if (selectedButtonIndex == 0) {
-      for (Food foodItem in widget.avatar.foodList) {
-        if (foodItem.name == name) {
-          setState(() {
-            if (foodItem.amount == 1) {
-              widget.avatar.foodList
-                  .removeWhere((element) => foodItem == element);
-              return;
-            }
-            foodItem.amount--;
-          });
+    for (Item item in widget.avatar.selectedButtonIndex == 0
+        ? widget.avatar.foodList
+        : widget.avatar.selectedButtonIndex == 1
+            ? widget.avatar.hygieneList
+            : widget.avatar.selectedButtonIndex == 2
+                ? widget.avatar.toysList
+                : widget.avatar.sleepList) {
+      if (item.name == name) {
+        // setState(() {
+        //   if (item.amount == 1) {
+        //     widget.avatar.foodList.removeWhere((element) => item == element);
+        //     return;
+        //   }
+        //   item.amount--;
+        // });
+        if (item.amount == 1) {
+          FirebaseFirestore.instance
+              .doc('${path[widget.avatar.selectedButtonIndex]}/${item.id}')
+              .delete();
           return;
         }
-      }
-    } else if (selectedButtonIndex == 1) {
-      for (Hygiene hygieneItem in widget.avatar.hygieneList) {
-        if (hygieneItem.name == name) {
-          setState(() {
-            if (hygieneItem.amount == 1) {
-              widget.avatar.hygieneList
-                  .removeWhere((element) => hygieneItem == element);
-              return;
-            }
-            hygieneItem.amount--;
-          });
-          return;
-        }
-      }
-    } else if (selectedButtonIndex == 2) {
-      for (Toy toyItem in widget.avatar.toyList) {
-        if (toyItem.name == name) {
-          setState(() {
-            if (toyItem.amount == 1) {
-              widget.avatar.toyList
-                  .removeWhere((element) => toyItem == element);
-              return;
-            }
-            toyItem.amount--;
-          });
-          return;
-        }
-      }
-    } else if (selectedButtonIndex == 3) {
-      for (Sleep sleepItem in widget.avatar.sleepList) {
-        if (sleepItem.name == name) {
-          setState(() {
-            if (sleepItem.amount == 1) {
-              widget.avatar.sleepList
-                  .removeWhere((element) => sleepItem == element);
-              return;
-            }
-            sleepItem.amount--;
-          });
-          return;
-        }
+        updateAmount(
+            item.amount - 1, item.id, widget.avatar.selectedButtonIndex);
+        return;
       }
     }
   }
 
-  void _addFood(/*int id, int foodID,*/ String name, String assetPath,
-      int price, double fillAmount) {
+  void _addItem(
+      String name, String assetPath, int price, double fillAmount, int type) {
     if (widget.updatePoints(-price)) {
-      for (Food foodItem in widget.avatar.foodList) {
-        if (foodItem.name == name) {
-          setState(() {
-            foodItem.amount++;
-          });
+      for (Item item in type == 0
+          ? widget.avatar.foodList
+          : type == 1
+              ? widget.avatar.hygieneList
+              : type == 2
+                  ? widget.avatar.toysList
+                  : widget.avatar.sleepList) {
+        if (item.name == name) {
+          // setState(() {
+          //   foodItem.amount++;
+          // });
+          updateAmount(item.amount + 1, item.id, type);
           return;
         }
       }
-      Food food = Food();
-      //food.id = id;
-      //food.foodID = foodID;
-      food.name = name;
-      food.amount = 1;
-      food.fillAmount = fillAmount;
-      food.assetPath = assetPath;
-      setState(() {
-        widget.avatar.foodList.add(food);
+
+      FirebaseFirestore.instance.collection(path[type]).add({
+        'name': name,
+        'amount': 1,
+        'fillAmount': fillAmount,
+        'assetPath': assetPath,
       });
+
+      // Item item = Item();
+      // item.name = name;
+      // item.amount = 1;
+      // item.fillAmount = fillAmount;
+      // item.assetPath = assetPath;
+      // setState(() {
+      //   if (type == 0) {
+      //     widget.avatar.foodList.add(item);
+      //   } else if (type == 1) {
+      //     widget.avatar.hygieneList.add(item);
+      //   } else if (type == 2) {
+      //     widget.avatar.toysList.add(item);
+      //   } else if (type == 3) {
+      //     widget.avatar.sleepList.add(item);
+      //   }
+      // });
     }
   }
 
-  void _addHygiene(/*int id, int hygieneID, */ String name, String assetPath,
-      int price, double fillAmount) {
-    if (widget.updatePoints(-price)) {
-      for (Hygiene hygieneItem in widget.avatar.hygieneList) {
-        if (hygieneItem.name == name) {
-          setState(() {
-            hygieneItem.amount++;
-          });
-          return;
-        }
-      }
-      Hygiene hygiene = Hygiene();
-      //hygiene.id = id;
-      //hygiene.hygieneID = hygieneID;
-      hygiene.name = name;
-      hygiene.amount = 1;
-      hygiene.fillAmount = fillAmount;
-      hygiene.assetPath = assetPath;
-      setState(() {
-        widget.avatar.hygieneList.add(hygiene);
-      });
-    }
-  }
+  // void _addFood(/*int id, int foodID,*/ String name, String assetPath,
+  //     int price, double fillAmount) {
+  //   if (widget.updatePoints(-price)) {
+  //     for (Item foodItem in widget.avatar.foodList) {
+  //       if (foodItem.name == name) {
+  //         setState(() {
+  //           foodItem.amount++;
+  //         });
+  //         return;
+  //       }
+  //     }
+  //     Item food = Item();
+  //     //food.id = id;
+  //     //food.foodID = foodID;
+  //     food.name = name;
+  //     food.amount = 1;
+  //     food.fillAmount = fillAmount;
+  //     food.assetPath = assetPath;
+  //     setState(() {
+  //       widget.avatar.foodList.add(food);
+  //     });
+  //   }
+  // }
 
-  void _addToy(/*int id,  int toyID, */String name, String assetPath, int price,
-      double fillAmount) {
-    if (widget.updatePoints(-price)) {
-      for (Toy toyItem in widget.avatar.toyList) {
-        if (toyItem.name == name) {
-          setState(() {
-            toyItem.amount++;
-          });
-          return;
-        }
-      }
-      Toy toy = Toy();
-      //toy.id = id;
-      //toy.toyID = toyID;
-      toy.name = name;
-      toy.amount = 1;
-      toy.fillAmount = fillAmount;
-      toy.assetPath = assetPath;
-      setState(() {
-        widget.avatar.toyList.add(toy);
-      });
-    }
-  }
+  // void _addHygiene(/*int id, int hygieneID, */ String name, String assetPath,
+  //     int price, double fillAmount) {
+  //   if (widget.updatePoints(-price)) {
+  //     for (Item hygieneItem in widget.avatar.hygieneList) {
+  //       if (hygieneItem.name == name) {
+  //         setState(() {
+  //           hygieneItem.amount++;
+  //         });
+  //         return;
+  //       }
+  //     }
+  //     Item hygiene = Item();
+  //     //hygiene.id = id;
+  //     //hygiene.hygieneID = hygieneID;
+  //     hygiene.name = name;
+  //     hygiene.amount = 1;
+  //     hygiene.fillAmount = fillAmount;
+  //     hygiene.assetPath = assetPath;
+  //     setState(() {
+  //       widget.avatar.hygieneList.add(hygiene);
+  //     });
+  //   }
+  // }
 
-  void _addSleep(/*int id,  int sleepID,*/ String name, String assetPath,
-      int price, double fillAmount) {
-    if (widget.updatePoints(-price)) {
-      for (Sleep sleepItem in widget.avatar.sleepList) {
-        if (sleepItem.name == name) {
-          setState(() {
-            sleepItem.amount++;
-          });
-          return;
-        }
-      }
-      Sleep sleep = Sleep();
-      //sleep.id = id;
-      //sleep.sleepID = sleepID;
-      sleep.name = name;
-      sleep.amount = 1;
-      sleep.fillAmount = fillAmount;
-      sleep.assetPath = assetPath;
-      setState(() {
-        widget.avatar.sleepList.add(sleep);
-      });
-    }
-  }
+  // void _addToy(/*int id,  int toyID, */String name, String assetPath, int price,
+  //     double fillAmount) {
+  //   if (widget.updatePoints(-price)) {
+  //     for (Item toyItem in widget.avatar.toyList) {
+  //       if (toyItem.name == name) {
+  //         setState(() {
+  //           toyItem.amount++;
+  //         });
+  //         return;
+  //       }
+  //     }
+  //     Item toy = Item();
+  //     //toy.id = id;
+  //     //toy.toyID = toyID;
+  //     toy.name = name;
+  //     toy.amount = 1;
+  //     toy.fillAmount = fillAmount;
+  //     toy.assetPath = assetPath;
+  //     setState(() {
+  //       widget.avatar.toyList.add(toy);
+  //     });
+  //   }
+  // }
+
+  // void _addSleep(/*int id,  int sleepID,*/ String name, String assetPath,
+  //     int price, double fillAmount) {
+  //   if (widget.updatePoints(-price)) {
+  //     for (Item sleepItem in widget.avatar.sleepList) {
+  //       if (sleepItem.name == name) {
+  //         setState(() {
+  //           sleepItem.amount++;
+  //         });
+  //         return;
+  //       }
+  //     }
+  //     Item sleep = Item();
+  //     //sleep.id = id;
+  //     //sleep.sleepID = sleepID;
+  //     sleep.name = name;
+  //     sleep.amount = 1;
+  //     sleep.fillAmount = fillAmount;
+  //     sleep.assetPath = assetPath;
+  //     setState(() {
+  //       widget.avatar.sleepList.add(sleep);
+  //     });
+  //   }
+  // }
 
   Widget _getInventory(int spot) {
-    if (selectedNecessity[0]) {
+    if (widget.avatar.selectedButtonIndex == 0) {
       if (widget.avatar.foodList.elementAtOrNull(spot) != null) {
         return _buildInventory(widget.avatar.foodList.elementAtOrNull(spot)!);
       }
-    } else if (selectedNecessity[1]) {
+    } else if (widget.avatar.selectedButtonIndex == 1) {
       if (widget.avatar.hygieneList.elementAtOrNull(spot) != null) {
         return _buildInventory(
             widget.avatar.hygieneList.elementAtOrNull(spot)!);
       }
-    } else if (selectedNecessity[2]) {
-      if (widget.avatar.toyList.elementAtOrNull(spot) != null) {
-        return _buildInventory(widget.avatar.toyList.elementAtOrNull(spot)!);
+    } else if (widget.avatar.selectedButtonIndex == 2) {
+      if (widget.avatar.toysList.elementAtOrNull(spot) != null) {
+        return _buildInventory(widget.avatar.toysList.elementAtOrNull(spot)!);
       }
-    } else if (selectedNecessity[3]) {
+    } else if (widget.avatar.selectedButtonIndex == 3) {
       if (widget.avatar.sleepList.elementAtOrNull(spot) != null) {
         return _buildInventory(widget.avatar.sleepList.elementAtOrNull(spot)!);
       }
@@ -263,7 +308,7 @@ class _AvatarScreenState extends State<_AvatarScreen> {
   }
 
   Widget _buildInventory(Item item) {
-    item.isRepresented = true;
+    //item.isRepresented = true;
     return Container(
         padding: const EdgeInsets.all(5),
         child: Stack(
@@ -380,13 +425,13 @@ class _AvatarScreenState extends State<_AvatarScreen> {
                         Text('Shop',
                             style: Theme.of(context).textTheme.headlineSmall),
                         Row(
-                            children: selectedNecessity[0]
+                            children: widget.avatar.selectedButtonIndex == 0
                                 ? _getFoodShop()
-                                : selectedNecessity[1]
+                                : widget.avatar.selectedButtonIndex == 1
                                     ? _getHygieneShop()
-                                    : selectedNecessity[2]
+                                    : widget.avatar.selectedButtonIndex == 2
                                         ? _getToysShop()
-                                        : selectedNecessity[3]
+                                        : widget.avatar.selectedButtonIndex == 3
                                             ? _getSleepShop()
                                             : List.empty())
                       ],
@@ -432,8 +477,8 @@ class _AvatarScreenState extends State<_AvatarScreen> {
                       height: 60,
                       child: IconButton(
                         onPressed: () {
-                          _addFood(/*widget.avatar.foodID, foodID, */name,
-                              assetPath, price, fillAmount);
+                          _addItem(/*widget.avatar.foodID, foodID, */ name,
+                              assetPath, price, fillAmount, 0);
                           //widget.avatar.foodID++;
                         },
                         icon: Image(image: AssetImage(assetPath)),
@@ -461,8 +506,13 @@ class _AvatarScreenState extends State<_AvatarScreen> {
                       height: 60,
                       child: IconButton(
                         onPressed: () {
-                          _addHygiene(/*widget.avatar.hygieneID, hygieneID,*/
-                              name, assetPath, price, fillAmount);
+                          _addItem(
+                              /*widget.avatar.hygieneID, hygieneID,*/
+                              name,
+                              assetPath,
+                              price,
+                              fillAmount,
+                              1);
                           //widget.avatar.hygieneID++;
                         },
                         icon: Image(image: AssetImage(assetPath)),
@@ -490,8 +540,8 @@ class _AvatarScreenState extends State<_AvatarScreen> {
                       height: 60,
                       child: IconButton(
                         onPressed: () {
-                          _addToy(/*widget.avatar.toyID,  toyID,*/ name,
-                              assetPath, price, fillAmount);
+                          _addItem(/*widget.avatar.toyID,  toyID,*/ name,
+                              assetPath, price, fillAmount, 2);
                           //widget.avatar.toyID++;
                         },
                         icon: Image(image: AssetImage(assetPath)),
@@ -519,8 +569,8 @@ class _AvatarScreenState extends State<_AvatarScreen> {
                       height: 60,
                       child: IconButton(
                         onPressed: () {
-                          _addSleep(/*widget.avatar.sleepID, sleepID, */ name,
-                              assetPath, price, fillAmount);
+                          _addItem(/*widget.avatar.sleepID, sleepID, */ name,
+                              assetPath, price, fillAmount, 3);
                           //widget.avatar.sleepID++;
                         },
                         icon: Image(image: AssetImage(assetPath)),
@@ -675,7 +725,7 @@ class _AvatarScreenState extends State<_AvatarScreen> {
                     width: 65,
                     height: 65,
                     decoration: BoxDecoration(
-                        color: selectedButtonIndex == index
+                        color: widget.avatar.selectedButtonIndex == index
                             ? const Color.fromARGB(255, 230, 146, 38)
                             : const Color.fromARGB(255, 255, 223, 142),
                         shape: BoxShape.circle,
@@ -706,45 +756,39 @@ class _AvatarScreenState extends State<_AvatarScreen> {
             setState(() {
               _deleteItem(item.name);
             });
-            if (selectedButtonIndex == 0) {
-              if (widget.avatar.food < 1) {
-                updateFillAmount(widget.userUID,
-                    widget.avatar.food + item.fillAmount, 'food');
+            if (widget.avatar.selectedButtonIndex == 0) {
+              if (widget.avatar.food + item.fillAmount < 1) {
+                updateFillAmount(widget.avatar.food + item.fillAmount, 'food');
                 //widget.avatar.food = widget.avatar.food + item.fillAmount;
-                if (widget.avatar.food >= 1) {
-                  updateFillAmount(widget.userUID, 1, 'food');
-                  //widget.avatar.food = 1;
-                }
+              } else {
+                updateFillAmount(1, 'food');
+                //widget.avatar.food = 1;
               }
-            } else if (selectedButtonIndex == 1) {
-              if (widget.avatar.hygiene < 1) {
-                updateFillAmount(widget.userUID,
+            } else if (widget.avatar.selectedButtonIndex == 1) {
+              if (widget.avatar.hygiene + item.fillAmount < 1) {
+                updateFillAmount(
                     widget.avatar.hygiene + item.fillAmount, 'hygiene');
                 //widget.avatar.food = widget.avatar.food + item.fillAmount;
-                if (widget.avatar.hygiene >= 1) {
-                  updateFillAmount(widget.userUID, 1, 'hygiene');
-                  //widget.avatar.food = 1;
-                }
+              } else {
+                updateFillAmount(1, 'hygiene');
+                //widget.avatar.food = 1;
               }
-            } else if (selectedButtonIndex == 2) {
-              if (widget.avatar.toys < 1) {
-                updateFillAmount(widget.userUID,
-                    widget.avatar.toys + item.fillAmount, 'toys');
+            } else if (widget.avatar.selectedButtonIndex == 2) {
+              if (widget.avatar.toys + item.fillAmount < 1) {
+                updateFillAmount(widget.avatar.toys + item.fillAmount, 'toys');
                 //widget.avatar.food = widget.avatar.food + item.fillAmount;
-                if (widget.avatar.toys >= 1) {
-                  updateFillAmount(widget.userUID, 1, 'toys');
-                  //widget.avatar.food = 1;
-                }
+              } else {
+                updateFillAmount(1, 'toys');
+                //widget.avatar.food = 1;
               }
-            } else if (selectedButtonIndex == 3) {
-              if (widget.avatar.sleep < 1) {
-                updateFillAmount(widget.userUID,
+            } else if (widget.avatar.selectedButtonIndex == 3) {
+              if (widget.avatar.sleep + item.fillAmount < 1) {
+                updateFillAmount(
                     widget.avatar.sleep + item.fillAmount, 'sleep');
                 //widget.avatar.food = widget.avatar.food + item.fillAmount;
-                if (widget.avatar.sleep >= 1) {
-                  updateFillAmount(widget.userUID, 1, 'sleep');
-                  //widget.avatar.food = 1;
-                }
+              } else {
+                updateFillAmount(1, 'sleep');
+                //widget.avatar.food = 1;
               }
             }
           }, builder:

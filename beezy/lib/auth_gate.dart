@@ -126,6 +126,7 @@ class AuthGate extends StatelessWidget {
               'hygiene' : Random().nextDouble(),
               'toys' : Random().nextDouble(),
               'sleep' : Random().nextDouble(),
+              'selectedButtonIndex' : 0
             });
           }
         })
