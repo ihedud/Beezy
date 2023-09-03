@@ -85,7 +85,7 @@ class _MainScreenState extends State<_MainScreen>
     super.dispose();
   }
 
-  Future<void> updatePoints(int newPoints) async {
+  Future<void> updateDatabasePoints(int newPoints) async {
     try {
       DocumentReference userRef =
           FirebaseFirestore.instance.doc('/users/${widget.userUID}');
@@ -93,6 +93,28 @@ class _MainScreenState extends State<_MainScreen>
       await userRef.update({'points': widget.userInfo.points + newPoints});
     } catch (e) {
       print('Error updating points: $e');
+    }
+  }
+
+  bool updatePoints(int newValue) {
+    if (newValue >= 0 || widget.userInfo.points >= -newValue) {
+      updateDatabasePoints(newValue);
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> updateHasWon(bool newValue) async {
+    try {
+      DocumentReference userRef =
+          FirebaseFirestore.instance.doc('/users/${widget.userUID}');
+      await userRef.update({'hasWon': newValue});
+      if (newValue) {
+        showWin();
+        updateHasWon(false);
+      }
+    } catch (e) {
+      print('Error updating hasWon: $e');
     }
   }
 
@@ -220,7 +242,7 @@ class _MainScreenState extends State<_MainScreen>
       'isRolling': false,
       'temporaryNectar': 0,
       'nectar': 0,
-      'honey': Random().nextInt(21) + 60,
+      'honey': Random().nextInt(21) + 70,
       'diaryText': 'Write your thoughts...',
       'narrativeSpot': Random().nextInt(4),
       'card1': 0,
@@ -234,6 +256,46 @@ class _MainScreenState extends State<_MainScreen>
     });
     setPoints(0);
     setStep(0);
+  }
+
+  Future<dynamic> showLose() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('You lost!'),
+            content: Text("You didn't fill the honeycomb. What a pity!"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  reset();
+                  Navigator.of(context).pop();
+                },
+                child: Text("Restart", style: TextStyle(fontSize: 22)),
+              )
+            ],
+          );
+        });
+  }
+
+  Future<dynamic> showWin() {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('You Won!'),
+            content: Text("You filled all the honeycomb. Congratulations!"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  reset();
+                  Navigator.of(context).pop();
+                },
+                child: Text("Restart", style: TextStyle(fontSize: 22)),
+              )
+            ],
+          );
+        });
   }
 
   @override
@@ -274,6 +336,8 @@ class _MainScreenState extends State<_MainScreen>
                         updateDaytime(widget.userUID);
                         updateHoneyFeverState(widget.userUID);
                         setStep(widget.userInfo.step + 1);
+                      } else {
+                        showLose();
                       }
                     },
                     style: ButtonStyle(
@@ -306,7 +370,10 @@ class _MainScreenState extends State<_MainScreen>
                   userUID: widget.userUID, updatePoints: updatePoints),
               IssuesScreen(userUID: widget.userUID),
               AvatarScreen(avatar: avatar, updatePoints: updatePoints),
-              HoneyScreen(updatePoints: updatePoints, userUID: widget.userUID)
+              HoneyScreen(
+                  updatePoints: updatePoints,
+                  userUID: widget.userUID,
+                  updateHasWon: updateHasWon)
             ])),
       ),
     );

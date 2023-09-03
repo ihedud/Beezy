@@ -1,10 +1,13 @@
 class Avatar {
-  //String name = '';
   int satisfactionLevel = 100;
   List<Food> foodList = <Food>[];
+  List<Hygiene> hygieneList = <Hygiene>[];
   List<Toy> toyList = <Toy>[];
+  List<Sleep> sleepList = <Sleep>[];
   int foodID = 0;
+  int hygieneID = 0;
   int toyID = 0;
+  int sleepID = 0;
 }
 
 class Item {
@@ -20,6 +23,14 @@ class Food extends Item {
   int foodID = 0;
 }
 
+class Hygiene extends Item {
+  int hygieneID = 0;
+}
+
 class Toy extends Item {
   int toyID = 0;
+}
+
+class Sleep extends Item {
+  int sleepID = 0;
 }

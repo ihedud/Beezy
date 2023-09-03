@@ -7,9 +7,13 @@ import '../models/honey.dart';
 class HoneyScreen extends StatelessWidget {
   final String userUID;
   final Function(int) updatePoints;
+  final Function(bool) updateHasWon;
 
   const HoneyScreen(
-      {Key? key, required this.userUID, required this.updatePoints})
+      {Key? key,
+      required this.userUID,
+      required this.updatePoints,
+      required this.updateHasWon})
       : super(key: key);
 
   @override
@@ -27,10 +31,10 @@ class HoneyScreen extends StatelessWidget {
             );
           case ConnectionState.active:
             return _HoneyScreen(
-              userUID: userUID,
-              honeyRush: snapshot.data!,
-              updatePoints: updatePoints,
-            );
+                userUID: userUID,
+                honeyRush: snapshot.data!,
+                updatePoints: updatePoints,
+                updateHasWon: updateHasWon);
           case ConnectionState.none:
             return ErrorWidget("The stream was wrong (connectionState.none)");
           case ConnectionState.done:
@@ -43,11 +47,12 @@ class HoneyScreen extends StatelessWidget {
 
 class _HoneyScreen extends StatefulWidget {
   const _HoneyScreen(
-      {super.key,
-      required this.updatePoints,
+      {required this.updatePoints,
+      required this.updateHasWon,
       required this.honeyRush,
       required this.userUID});
   final Function(int) updatePoints;
+  final Function(bool) updateHasWon;
   final HoneyRush honeyRush;
   final String userUID;
 
@@ -242,7 +247,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
           description: "Generate 2 honey.",
           price: 2,
           effect: () {
-            updateHoney(widget.userUID, widget.honeyRush.honey + 2);
+            updateMyHoney(widget.honeyRush.honey + 2);
             widget.honeyRush.honey += 2;
           }),
       HoneyCard(
@@ -250,7 +255,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
           description: "Generate 3 honey.",
           price: 3,
           effect: () {
-            updateHoney(widget.userUID, widget.honeyRush.honey + 3);
+            updateMyHoney(widget.honeyRush.honey + 3);
             widget.honeyRush.honey += 3;
           }),
       HoneyCard(
@@ -258,7 +263,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
           description: "Generate 1 honey.",
           price: 1,
           effect: () {
-            updateHoney(widget.userUID, widget.honeyRush.honey + 1);
+            updateMyHoney(widget.honeyRush.honey + 1);
             widget.honeyRush.honey += 1;
           })
     ];
@@ -276,8 +281,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
     ];
 
     if (widget.honeyRush.playedCardsNum > 0) {
-      for (int i = 0; i < 3; i++)
-      {
+      for (int i = 0; i < 3; i++) {
         if (!generatedSlots[i]) {
           playedCards.add(generatedCards[i]);
         }
@@ -861,7 +865,8 @@ class _HoneyScreenState extends State<_HoneyScreen> {
               updateCardSlots(widget.userUID, false, slot);
               //setState(() {
               playedCards.add(generatedCards[slot]);
-              updatePlayedCardsNum(widget.userUID, widget.honeyRush.playedCardsNum + 1);
+              updatePlayedCardsNum(
+                  widget.userUID, widget.honeyRush.playedCardsNum + 1);
               widget.honeyRush.playedCardsNum++;
               if (slot == 0) {
                 widget.honeyRush.cardSlot1 = false;
@@ -1030,28 +1035,16 @@ class _HoneyScreenState extends State<_HoneyScreen> {
 
   Widget cardsButton() {
     return Row(children: [
-      ElevatedButton(
-          onPressed: () {
-            //setState(() {
-            generateCards();
-            widget.updatePoints(-2);
-            //});
-          },
-          style: ElevatedButton.styleFrom(
-              backgroundColor: Color.fromARGB(255, 255, 245, 202),
-              shape: CircleBorder(),
-              padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0)),
-          child: Container(
-              width: 50,
-              height: 50,
-              child: Stack(children: [
-                Image.asset("restart.png"),
-                Positioned(
-                    top: 10,
-                    right: 10,
-                    child:
-                        Container(width: 30, child: Image.asset("cards.png")))
-              ]))),
+      Container(
+          width: 50,
+          height: 50,
+          child: Stack(children: [
+            Image.asset("restart.png"),
+            Positioned(
+                top: 10,
+                right: 10,
+                child: Container(width: 30, child: Image.asset("cards.png")))
+          ])),
       SizedBox(width: 15),
       Text("2", style: TextStyle(fontSize: 20)),
       Container(width: 40, child: Image.asset("points.png"))
@@ -1098,11 +1091,9 @@ class _HoneyScreenState extends State<_HoneyScreen> {
       widget.honeyRush.cardSlot3
     ];
 
-    //setState(() {
     generatedCards.add(allCards[randomNumber1]);
     generatedCards.add(allCards[randomNumber2]);
     generatedCards.add(allCards[randomNumber3]);
-    //});
   }
 
   void rollDice() {
@@ -1149,17 +1140,19 @@ class _HoneyScreenState extends State<_HoneyScreen> {
 
   bool updateMyNectar(int newValue) {
     if (newValue >= 0 || widget.honeyRush.nectar >= -newValue) {
-      //setState(() {
-      // if (100 - state.nectar <= newValue) {
-      //   state.nectar = 100;
-      // } else {
       updateNectar(widget.userUID, widget.honeyRush.nectar + newValue);
-      //state.nectar += newValue;
-      //}
-      //});
       return true;
     }
     return false;
+  }
+
+  void updateMyHoney(int newValue) {
+    if (newValue >= 100) {
+      updateHoney(widget.userUID, 100);
+      widget.updateHasWon(true);
+    } else {
+      updateHoney(widget.userUID, newValue);
+    }
   }
 
   Future<dynamic> showDice() {
@@ -1182,11 +1175,12 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                   ? Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       TextButton(
                         onPressed: () {
-                          updateIsRolling(widget.userUID, true);
-                          widget.honeyRush.isRolling = true;
-                          rollDice();
-                          Navigator.of(context).pop();
-                          widget.updatePoints(-2);
+                          if (widget.updatePoints(-2)) {
+                            updateIsRolling(widget.userUID, true);
+                            widget.honeyRush.isRolling = true;
+                            rollDice();
+                            Navigator.of(context).pop();
+                          }
                         },
                         child: dicesButton(),
                       ),
@@ -1743,11 +1737,12 @@ class _HoneyScreenState extends State<_HoneyScreen> {
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 TextButton(
                   onPressed: () {
-                    updateIsCarding(widget.userUID, true);
-                    widget.honeyRush.isCarding = true;
-                    generateCards();
-                    Navigator.of(context).pop();
-                    widget.updatePoints(-2);
+                    if (widget.updatePoints(-2)) {
+                      updateIsCarding(widget.userUID, true);
+                      widget.honeyRush.isCarding = true;
+                      generateCards();
+                      Navigator.of(context).pop();
+                    }
                   },
                   child: cardsButton(),
                 ),
@@ -1756,6 +1751,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                   onPressed: () {
                     updateIsCarding(widget.userUID, false);
                     Navigator.of(context).pop();
+                    widget.updatePoints(0);
                   },
                   child: Text('Continue', style: TextStyle(fontSize: 22)),
                 )

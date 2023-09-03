@@ -52,18 +52,6 @@ class PMTinfo {
   List<Task> tasks = <Task>[];
   int columnID = 0;
 
-  // PMTinfo({List<ColumnBZ>? columns, List<Task>? tasks, int? columnID}) {
-  //   if (columns != null) {
-  //     this.columns = columns;
-  //   }
-  //   if (tasks != null) {
-  //     this.tasks = tasks;
-  //   }
-  //   if (columnID != null) {
-  //     this.columnID = columnID;
-  //   }
-  // }
-
   PMTinfo.fromFirestore(Map<String, dynamic> json, List<ColumnBZ> columnsData,
       List<Task> tasksData)
       : columnID = json['columnID'] {
@@ -71,76 +59,6 @@ class PMTinfo {
     tasks = tasksData;
   }
 }
-
-// Stream<PMTinfo> userTaskSnapshots(String userUID) {
-//   final db = FirebaseFirestore.instance;
-//   final stream = db.collection("/users/$userUID/PMTinfo").snapshots();
-//   final streamColumns =
-//       db.collection("/users/$userUID/PMTinfo/PMTinfo/columns").snapshots();
-//   final streamTasks =
-//       db.collection("/users/$userUID/PMTinfo/PMTinfo/tasks").snapshots();
-
-//   final controller = StreamController<PMTinfo>();
-
-//   stream.listen((query) {
-//     final columns = <ColumnBZ>[];
-//     final tasks = <Task>[];
-
-//     streamColumns.listen((queryColumns) {
-//       print("here");
-//       columns.clear();
-//       for (int i = 0; i < queryColumns.docs.length; i++) {
-//         for (final doc in queryColumns.docs) {
-//           if (doc.get('displayOrder') == i) {
-//             columns.add(ColumnBZ.fromFirestore(doc.id, doc.data()));
-//           }
-//         }
-//       }
-
-//       streamTasks.listen((queryTasks) {
-//         tasks.clear();
-//         for (final taskDoc in queryTasks.docs) {
-//           tasks.add(Task.fromFirestore(taskDoc.id, taskDoc.data()));
-//         }
-
-//         late PMTinfo info;
-//         for (final doc in query.docs) {
-//           info = PMTinfo.fromFirestore(doc.data(), columns, tasks);
-//         }
-
-//         controller.add(info);
-//       });
-//     });
-//   });
-
-//   return controller.stream;
-// }
-
-// Stream<PMTinfo> userTaskSnapshots(String userUID) {
-//   final db = FirebaseFirestore.instance;
-//   final stream = db.collection("/users/$userUID/PMTinfo").snapshots();
-//   final controller = StreamController<PMTinfo>();
-
-//   stream.listen((query) async {
-//     final columnsSnapshot =
-//         await db.collection("/users/$userUID/PMTinfo/PMTinfo/columns").get();
-
-//     final tasksSnapshot =
-//         await db.collection("/users/$userUID/PMTinfo/PMTinfo/tasks").get();
-
-//     final columns = columnsSnapshot.docs.map(
-//         (doc) => ColumnBZ.fromFirestore(doc.id, doc.data())).toList();
-
-//     final tasks = tasksSnapshot.docs.map(
-//         (doc) => Task.fromFirestore(doc.id, doc.data())).toList();
-
-//     final info = PMTinfo.fromFirestore(query.docs.first.data(), columns, tasks);
-
-//     controller.add(info);
-//   });
-
-//   return controller.stream;
-// }
 
 Stream<PMTinfo> userPMTinfoSnapshots(String userUID) {
   final db = FirebaseFirestore.instance;
@@ -160,9 +78,6 @@ Stream<PMTinfo> userPMTinfoSnapshots(String userUID) {
 
   columnsStream.listen((queryColumns) {
     columns.clear();
-    // for (final doc in queryColumns.docs) {
-    //   columns.add(ColumnBZ.fromFirestore(doc.id, doc.data()));
-    // }
 
     for (int i = 0; i < queryColumns.docs.length; i++) {
       for (final doc in queryColumns.docs) {
@@ -220,11 +135,13 @@ class UserInfo {
   String userEmail = '';
   int points = 0;
   int step = 0;
+  bool hasWon = false;
 
   UserInfo.fromFirestore(Map<String, dynamic> json)
       : userEmail = json['email'],
       points = json['points'],
-      step = json['step'];
+      step = json['step'],
+      hasWon = json['hasWon'];
 }
 
 Stream<UserInfo?> userInfoSnapshot(String userUID) {

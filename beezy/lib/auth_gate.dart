@@ -23,7 +23,7 @@ class AuthGate extends StatelessWidget {
           if (!userDocSnapshot.exists) {
             transaction.set(
               usersCollection.doc(user.uid),
-              {'email': user.email, 'points': 0, 'step': 0},
+              {'email': user.email, 'points': 0, 'step': 0, 'hasWon' : false},
             );
             CollectionReference info =
                 usersCollection.doc(user.uid).collection("PMTinfo");
@@ -107,7 +107,7 @@ class AuthGate extends StatelessWidget {
               'isRolling': false,
               'temporaryNectar': 0,
               'nectar': 0,
-              'honey' : Random().nextInt(21) + 60,
+              'honey' : Random().nextInt(21) + 65,
               'diaryText' : 'Write your thoughts...',
               'narrativeSpot' : Random().nextInt(4),
               'card1' : 0,
