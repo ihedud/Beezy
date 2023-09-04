@@ -265,6 +265,27 @@ class _HoneyScreenState extends State<_HoneyScreen> {
           effect: () {
             updateMyHoney(widget.honeyRush.honey + 1);
             widget.honeyRush.honey += 1;
+          }),
+          HoneyCard(
+          imagePath: "cards/nectar_card.png",
+          description: "Your nectar is increased by 1.",
+          price: 0,
+          effect: () {
+            updateMyNectar(1);
+          }),
+          HoneyCard(
+          imagePath: "cards/honey_stash.png",
+          description: "Your nectar is increased by 2.",
+          price: 0,
+          effect: () {
+            updateMyNectar(2);
+          }),
+          HoneyCard(
+          imagePath: "cards/honeycomb.png",
+          description: "Your nectar is increased by 3.",
+          price: 0,
+          effect: () {
+            updateMyNectar(3);
           })
     ];
 
@@ -321,18 +342,18 @@ class _HoneyScreenState extends State<_HoneyScreen> {
             height: 100,
             decoration: BoxDecoration(
                 color: profile.lifes == 0
-                    ? Color.fromARGB(255, 189, 165, 104)
+                    ? const Color.fromARGB(255, 189, 165, 104)
                     : profile.hasHoneyFever
-                        ? Color.fromARGB(255, 187, 155, 76)
-                        : Color.fromARGB(255, 255, 223, 142),
-                border:
-                    Border.all(color: Color.fromARGB(143, 20, 14, 5), width: 2),
+                        ? const Color.fromARGB(255, 187, 155, 76)
+                        : const Color.fromARGB(255, 255, 223, 142),
+                border: Border.all(
+                    color: const Color.fromARGB(143, 20, 14, 5), width: 2),
                 borderRadius: BorderRadius.circular(10.0)),
             child: Row(children: [
               const SizedBox(width: 5),
               Column(children: [
-                SizedBox(height: 2),
-                Container(
+                const SizedBox(height: 2),
+                SizedBox(
                   height: 73,
                   child: Image.asset(profile.avatarTypePath),
                 ),
@@ -343,13 +364,12 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                       ),
                 )
               ]),
-              Spacer(),
+              const Spacer(),
               widget.honeyRush.daytime &&
                       profile.lifes > 0 &&
                       !profile.hasHoneyFever
-                  ? Container(
-                      child: Column(children: [
-                      Container(
+                  ? Column(children: [
+                      SizedBox(
                           height: 40,
                           child: Row(children: [
                             SizedBox(
@@ -369,9 +389,8 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                                     : 'heart_empty.png'))
                           ])),
                       getNPCPlayedCards(profile.playedCards)
-                    ]))
-                  : Container(
-                      child: Row(children: [
+                    ])
+                  : Row(children: [
                       SizedBox(
                           width: 30,
                           child: Image.asset(profile.lifes == 0
@@ -387,8 +406,8 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                           child: Image.asset(profile.lifes == 3
                               ? 'heart_full.png'
                               : 'heart_empty.png'))
-                    ])),
-              Spacer()
+                    ]),
+              const Spacer()
             ])));
   }
 
@@ -400,35 +419,35 @@ class _HoneyScreenState extends State<_HoneyScreen> {
           Positioned.fill(
             child: Container(
                 decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 255, 223, 142),
+                    color: const Color.fromARGB(255, 255, 223, 142),
                     border: Border.all(
-                        color: Color.fromARGB(143, 20, 14, 5), width: 4),
+                        color: const Color.fromARGB(143, 20, 14, 5), width: 4),
                     borderRadius: BorderRadius.circular(10.0)),
                 child: Column(
                   children: [
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Container(
                         width: 230,
                         height: 80,
                         decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 250, 208, 100),
+                            color: const Color.fromARGB(255, 250, 208, 100),
                             border: Border.all(
-                                color: Color.fromARGB(143, 20, 14, 5),
+                                color: const Color.fromARGB(143, 20, 14, 5),
                                 width: 2),
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Row(children: [
-                          SizedBox(width: 3),
-                          Container(child: Image.asset('bee_avatar_1.png')),
-                          Container(
+                          const SizedBox(width: 3),
+                          Image.asset('bee_avatar_1.png'),
+                          SizedBox(
                               width: 49, child: Image.asset('heart_full.png')),
-                          Container(
+                          SizedBox(
                               width: 49, child: Image.asset('heart_full.png')),
-                          Container(
+                          SizedBox(
                               width: 49, child: Image.asset('heart_full.png'))
                         ])),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Expanded(
-                      child: Container(
+                      child: SizedBox(
                           width: 210,
                           child: ListView(
                               scrollDirection: Axis.vertical,
@@ -466,12 +485,12 @@ class _HoneyScreenState extends State<_HoneyScreen> {
           Positioned.fill(
             child: Container(
                 decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 255, 223, 142),
+                    color: const Color.fromARGB(255, 255, 223, 142),
                     border: Border.all(
-                        color: Color.fromARGB(143, 20, 14, 5), width: 4),
+                        color: const Color.fromARGB(143, 20, 14, 5), width: 4),
                     borderRadius: BorderRadius.circular(10.0)),
                 child: Padding(
-                    padding: EdgeInsets.all(15),
+                    padding: const EdgeInsets.all(15),
                     child: RichText(
                       text: TextSpan(
                         style: DefaultTextStyle.of(context).style,
@@ -542,9 +561,9 @@ class _HoneyScreenState extends State<_HoneyScreen> {
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 255, 223, 142),
+                  color: const Color.fromARGB(255, 255, 223, 142),
                   border: Border.all(
-                      color: Color.fromARGB(143, 20, 14, 5), width: 4),
+                      color: const Color.fromARGB(143, 20, 14, 5), width: 4),
                   borderRadius: BorderRadius.circular(10.0)),
             ),
           ),
@@ -608,7 +627,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                             isEditingDiary = true;
                           });
                         },
-                        child: Container(
+                        child: SizedBox(
                           width: 280,
                           height: 170,
                           child: SingleChildScrollView(
@@ -635,7 +654,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                       Positioned.fill(
                         child: Container(
                           decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 79, 179, 197),
+                              color: const Color.fromARGB(255, 79, 179, 197),
                               border: Border.all(color: Colors.black, width: 2),
                               borderRadius: BorderRadius.circular(10.0)),
                         ),
@@ -678,7 +697,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                       Positioned.fill(
                         child: Container(
                           decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 23, 38, 104),
+                              color: const Color.fromARGB(255, 23, 38, 104),
                               border: Border.all(color: Colors.black, width: 2),
                               borderRadius: BorderRadius.circular(10.0)),
                         ),
@@ -709,111 +728,33 @@ class _HoneyScreenState extends State<_HoneyScreen> {
     ]);
   }
 
+  Widget honeyStrip(int num, double width, Color fullColor) {
+    return Container(
+      width: width,
+      height: 18,
+      decoration: BoxDecoration(
+          color: widget.honeyRush.honey >= num
+              ? fullColor
+              : const Color.fromARGB(255, 252, 241, 191),
+          border: Border.all(color: Colors.black, width: 3),
+          borderRadius: BorderRadius.circular(10.0)),
+    );
+  }
+
   Widget honeycomb() {
     return Stack(children: [
-      Container(
-          child: Column(children: [
-        Container(
-          width: 120,
-          height: 18,
-          decoration: BoxDecoration(
-              color: widget.honeyRush.honey == 100
-                  ? Color.fromARGB(255, 230, 146, 38)
-                  : Color.fromARGB(255, 252, 241, 191),
-              border: Border.all(color: Colors.black, width: 3),
-              borderRadius: BorderRadius.circular(10.0)),
-        ),
-        Container(
-          width: 120,
-          height: 18,
-          decoration: BoxDecoration(
-              color: widget.honeyRush.honey >= 90
-                  ? Color.fromARGB(255, 230, 146, 38)
-                  : Color.fromARGB(255, 252, 241, 191),
-              border: Border.all(color: Colors.black, width: 3),
-              borderRadius: BorderRadius.circular(10.0)),
-        ),
-        Container(
-          width: 160,
-          height: 18,
-          decoration: BoxDecoration(
-              color: widget.honeyRush.honey >= 80
-                  ? Color.fromARGB(255, 240, 172, 84)
-                  : Color.fromARGB(255, 252, 241, 191),
-              border: Border.all(color: Colors.black, width: 3),
-              borderRadius: BorderRadius.circular(10.0)),
-        ),
-        Container(
-          width: 160,
-          height: 18,
-          decoration: BoxDecoration(
-              color: widget.honeyRush.honey >= 70
-                  ? Color.fromARGB(255, 240, 172, 84)
-                  : Color.fromARGB(255, 252, 241, 191),
-              border: Border.all(color: Colors.black, width: 3),
-              borderRadius: BorderRadius.circular(10.0)),
-        ),
-        Container(
-          width: 200,
-          height: 18,
-          decoration: BoxDecoration(
-              color: widget.honeyRush.honey >= 60
-                  ? Color.fromARGB(255, 230, 146, 38)
-                  : Color.fromARGB(255, 252, 241, 191),
-              border: Border.all(color: Colors.black, width: 3),
-              borderRadius: BorderRadius.circular(10.0)),
-        ),
-        Container(
-          width: 200,
-          height: 18,
-          decoration: BoxDecoration(
-              color: widget.honeyRush.honey >= 50
-                  ? Color.fromARGB(255, 230, 146, 38)
-                  : Color.fromARGB(255, 252, 241, 191),
-              border: Border.all(color: Colors.black, width: 3),
-              borderRadius: BorderRadius.circular(10.0)),
-        ),
-        Container(
-          width: 160,
-          height: 18,
-          decoration: BoxDecoration(
-              color: widget.honeyRush.honey >= 40
-                  ? Color.fromARGB(255, 240, 172, 84)
-                  : Color.fromARGB(255, 252, 241, 191),
-              border: Border.all(color: Colors.black, width: 3),
-              borderRadius: BorderRadius.circular(10.0)),
-        ),
-        Container(
-          width: 160,
-          height: 18,
-          decoration: BoxDecoration(
-              color: widget.honeyRush.honey >= 30
-                  ? Color.fromARGB(255, 240, 172, 84)
-                  : Color.fromARGB(255, 252, 241, 191),
-              border: Border.all(color: Colors.black, width: 3),
-              borderRadius: BorderRadius.circular(10.0)),
-        ),
-        Container(
-          width: 120,
-          height: 18,
-          decoration: BoxDecoration(
-              color: widget.honeyRush.honey >= 20
-                  ? Color.fromARGB(255, 230, 146, 38)
-                  : Color.fromARGB(255, 252, 241, 191),
-              border: Border.all(color: Colors.black, width: 3),
-              borderRadius: BorderRadius.circular(10.0)),
-        ),
-        Container(
-          width: 120,
-          height: 18,
-          decoration: BoxDecoration(
-              color: widget.honeyRush.honey >= 10
-                  ? Color.fromARGB(255, 230, 146, 38)
-                  : Color.fromARGB(255, 252, 241, 191),
-              border: Border.all(color: Colors.black, width: 3),
-              borderRadius: BorderRadius.circular(10.0)),
-        )
-      ])),
+      Column(children: [
+        honeyStrip(100, 120, const Color.fromARGB(255, 230, 146, 38)),
+        honeyStrip(90, 120, const Color.fromARGB(255, 230, 146, 38)),
+        honeyStrip(80, 160, const Color.fromARGB(255, 240, 172, 84)),
+        honeyStrip(70, 160, const Color.fromARGB(255, 240, 172, 84)),
+        honeyStrip(60, 200, const Color.fromARGB(255, 230, 146, 38)),
+        honeyStrip(50, 200, const Color.fromARGB(255, 230, 146, 38)),
+        honeyStrip(40, 160, const Color.fromARGB(255, 240, 172, 84)),
+        honeyStrip(30, 160, const Color.fromARGB(255, 240, 172, 84)),
+        honeyStrip(20, 120, const Color.fromARGB(255, 230, 146, 38)),
+        honeyStrip(10, 120, const Color.fromARGB(255, 230, 146, 38)),
+      ]),
       Positioned(
         top: 63,
         left: 73,
@@ -822,12 +763,12 @@ class _HoneyScreenState extends State<_HoneyScreen> {
             height: 54,
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color.fromARGB(255, 252, 241, 191),
+                color: const Color.fromARGB(255, 252, 241, 191),
                 border: Border.all(width: 4, color: Colors.black)),
             child: Center(
                 child: Text("${widget.honeyRush.honey}%",
-                    style:
-                        TextStyle(fontWeight: FontWeight.w900, fontSize: 18)))),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w900, fontSize: 18)))),
       ),
     ]);
   }
@@ -836,9 +777,9 @@ class _HoneyScreenState extends State<_HoneyScreen> {
     return Row(
       children: [
         card(0),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         card(1),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         card(2)
       ],
     );
@@ -848,22 +789,20 @@ class _HoneyScreenState extends State<_HoneyScreen> {
     return Row(
       children: [
         randomCard(0),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         randomCard(1),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         randomCard(2)
       ],
     );
   }
 
   Widget card(int slot) {
-    if (generatedSlots[slot] && generatedCards.length > 0) {
+    if (generatedSlots[slot] && generatedCards.isNotEmpty) {
       return ElevatedButton(
           onPressed: () {
-            //setState(() {
             if (updateMyNectar(-generatedCards[slot].price)) {
               updateCardSlots(widget.userUID, false, slot);
-              //setState(() {
               playedCards.add(generatedCards[slot]);
               updatePlayedCardsNum(
                   widget.userUID, widget.honeyRush.playedCardsNum + 1);
@@ -875,19 +814,16 @@ class _HoneyScreenState extends State<_HoneyScreen> {
               } else if (slot == 2) {
                 widget.honeyRush.cardSlot3 = false;
               }
-
               generatedSlots = [
                 widget.honeyRush.cardSlot1,
                 widget.honeyRush.cardSlot2,
                 widget.honeyRush.cardSlot3
               ];
-              //generatedSlots[slot] = false;
               generatedCards[slot].effect();
-              //});
             }
           },
           style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               )),
@@ -895,17 +831,17 @@ class _HoneyScreenState extends State<_HoneyScreen> {
               width: 140,
               height: 180,
               decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 255, 251, 239),
+                  color: const Color.fromARGB(255, 255, 251, 239),
                   border: Border.all(color: Colors.black, width: 3),
                   borderRadius: BorderRadius.circular(10.0)),
               child: Stack(children: [
                 Padding(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: Column(children: [
-                      Container(
+                      SizedBox(
                           height: 80,
                           child: Image.asset(generatedCards[slot].imagePath)),
-                      Spacer(),
+                      const Spacer(),
                       Text(generatedCards[slot].description,
                           textAlign: TextAlign.center)
                     ])),
@@ -913,7 +849,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                     top: 5,
                     right: 5,
                     child: Text(generatedCards[slot].price.toString(),
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)))
               ])));
     }
@@ -921,7 +857,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
       width: 140,
       height: 180,
       decoration: BoxDecoration(
-          color: Color.fromARGB(255, 255, 223, 142),
+          color: const Color.fromARGB(255, 255, 223, 142),
           border: Border.all(color: Colors.black, width: 3),
           borderRadius: BorderRadius.circular(10.0)),
     );
@@ -932,16 +868,16 @@ class _HoneyScreenState extends State<_HoneyScreen> {
         width: 140,
         height: 180,
         decoration: BoxDecoration(
-            color: Color.fromARGB(255, 255, 251, 239),
+            color: const Color.fromARGB(255, 255, 251, 239),
             border: Border.all(color: Colors.black, width: 3),
             borderRadius: BorderRadius.circular(10.0)),
         child: Padding(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: Column(children: [
-              Container(
+              SizedBox(
                   height: 80,
                   child: Image.asset(generatedCards[slot].imagePath)),
-              Spacer(),
+              const Spacer(),
               Text(generatedCards[slot].description,
                   textAlign: TextAlign.center)
             ])));
@@ -949,41 +885,41 @@ class _HoneyScreenState extends State<_HoneyScreen> {
 
   Widget getPlayedCards() {
     return Stack(children: [
-      Container(
+      SizedBox(
           width: 450,
           child: Row(
             children: [
-              Spacer(),
-              playedCard(playedCards.length > 0, 0),
-              SizedBox(width: 10),
+              const Spacer(),
+              playedCard(playedCards.isNotEmpty, 0),
+              const SizedBox(width: 10),
               playedCard(playedCards.length > 1, 1),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               playedCard(playedCards.length > 2, 2),
-              Spacer()
+              const Spacer()
             ],
           )),
       Positioned(
         top: 20,
         left: 0,
         child: Row(children: [
-          SizedBox(width: 30),
+          const SizedBox(width: 30),
           Text(widget.honeyRush.nectar.toString(),
-              style: TextStyle(fontSize: 22)),
-          Container(width: 40, child: Image.asset("nectar.png"))
+              style: const TextStyle(fontSize: 22)),
+          SizedBox(width: 40, child: Image.asset("nectar.png"))
         ]),
       )
     ]);
   }
 
   Widget getNPCPlayedCards(int playedCardsNPC) {
-    return Container(
+    return SizedBox(
         height: 45,
         child: Row(
           children: [
             playedCardNPC(playedCardsNPC > 0),
-            SizedBox(width: 2),
+            const SizedBox(width: 2),
             playedCardNPC(playedCardsNPC > 1),
-            SizedBox(width: 2),
+            const SizedBox(width: 2),
             playedCardNPC(playedCardsNPC > 2),
           ],
         ));
@@ -997,12 +933,12 @@ class _HoneyScreenState extends State<_HoneyScreen> {
               width: 70,
               height: 90,
               decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 255, 251, 239),
+                  color: const Color.fromARGB(255, 255, 251, 239),
                   border: Border.all(color: Colors.black, width: 3),
                   borderRadius: BorderRadius.circular(10.0)),
               child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Container(
+                  padding: const EdgeInsets.all(10),
+                  child: SizedBox(
                       height: 60,
                       child: Image.asset(playedCards[slot].imagePath)))));
     }
@@ -1010,7 +946,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
       width: 70,
       height: 90,
       decoration: BoxDecoration(
-          color: Color.fromARGB(255, 255, 223, 142),
+          color: const Color.fromARGB(255, 255, 223, 142),
           border: Border.all(color: Colors.black, width: 3),
           borderRadius: BorderRadius.circular(10.0)),
     );
@@ -1022,7 +958,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
         width: 28,
         height: 40,
         decoration: BoxDecoration(
-            color: Color.fromARGB(255, 255, 251, 239),
+            color: const Color.fromARGB(255, 255, 251, 239),
             border: Border.all(color: Colors.black, width: 1),
             borderRadius: BorderRadius.circular(5.0)),
       );
@@ -1035,7 +971,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
 
   Widget cardsButton() {
     return Row(children: [
-      Container(
+      SizedBox(
           width: 50,
           height: 50,
           child: Stack(children: [
@@ -1043,17 +979,17 @@ class _HoneyScreenState extends State<_HoneyScreen> {
             Positioned(
                 top: 10,
                 right: 10,
-                child: Container(width: 30, child: Image.asset("cards.png")))
+                child: SizedBox(width: 30, child: Image.asset("cards.png")))
           ])),
-      SizedBox(width: 15),
-      Text("2", style: TextStyle(fontSize: 20)),
-      Container(width: 40, child: Image.asset("points.png"))
+      const SizedBox(width: 15),
+      const Text("2", style: TextStyle(fontSize: 20)),
+      SizedBox(width: 40, child: Image.asset("points.png"))
     ]);
   }
 
   Widget dicesButton() {
     return Row(children: [
-      Container(
+      SizedBox(
           width: 50,
           height: 50,
           child: Stack(children: [
@@ -1061,11 +997,11 @@ class _HoneyScreenState extends State<_HoneyScreen> {
             Positioned(
                 top: 12,
                 right: 12,
-                child: Container(width: 25, child: Image.asset("dices.png")))
+                child: SizedBox(width: 25, child: Image.asset("dices.png")))
           ])),
-      SizedBox(width: 15),
-      Text("2", style: TextStyle(fontSize: 20)),
-      Container(width: 40, child: Image.asset("points.png")),
+      const SizedBox(width: 15),
+      const Text("2", style: TextStyle(fontSize: 20)),
+      SizedBox(width: 40, child: Image.asset("points.png")),
     ]);
   }
 
@@ -1160,15 +1096,15 @@ class _HoneyScreenState extends State<_HoneyScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('How much nectar do I get today?'),
-            content: Container(
+            title: const Text('How much nectar do I get today?'),
+            content: SizedBox(
                 height: 150,
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Container(width: 90, child: Image.asset("dices.png")),
+                      SizedBox(width: 90, child: Image.asset("dices.png")),
                       Text(widget.honeyRush.temporaryNectar.toString(),
-                          style: TextStyle(fontSize: 30))
+                          style: const TextStyle(fontSize: 30))
                     ])),
             actions: [
               widget.honeyRush.hasRolled
@@ -1184,7 +1120,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                         },
                         child: dicesButton(),
                       ),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 20),
                       TextButton(
                         onPressed: () {
                           updateIsRolling(widget.userUID, false);
@@ -1194,7 +1130,8 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                           showCards();
                           widget.updatePoints(0);
                         },
-                        child: Text('Continue', style: TextStyle(fontSize: 22)),
+                        child: const Text('Continue',
+                            style: TextStyle(fontSize: 22)),
                       )
                     ])
                   : TextButton(
@@ -1205,11 +1142,81 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                         Navigator.of(context).pop();
                         showDice();
                       },
-                      child: Text('Roll', style: TextStyle(fontSize: 22)),
+                      child: const Text('Roll', style: TextStyle(fontSize: 22)),
                     ),
             ],
           );
         });
+  }
+
+  Widget voteProfile(int index, BuildContext context) {
+    return Container(
+        padding: const EdgeInsets.symmetric(vertical: 5.0),
+        child: widget.honeyRush.allProfiles[index].lifes == 0 ||
+                widget.honeyRush.allProfiles[index].hasHoneyFever
+            ? Container(
+                height: 80,
+                width: 180,
+                decoration: BoxDecoration(
+                    color: widget.honeyRush.allProfiles[index].lifes == 0
+                        ? const Color.fromARGB(255, 189, 165, 104)
+                        : const Color.fromARGB(255, 187, 155, 76),
+                    border: Border.all(
+                        color: const Color.fromARGB(143, 17, 12, 4), width: 2),
+                    borderRadius: BorderRadius.circular(10.0)),
+                child: Row(children: [
+                  const SizedBox(width: 5),
+                  SizedBox(
+                    height: 65,
+                    child: Image.asset(
+                        widget.honeyRush.allProfiles[index].avatarTypePath),
+                  ),
+                  const Spacer(),
+                  Text(
+                    widget.honeyRush.allProfiles[index].name,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: const Color.fromARGB(143, 61, 29, 7)),
+                  ),
+                  const Spacer()
+                ]))
+            : GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedNPC = index;
+                    Navigator.of(context).pop();
+                    showVoting();
+                  });
+                },
+                child: Container(
+                    height: 80,
+                    width: 180,
+                    decoration: BoxDecoration(
+                        color: selectedNPC == index
+                            ? const Color.fromARGB(255, 255, 192, 97)
+                            : const Color.fromARGB(255, 255, 223, 142),
+                        border: Border.all(
+                            color: selectedNPC == index
+                                ? const Color.fromARGB(143, 20, 14, 5)
+                                : const Color.fromARGB(143, 17, 12, 4),
+                            width: 2),
+                        borderRadius: BorderRadius.circular(10.0)),
+                    child: Row(children: [
+                      const SizedBox(width: 5),
+                      SizedBox(
+                        height: 65,
+                        child: Image.asset(
+                            widget.honeyRush.allProfiles[index].avatarTypePath),
+                      ),
+                      const Spacer(),
+                      Text(
+                        widget.honeyRush.allProfiles[index].name,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            color: const Color.fromARGB(143, 61, 29, 7)),
+                      ),
+                      const Spacer()
+                    ]))));
   }
 
   Future<dynamic> showVoting() {
@@ -1217,501 +1224,27 @@ class _HoneyScreenState extends State<_HoneyScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Who is the Wasp?'),
-            content: Container(
+            title: const Text('Who is the Wasp?'),
+            content: SizedBox(
                 height: 180,
                 child: Column(children: [
                   Row(children: [
-                    Container(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: widget.honeyRush.allProfiles[0].lifes == 0 ||
-                                widget.honeyRush.allProfiles[0].hasHoneyFever
-                            ? Container(
-                                height: 80,
-                                width: 180,
-                                decoration: BoxDecoration(
-                                    color:
-                                        widget.honeyRush.allProfiles[0].lifes == 0
-                                            ? Color.fromARGB(255, 189, 165, 104)
-                                            : Color.fromARGB(255, 187, 155, 76),
-                                    border: Border.all(
-                                        color: Color.fromARGB(143, 17, 12, 4),
-                                        width: 2),
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                child: Row(children: [
-                                  const SizedBox(width: 5),
-                                  Container(
-                                    height: 65,
-                                    child: Image.asset(widget.honeyRush
-                                        .allProfiles[0].avatarTypePath),
-                                  ),
-                                  Spacer(),
-                                  Text(
-                                    widget.honeyRush.allProfiles[0].name,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(
-                                            fontWeight: FontWeight.w900,
-                                            color:
-                                                Color.fromARGB(143, 61, 29, 7)),
-                                  ),
-                                  Spacer()
-                                ]))
-                            : GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedNPC = 0;
-                                    Navigator.of(context).pop();
-                                    showVoting();
-                                  });
-                                },
-                                child: Container(
-                                    height: 80,
-                                    width: 180,
-                                    decoration: BoxDecoration(
-                                        color: selectedNPC == 0
-                                            ? Color.fromARGB(255, 255, 192, 97)
-                                            : Color.fromARGB(
-                                                255, 255, 223, 142),
-                                        border: Border.all(
-                                            color: selectedNPC == 0
-                                                ? Color.fromARGB(143, 20, 14, 5)
-                                                : Color.fromARGB(
-                                                    143, 17, 12, 4),
-                                            width: 2),
-                                        borderRadius:
-                                            BorderRadius.circular(10.0)),
-                                    child: Row(children: [
-                                      const SizedBox(width: 5),
-                                      Container(
-                                        height: 65,
-                                        child: Image.asset(widget.honeyRush
-                                            .allProfiles[0].avatarTypePath),
-                                      ),
-                                      Spacer(),
-                                      Text(
-                                        widget.honeyRush.allProfiles[0].name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge
-                                            ?.copyWith(
-                                                fontWeight: FontWeight.w900,
-                                                color: Color.fromARGB(
-                                                    143, 61, 29, 7)),
-                                      ),
-                                      Spacer()
-                                    ])))),
-                    SizedBox(width: 10),
-                    Container(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: widget.honeyRush.allProfiles[1].lifes == 0 ||
-                                widget.honeyRush.allProfiles[1].hasHoneyFever
-                            ? Container(
-                                height: 80,
-                                width: 180,
-                                decoration: BoxDecoration(
-                                    color:
-                                        widget.honeyRush.allProfiles[1].lifes == 0
-                                            ? Color.fromARGB(255, 189, 165, 104)
-                                            : Color.fromARGB(255, 187, 155, 76),
-                                    border: Border.all(
-                                        color: Color.fromARGB(143, 17, 12, 4),
-                                        width: 2),
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                child: Row(children: [
-                                  const SizedBox(width: 5),
-                                  Container(
-                                    height: 65,
-                                    child: Image.asset(widget.honeyRush
-                                        .allProfiles[1].avatarTypePath),
-                                  ),
-                                  Spacer(),
-                                  Text(
-                                    widget.honeyRush.allProfiles[1].name,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(
-                                            fontWeight: FontWeight.w900,
-                                            color:
-                                                Color.fromARGB(143, 61, 29, 7)),
-                                  ),
-                                  Spacer()
-                                ]))
-                            : GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedNPC = 1;
-                                    Navigator.of(context).pop();
-                                    showVoting();
-                                  });
-                                },
-                                child: Container(
-                                    height: 80,
-                                    width: 180,
-                                    decoration: BoxDecoration(
-                                        color: selectedNPC == 1
-                                            ? Color.fromARGB(255, 255, 192, 97)
-                                            : Color.fromARGB(
-                                                255, 255, 223, 142),
-                                        border: Border.all(
-                                            color: selectedNPC == 1
-                                                ? Color.fromARGB(143, 20, 14, 5)
-                                                : Color.fromARGB(
-                                                    143, 20, 14, 5),
-                                            width: 2),
-                                        borderRadius:
-                                            BorderRadius.circular(10.0)),
-                                    child: Row(children: [
-                                      const SizedBox(width: 5),
-                                      Container(
-                                        height: 65,
-                                        child: Image.asset(widget.honeyRush
-                                            .allProfiles[1].avatarTypePath),
-                                      ),
-                                      Spacer(),
-                                      Text(
-                                        widget.honeyRush.allProfiles[1].name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge
-                                            ?.copyWith(
-                                                fontWeight: FontWeight.w900,
-                                                color: Color.fromARGB(
-                                                    143, 61, 29, 7)),
-                                      ),
-                                      Spacer()
-                                    ])))),
-                    SizedBox(width: 10),
-                    Container(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: widget.honeyRush.allProfiles[2].lifes == 0 ||
-                                widget.honeyRush.allProfiles[2].hasHoneyFever
-                            ? Container(
-                                height: 80,
-                                width: 180,
-                                decoration: BoxDecoration(
-                                    color:
-                                        widget.honeyRush.allProfiles[2].lifes == 0
-                                            ? Color.fromARGB(255, 189, 165, 104)
-                                            : Color.fromARGB(255, 187, 155, 76),
-                                    border: Border.all(
-                                        color: Color.fromARGB(143, 17, 12, 4),
-                                        width: 2),
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                child: Row(children: [
-                                  const SizedBox(width: 5),
-                                  Container(
-                                    height: 65,
-                                    child: Image.asset(widget.honeyRush
-                                        .allProfiles[2].avatarTypePath),
-                                  ),
-                                  Spacer(),
-                                  Text(
-                                    widget.honeyRush.allProfiles[2].name,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(
-                                            fontWeight: FontWeight.w900,
-                                            color:
-                                                Color.fromARGB(143, 61, 29, 7)),
-                                  ),
-                                  Spacer()
-                                ]))
-                            : GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedNPC = 2;
-                                    Navigator.of(context).pop();
-                                    showVoting();
-                                  });
-                                },
-                                child: Container(
-                                    height: 80,
-                                    width: 180,
-                                    decoration: BoxDecoration(
-                                        color: selectedNPC == 2
-                                            ? Color.fromARGB(255, 255, 192, 97)
-                                            : Color.fromARGB(
-                                                255, 255, 223, 142),
-                                        border: Border.all(
-                                            color: selectedNPC == 2
-                                                ? Color.fromARGB(143, 20, 14, 5)
-                                                : Color.fromARGB(
-                                                    143, 20, 14, 5),
-                                            width: 2),
-                                        borderRadius:
-                                            BorderRadius.circular(10.0)),
-                                    child: Row(children: [
-                                      const SizedBox(width: 5),
-                                      Container(
-                                        height: 65,
-                                        child: Image.asset(widget.honeyRush
-                                            .allProfiles[2].avatarTypePath),
-                                      ),
-                                      Spacer(),
-                                      Text(
-                                        widget.honeyRush.allProfiles[2].name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge
-                                            ?.copyWith(
-                                                fontWeight: FontWeight.w900,
-                                                color: Color.fromARGB(
-                                                    143, 61, 29, 7)),
-                                      ),
-                                      Spacer()
-                                    ])))),
+                    voteProfile(0, context),
+                    const SizedBox(width: 10),
+                    voteProfile(1, context),
+                    const SizedBox(width: 10),
+                    voteProfile(2, context)
                   ]),
                   Row(children: [
-                    Container(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: widget.honeyRush.allProfiles[3].lifes == 0 ||
-                                widget.honeyRush.allProfiles[3].hasHoneyFever
-                            ? Container(
-                                height: 80,
-                                width: 180,
-                                decoration: BoxDecoration(
-                                    color:
-                                        widget.honeyRush.allProfiles[3].lifes == 0
-                                            ? Color.fromARGB(255, 189, 165, 104)
-                                            : Color.fromARGB(255, 187, 155, 76),
-                                    border: Border.all(
-                                        color: Color.fromARGB(143, 17, 12, 4),
-                                        width: 2),
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                child: Row(children: [
-                                  const SizedBox(width: 5),
-                                  Container(
-                                    height: 65,
-                                    child: Image.asset(widget.honeyRush
-                                        .allProfiles[3].avatarTypePath),
-                                  ),
-                                  Spacer(),
-                                  Text(
-                                    widget.honeyRush.allProfiles[3].name,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(
-                                            fontWeight: FontWeight.w900,
-                                            color:
-                                                Color.fromARGB(143, 61, 29, 7)),
-                                  ),
-                                  Spacer()
-                                ]))
-                            : GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedNPC = 3;
-                                    Navigator.of(context).pop();
-                                    showVoting();
-                                  });
-                                },
-                                child: Container(
-                                    height: 80,
-                                    width: 180,
-                                    decoration: BoxDecoration(
-                                        color: selectedNPC == 3
-                                            ? Color.fromARGB(255, 255, 192, 97)
-                                            : Color.fromARGB(
-                                                255, 255, 223, 142),
-                                        border: Border.all(
-                                            color: selectedNPC == 3
-                                                ? Color.fromARGB(143, 20, 14, 5)
-                                                : Color.fromARGB(
-                                                    143, 20, 14, 5),
-                                            width: 2),
-                                        borderRadius:
-                                            BorderRadius.circular(10.0)),
-                                    child: Row(children: [
-                                      const SizedBox(width: 5),
-                                      Container(
-                                        height: 65,
-                                        child: Image.asset(widget.honeyRush
-                                            .allProfiles[3].avatarTypePath),
-                                      ),
-                                      Spacer(),
-                                      Text(
-                                        widget.honeyRush.allProfiles[3].name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge
-                                            ?.copyWith(
-                                                fontWeight: FontWeight.w900,
-                                                color: Color.fromARGB(
-                                                    143, 61, 29, 7)),
-                                      ),
-                                      Spacer()
-                                    ])))),
-                    SizedBox(width: 10),
-                    Container(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: widget.honeyRush.allProfiles[4].lifes == 0 ||
-                                widget.honeyRush.allProfiles[4].hasHoneyFever
-                            ? Container(
-                                height: 80,
-                                width: 180,
-                                decoration: BoxDecoration(
-                                    color:
-                                        widget.honeyRush.allProfiles[4].lifes == 0
-                                            ? Color.fromARGB(255, 189, 165, 104)
-                                            : Color.fromARGB(255, 187, 155, 76),
-                                    border: Border.all(
-                                        color: Color.fromARGB(143, 17, 12, 4),
-                                        width: 2),
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                child: Row(children: [
-                                  const SizedBox(width: 5),
-                                  Container(
-                                    height: 65,
-                                    child: Image.asset(widget.honeyRush
-                                        .allProfiles[4].avatarTypePath),
-                                  ),
-                                  Spacer(),
-                                  Text(
-                                    widget.honeyRush.allProfiles[4].name,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(
-                                            fontWeight: FontWeight.w900,
-                                            color:
-                                                Color.fromARGB(143, 61, 29, 7)),
-                                  ),
-                                  Spacer()
-                                ]))
-                            : GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedNPC = 4;
-                                    Navigator.of(context).pop();
-                                    showVoting();
-                                  });
-                                },
-                                child: Container(
-                                    height: 80,
-                                    width: 180,
-                                    decoration: BoxDecoration(
-                                        color: selectedNPC == 4
-                                            ? Color.fromARGB(255, 255, 192, 97)
-                                            : Color.fromARGB(
-                                                255, 255, 223, 142),
-                                        border: Border.all(
-                                            color: selectedNPC == 4
-                                                ? Color.fromARGB(143, 20, 14, 5)
-                                                : Color.fromARGB(
-                                                    143, 20, 14, 5),
-                                            width: 2),
-                                        borderRadius:
-                                            BorderRadius.circular(10.0)),
-                                    child: Row(children: [
-                                      const SizedBox(width: 5),
-                                      Container(
-                                        height: 65,
-                                        child: Image.asset(widget.honeyRush
-                                            .allProfiles[4].avatarTypePath),
-                                      ),
-                                      Spacer(),
-                                      Text(
-                                        widget.honeyRush.allProfiles[4].name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge
-                                            ?.copyWith(
-                                                fontWeight: FontWeight.w900,
-                                                color: Color.fromARGB(
-                                                    143, 61, 29, 7)),
-                                      ),
-                                      Spacer()
-                                    ])))),
-                    SizedBox(width: 10),
-                    Container(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: widget.honeyRush.allProfiles[5].lifes == 0 ||
-                                widget.honeyRush.allProfiles[5].hasHoneyFever
-                            ? Container(
-                                height: 80,
-                                width: 180,
-                                decoration: BoxDecoration(
-                                    color:
-                                        widget.honeyRush.allProfiles[5].lifes == 0
-                                            ? Color.fromARGB(255, 189, 165, 104)
-                                            : Color.fromARGB(255, 187, 155, 76),
-                                    border: Border.all(
-                                        color: Color.fromARGB(143, 17, 12, 4),
-                                        width: 2),
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                child: Row(children: [
-                                  const SizedBox(width: 5),
-                                  Container(
-                                    height: 65,
-                                    child: Image.asset(widget.honeyRush
-                                        .allProfiles[5].avatarTypePath),
-                                  ),
-                                  Spacer(),
-                                  Text(
-                                    widget.honeyRush.allProfiles[5].name,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(
-                                            fontWeight: FontWeight.w900,
-                                            color:
-                                                Color.fromARGB(143, 61, 29, 7)),
-                                  ),
-                                  Spacer()
-                                ]))
-                            : GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedNPC = 5;
-                                    Navigator.of(context).pop();
-                                    showVoting();
-                                  });
-                                },
-                                child: Container(
-                                    height: 80,
-                                    width: 180,
-                                    decoration: BoxDecoration(
-                                        color: selectedNPC == 5
-                                            ? Color.fromARGB(255, 255, 192, 97)
-                                            : Color.fromARGB(
-                                                255, 255, 223, 142),
-                                        border: Border.all(
-                                            color: selectedNPC == 5
-                                                ? Color.fromARGB(143, 20, 14, 5)
-                                                : Color.fromARGB(
-                                                    143, 20, 14, 5),
-                                            width: 2),
-                                        borderRadius:
-                                            BorderRadius.circular(10.0)),
-                                    child: Row(children: [
-                                      const SizedBox(width: 5),
-                                      Container(
-                                        height: 65,
-                                        child: Image.asset(widget.honeyRush
-                                            .allProfiles[5].avatarTypePath),
-                                      ),
-                                      Spacer(),
-                                      Text(
-                                        widget.honeyRush.allProfiles[5].name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge
-                                            ?.copyWith(
-                                                fontWeight: FontWeight.w900,
-                                                color: Color.fromARGB(
-                                                    143, 61, 29, 7)),
-                                      ),
-                                      Spacer()
-                                    ])))),
+                    voteProfile(3, context),
+                    const SizedBox(width: 10),
+                    voteProfile(4, context),
+                    const SizedBox(width: 10),
+                    voteProfile(5, context)
                   ])
                 ])),
             actions: [
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
               TextButton(
                 onPressed: () {
                   randomizeHoneyFever(selectedNPC);
@@ -1719,7 +1252,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                   showDice();
                 },
                 child: Text(selectedNPC == 9 ? 'Skip Vote' : 'Continue',
-                    style: TextStyle(fontSize: 22)),
+                    style: const TextStyle(fontSize: 22)),
               )
             ],
           );
@@ -1731,7 +1264,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Which cards can I play today?'),
+            title: const Text('Which cards can I play today?'),
             content: getRandomCards(),
             actions: [
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -1746,14 +1279,14 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                   },
                   child: cardsButton(),
                 ),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 TextButton(
                   onPressed: () {
                     updateIsCarding(widget.userUID, false);
                     Navigator.of(context).pop();
                     widget.updatePoints(0);
                   },
-                  child: Text('Continue', style: TextStyle(fontSize: 22)),
+                  child: const Text('Continue', style: TextStyle(fontSize: 22)),
                 )
               ])
             ],
@@ -1776,16 +1309,12 @@ class _HoneyScreenState extends State<_HoneyScreen> {
         const Spacer(),
         Column(children: [
           dayNight(),
-          //Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          //dicesButtonOld(),
-          //SizedBox(width: 30),
           honeycomb(),
-          //]),
-          Spacer(),
+          const Spacer(),
           getPlayedCards(),
-          Spacer(),
+          const Spacer(),
           getCards(),
-          Spacer()
+          const Spacer()
         ]),
         const Spacer(),
         profiles(),

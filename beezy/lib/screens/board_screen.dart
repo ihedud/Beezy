@@ -11,14 +11,12 @@ List<Widget> starIcons = <Widget>[
 class BoardScreen extends StatelessWidget {
   final String userEmail;
   final String userUID;
-  //final PMTinfo info;
   final Function(int) updatePoints;
 
   const BoardScreen(
       {Key? key,
       required this.userEmail,
       required this.userUID,
-      //required this.info,
       required this.updatePoints})
       : super(key: key);
 
@@ -56,19 +54,16 @@ class BoardScreen extends StatelessWidget {
 }
 
 class _BoardScreen extends StatefulWidget {
-  const _BoardScreen({
-    required this.userEmail,
-    required this.userUID,
-    required this.info,
-    required this.updatePoints,
-    /*required this.tasks*/
-  });
+  const _BoardScreen(
+      {required this.userEmail,
+      required this.userUID,
+      required this.info,
+      required this.updatePoints});
 
   final String userEmail;
   final String userUID;
   final PMTinfo info;
   final Function(int) updatePoints;
-  //final List<Task> tasks;
 
   @override
   State<_BoardScreen> createState() => _BoardScreenState();
@@ -111,18 +106,6 @@ class _BoardScreenState extends State<_BoardScreen> {
       print('Error updating status: $e');
     }
   }
-
-  // void _addColumn(String id, String columnTitle, bool isEditingText,
-  //     TextEditingController editingController) {
-  //   ColumnBZ column = ColumnBZ();
-  //   column.id = id;
-  //   column.columnTitle = columnTitle + (int.parse(id) + 1).toString();
-  //   column.isEditingText = isEditingText;
-  //   column.editingController = editingController;
-  //   setState(() {
-  //     widget.board.columns.add(column);
-  //   });
-  // }
 
   Future<void> updateName(String newName, String columnID) async {
     try {
@@ -289,8 +272,6 @@ class _BoardScreenState extends State<_BoardScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              //Expanded(
-                              //child:
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -299,7 +280,6 @@ class _BoardScreenState extends State<_BoardScreen> {
                                   _getKey(column)
                                 ],
                               ),
-                              //),
                               Expanded(
                                   child: Column(
                                 children: [
@@ -309,49 +289,43 @@ class _BoardScreenState extends State<_BoardScreen> {
                                           children:
                                               _getTasks(column, context))),
                                   !column.isKey
-                                      ? OutlinedButton(
-                                          style: OutlinedButton.styleFrom(
-                                            side: const BorderSide(
-                                                width: 1.0,
-                                                color: Color.fromARGB(
-                                                    143, 20, 14, 5)),
-                                          ),
-                                          onPressed: () {
-                                            _addTask('New Task', column);
-                                          },
-                                          child: const Icon(Icons.add,
-                                              color: Color.fromARGB(
-                                                  143, 20, 14, 5)))
+                                      ? Tooltip(
+                                          message: "Add new task",
+                                          child: OutlinedButton(
+                                              style: OutlinedButton.styleFrom(
+                                                side: const BorderSide(
+                                                    width: 1.0,
+                                                    color: Color.fromARGB(
+                                                        143, 20, 14, 5)),
+                                              ),
+                                              onPressed: () {
+                                                _addTask('New Task', column);
+                                              },
+                                              child: const Icon(Icons.add,
+                                                  color: Color.fromARGB(
+                                                      143, 20, 14, 5))))
                                       : Container(),
                                 ],
                               )),
                               !column.isKey
-                                  ? OutlinedButton(
-                                      style: OutlinedButton.styleFrom(
-                                        side: const BorderSide(
-                                            width: 1.0,
-                                            color:
-                                                Color.fromARGB(143, 20, 14, 5)),
-                                      ),
-                                      onPressed: () {
-                                        _deleteColumn(
-                                            column.id, column.displayOrder);
-                                      },
-                                      child: const Tooltip(
-                                        message: 'Delete this column',
+                                  ? Tooltip(
+                                      message: 'Delete this column',
+                                      child: OutlinedButton(
+                                        style: OutlinedButton.styleFrom(
+                                          side: const BorderSide(
+                                              width: 1.0,
+                                              color: Color.fromARGB(
+                                                  143, 20, 14, 5)),
+                                        ),
+                                        onPressed: () {
+                                          _deleteColumn(
+                                              column.id, column.displayOrder);
+                                        },
                                         child: Icon(Icons.remove_circle,
                                             color:
                                                 Color.fromARGB(143, 20, 14, 5)),
                                       ))
                                   : Container(),
-
-                              // OutlinedButton(
-                              //     onPressed: () {
-                              //       _editKey(column);
-                              //     },
-                              //     child: Tooltip(
-                              //         message: 'Make this column a Key',
-                              //         child: _getKey(column)))
                             ],
                           )))));
         });
@@ -390,34 +364,38 @@ class _BoardScreenState extends State<_BoardScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(task.name),
-                      OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                                width: 1.0,
-                                color: Color.fromARGB(143, 20, 14, 5)),
-                          ),
-                          onPressed: () {
-                            _deleteTask(task.id);
-                          },
-                          //tooltip: 'Delete this column',
-                          child: const Icon(Icons.remove_circle,
-                              color: Color.fromARGB(143, 20, 14, 5))),
-                      OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                                width: 1.0,
-                                color: Color.fromARGB(143, 20, 14, 5)),
-                          ),
-                          onPressed: () async {
-                            await Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => TaskScreen(
-                                    taskID: task.id, userUID: widget.userUID),
+                      Tooltip(
+                          message: "Delete this task",
+                          child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(
+                                    width: 1.0,
+                                    color: Color.fromARGB(143, 20, 14, 5)),
                               ),
-                            );
-                          },
-                          child: const Icon(Icons.edit,
-                              color: Color.fromARGB(143, 20, 14, 5))),
+                              onPressed: () {
+                                _deleteTask(task.id);
+                              },
+                              child: const Icon(Icons.remove_circle,
+                                  color: Color.fromARGB(143, 20, 14, 5)))),
+                      Tooltip(
+                          message: "Edit this task",
+                          child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(
+                                    width: 1.0,
+                                    color: Color.fromARGB(143, 20, 14, 5)),
+                              ),
+                              onPressed: () async {
+                                await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => TaskScreen(
+                                        taskID: task.id,
+                                        userUID: widget.userUID),
+                                  ),
+                                );
+                              },
+                              child: const Icon(Icons.edit,
+                                  color: Color.fromARGB(143, 20, 14, 5)))),
                     ],
                   )))),
     );
@@ -446,30 +424,23 @@ class _BoardScreenState extends State<_BoardScreen> {
   Widget build(BuildContext context) {
     return Row(children: [
       Expanded(
-        child: ReorderableListView(
-          scrollDirection: Axis.horizontal,
-          children: _getColumns(),
-          onReorder: (int oldIndex, int newIndex) {
-            //setState(() {
-            if (oldIndex < newIndex) {
-              newIndex -= 1;
-            }
-            final ColumnBZ column = widget.info.columns.removeAt(oldIndex);
-            widget.info.columns.insert(newIndex, column);
-            moveColumn();
-            //});
-          },
-        ),
-      ),
+          child: ReorderableListView(
+              scrollDirection: Axis.horizontal,
+              children: _getColumns(),
+              onReorder: (int oldIndex, int newIndex) {
+                if (oldIndex < newIndex) {
+                  newIndex -= 1;
+                }
+                final ColumnBZ column = widget.info.columns.removeAt(oldIndex);
+                widget.info.columns.insert(newIndex, column);
+                moveColumn();
+              })),
       FloatingActionButton(
         onPressed: () {
           _addColumn('New Column ');
-          // _addColumn(widget.board.columnID.toString(), 'New Column ', false,
-          //     TextEditingController());
-          // widget.board.columnID++;
         },
-        tooltip: 'Create new column',
-        backgroundColor: Color.fromARGB(255, 230, 146, 38),
+        tooltip: 'Add new column',
+        backgroundColor: const Color.fromARGB(255, 230, 146, 38),
         child: const Icon(Icons.add),
       ),
     ]);

@@ -1,3 +1,4 @@
+import 'package:beezy/screens/task_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../models/board.dart';
@@ -7,9 +8,7 @@ class BacklogScreen extends StatelessWidget {
   final Function(int) updatePoints;
 
   const BacklogScreen(
-      {Key? key,
-      required this.userUID,
-      required this.updatePoints})
+      {Key? key, required this.userUID, required this.updatePoints})
       : super(key: key);
 
   @override
@@ -109,7 +108,9 @@ class _BacklogScreenState extends State<_BacklogScreen> {
   }
 
   void _addBacklogTask(String userUID, String name) {
-    FirebaseFirestore.instance.collection("/users/$userUID/PMTinfo/PMTinfo/tasks").add({
+    FirebaseFirestore.instance
+        .collection("/users/$userUID/PMTinfo/PMTinfo/tasks")
+        .add({
       'columnID': widget.info.columns.first.id,
       'sprintID': 0,
       'name': name,
@@ -121,7 +122,9 @@ class _BacklogScreenState extends State<_BacklogScreen> {
   }
 
   void _addBoardTask(String userUID, String name) {
-    FirebaseFirestore.instance.collection("/users/$userUID/PMTinfo/PMTinfo/tasks").add({
+    FirebaseFirestore.instance
+        .collection("/users/$userUID/PMTinfo/PMTinfo/tasks")
+        .add({
       'columnID': widget.info.columns.first.id,
       'sprintID': 1,
       'name': name,
@@ -133,7 +136,9 @@ class _BacklogScreenState extends State<_BacklogScreen> {
   }
 
   void _deleteTask(String userUID, String taskID) {
-    FirebaseFirestore.instance.doc('/users/$userUID/PMTinfo/PMTinfo/tasks/$taskID').delete();
+    FirebaseFirestore.instance
+        .doc('/users/$userUID/PMTinfo/PMTinfo/tasks/$taskID')
+        .delete();
   }
 
   List<Widget> _getSprintTasks(BuildContext context) {
@@ -195,7 +200,7 @@ class _BacklogScreenState extends State<_BacklogScreen> {
                             style: const TextStyle(color: Colors.black),
                             underline: Container(
                               height: 2,
-                              color: Color.fromARGB(255, 230, 146, 38),
+                              color: const Color.fromARGB(255, 230, 146, 38),
                             ),
                             onChanged: (String? value) {
                               for (ColumnBZ column in widget.info.columns) {
@@ -223,23 +228,28 @@ class _BacklogScreenState extends State<_BacklogScreen> {
                               );
                             }).toList(),
                           ),
-                          OutlinedButton(
-                              onPressed: () {
-                                _deleteTask(widget.userUID, task.id);
-                              },
-                              //tooltip: 'Delete this column',
-                              child: const Icon(Icons.remove_circle)),
-                          // OutlinedButton(
-                          //     onPressed: () async {
-                          //       await Navigator.of(context).push(
-                          //         MaterialPageRoute(
-                          //           builder: (context) =>
-                          //               TaskScreen(selectedTask: task, userUID: widget.u,),
-                          //         ),
-                          //       );
-                          //       setState(() {});
-                          //     },
-                          //     child: const Icon(Icons.edit)),
+                          Tooltip(
+                              message: "Delete this task",
+                              child: OutlinedButton(
+                                  onPressed: () {
+                                    _deleteTask(widget.userUID, task.id);
+                                  },
+                                  child: const Icon(Icons.remove_circle))),
+                          Tooltip(
+                              message: "Edit this task",
+                              child: OutlinedButton(
+                                  onPressed: () async {
+                                    await Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => TaskScreen(
+                                          taskID: task.id,
+                                          userUID: widget.userUID,
+                                        ),
+                                      ),
+                                    );
+                                    setState(() {});
+                                  },
+                                  child: const Icon(Icons.edit))),
                         ],
                       ))))),
     );
@@ -278,11 +288,14 @@ class _BacklogScreenState extends State<_BacklogScreen> {
                               Column(
                                 children: _getSprintTasks(context),
                               ),
-                              OutlinedButton(
-                                  onPressed: () {
-                                    _addBoardTask(widget.userUID, 'New Task');
-                                  },
-                                  child: const Icon(Icons.add)),
+                              Tooltip(
+                                  message: "Add new task",
+                                  child: OutlinedButton(
+                                      onPressed: () {
+                                        _addBoardTask(
+                                            widget.userUID, 'New Task');
+                                      },
+                                      child: const Icon(Icons.add))),
                             ])))));
       }),
       DragTarget<Task>(onAccept: (task) {
@@ -309,11 +322,14 @@ class _BacklogScreenState extends State<_BacklogScreen> {
                               Column(
                                 children: _getBacklogTasks(context),
                               ),
-                              OutlinedButton(
-                                  onPressed: () {
-                                    _addBacklogTask(widget.userUID, 'New Task');
-                                  },
-                                  child: const Icon(Icons.add)),
+                              Tooltip(
+                                  message: "Add new task",
+                                  child: OutlinedButton(
+                                      onPressed: () {
+                                        _addBacklogTask(
+                                            widget.userUID, 'New Task');
+                                      },
+                                      child: const Icon(Icons.add)))
                             ])))));
       })
     ]);

@@ -60,7 +60,6 @@ class _AvatarScreen extends StatefulWidget {
 }
 
 class _AvatarScreenState extends State<_AvatarScreen> {
-  //int selectedButtonIndex = 0;
   late List<String> path;
 
   @override
@@ -106,9 +105,6 @@ class _AvatarScreenState extends State<_AvatarScreen> {
   }
 
   void selectButton(int index) {
-    // setState(() {
-    //   selectedButtonIndex = index;
-    // });
     updateSelectedButtonIndex(index);
     setState(() {
       widget.avatar.selectedButtonIndex = index;
@@ -124,13 +120,6 @@ class _AvatarScreenState extends State<_AvatarScreen> {
                 ? widget.avatar.toysList
                 : widget.avatar.sleepList) {
       if (item.name == name) {
-        // setState(() {
-        //   if (item.amount == 1) {
-        //     widget.avatar.foodList.removeWhere((element) => item == element);
-        //     return;
-        //   }
-        //   item.amount--;
-        // });
         if (item.amount == 1) {
           FirebaseFirestore.instance
               .doc('${path[widget.avatar.selectedButtonIndex]}/${item.id}')
@@ -155,9 +144,6 @@ class _AvatarScreenState extends State<_AvatarScreen> {
                   ? widget.avatar.toysList
                   : widget.avatar.sleepList) {
         if (item.name == name) {
-          // setState(() {
-          //   foodItem.amount++;
-          // });
           updateAmount(item.amount + 1, item.id, type);
           return;
         }
@@ -169,121 +155,8 @@ class _AvatarScreenState extends State<_AvatarScreen> {
         'fillAmount': fillAmount,
         'assetPath': assetPath,
       });
-
-      // Item item = Item();
-      // item.name = name;
-      // item.amount = 1;
-      // item.fillAmount = fillAmount;
-      // item.assetPath = assetPath;
-      // setState(() {
-      //   if (type == 0) {
-      //     widget.avatar.foodList.add(item);
-      //   } else if (type == 1) {
-      //     widget.avatar.hygieneList.add(item);
-      //   } else if (type == 2) {
-      //     widget.avatar.toysList.add(item);
-      //   } else if (type == 3) {
-      //     widget.avatar.sleepList.add(item);
-      //   }
-      // });
     }
   }
-
-  // void _addFood(/*int id, int foodID,*/ String name, String assetPath,
-  //     int price, double fillAmount) {
-  //   if (widget.updatePoints(-price)) {
-  //     for (Item foodItem in widget.avatar.foodList) {
-  //       if (foodItem.name == name) {
-  //         setState(() {
-  //           foodItem.amount++;
-  //         });
-  //         return;
-  //       }
-  //     }
-  //     Item food = Item();
-  //     //food.id = id;
-  //     //food.foodID = foodID;
-  //     food.name = name;
-  //     food.amount = 1;
-  //     food.fillAmount = fillAmount;
-  //     food.assetPath = assetPath;
-  //     setState(() {
-  //       widget.avatar.foodList.add(food);
-  //     });
-  //   }
-  // }
-
-  // void _addHygiene(/*int id, int hygieneID, */ String name, String assetPath,
-  //     int price, double fillAmount) {
-  //   if (widget.updatePoints(-price)) {
-  //     for (Item hygieneItem in widget.avatar.hygieneList) {
-  //       if (hygieneItem.name == name) {
-  //         setState(() {
-  //           hygieneItem.amount++;
-  //         });
-  //         return;
-  //       }
-  //     }
-  //     Item hygiene = Item();
-  //     //hygiene.id = id;
-  //     //hygiene.hygieneID = hygieneID;
-  //     hygiene.name = name;
-  //     hygiene.amount = 1;
-  //     hygiene.fillAmount = fillAmount;
-  //     hygiene.assetPath = assetPath;
-  //     setState(() {
-  //       widget.avatar.hygieneList.add(hygiene);
-  //     });
-  //   }
-  // }
-
-  // void _addToy(/*int id,  int toyID, */String name, String assetPath, int price,
-  //     double fillAmount) {
-  //   if (widget.updatePoints(-price)) {
-  //     for (Item toyItem in widget.avatar.toyList) {
-  //       if (toyItem.name == name) {
-  //         setState(() {
-  //           toyItem.amount++;
-  //         });
-  //         return;
-  //       }
-  //     }
-  //     Item toy = Item();
-  //     //toy.id = id;
-  //     //toy.toyID = toyID;
-  //     toy.name = name;
-  //     toy.amount = 1;
-  //     toy.fillAmount = fillAmount;
-  //     toy.assetPath = assetPath;
-  //     setState(() {
-  //       widget.avatar.toyList.add(toy);
-  //     });
-  //   }
-  // }
-
-  // void _addSleep(/*int id,  int sleepID,*/ String name, String assetPath,
-  //     int price, double fillAmount) {
-  //   if (widget.updatePoints(-price)) {
-  //     for (Item sleepItem in widget.avatar.sleepList) {
-  //       if (sleepItem.name == name) {
-  //         setState(() {
-  //           sleepItem.amount++;
-  //         });
-  //         return;
-  //       }
-  //     }
-  //     Item sleep = Item();
-  //     //sleep.id = id;
-  //     //sleep.sleepID = sleepID;
-  //     sleep.name = name;
-  //     sleep.amount = 1;
-  //     sleep.fillAmount = fillAmount;
-  //     sleep.assetPath = assetPath;
-  //     setState(() {
-  //       widget.avatar.sleepList.add(sleep);
-  //     });
-  //   }
-  // }
 
   Widget _getInventory(int spot) {
     if (widget.avatar.selectedButtonIndex == 0) {
@@ -308,7 +181,6 @@ class _AvatarScreenState extends State<_AvatarScreen> {
   }
 
   Widget _buildInventory(Item item) {
-    //item.isRepresented = true;
     return Container(
         padding: const EdgeInsets.all(5),
         child: Stack(
@@ -477,9 +349,8 @@ class _AvatarScreenState extends State<_AvatarScreen> {
                       height: 60,
                       child: IconButton(
                         onPressed: () {
-                          _addItem(/*widget.avatar.foodID, foodID, */ name,
+                          _addItem(name,
                               assetPath, price, fillAmount, 0);
-                          //widget.avatar.foodID++;
                         },
                         icon: Image(image: AssetImage(assetPath)),
                       ))),
@@ -506,14 +377,11 @@ class _AvatarScreenState extends State<_AvatarScreen> {
                       height: 60,
                       child: IconButton(
                         onPressed: () {
-                          _addItem(
-                              /*widget.avatar.hygieneID, hygieneID,*/
-                              name,
+                          _addItem(name,
                               assetPath,
                               price,
                               fillAmount,
                               1);
-                          //widget.avatar.hygieneID++;
                         },
                         icon: Image(image: AssetImage(assetPath)),
                       ))),
@@ -540,9 +408,8 @@ class _AvatarScreenState extends State<_AvatarScreen> {
                       height: 60,
                       child: IconButton(
                         onPressed: () {
-                          _addItem(/*widget.avatar.toyID,  toyID,*/ name,
+                          _addItem(name,
                               assetPath, price, fillAmount, 2);
-                          //widget.avatar.toyID++;
                         },
                         icon: Image(image: AssetImage(assetPath)),
                       ))),
@@ -569,9 +436,8 @@ class _AvatarScreenState extends State<_AvatarScreen> {
                       height: 60,
                       child: IconButton(
                         onPressed: () {
-                          _addItem(/*widget.avatar.sleepID, sleepID, */ name,
+                          _addItem(name,
                               assetPath, price, fillAmount, 3);
-                          //widget.avatar.sleepID++;
                         },
                         icon: Image(image: AssetImage(assetPath)),
                       ))),
@@ -759,36 +625,28 @@ class _AvatarScreenState extends State<_AvatarScreen> {
             if (widget.avatar.selectedButtonIndex == 0) {
               if (widget.avatar.food + item.fillAmount < 1) {
                 updateFillAmount(widget.avatar.food + item.fillAmount, 'food');
-                //widget.avatar.food = widget.avatar.food + item.fillAmount;
               } else {
                 updateFillAmount(1, 'food');
-                //widget.avatar.food = 1;
               }
             } else if (widget.avatar.selectedButtonIndex == 1) {
               if (widget.avatar.hygiene + item.fillAmount < 1) {
                 updateFillAmount(
                     widget.avatar.hygiene + item.fillAmount, 'hygiene');
-                //widget.avatar.food = widget.avatar.food + item.fillAmount;
               } else {
                 updateFillAmount(1, 'hygiene');
-                //widget.avatar.food = 1;
               }
             } else if (widget.avatar.selectedButtonIndex == 2) {
               if (widget.avatar.toys + item.fillAmount < 1) {
                 updateFillAmount(widget.avatar.toys + item.fillAmount, 'toys');
-                //widget.avatar.food = widget.avatar.food + item.fillAmount;
               } else {
                 updateFillAmount(1, 'toys');
-                //widget.avatar.food = 1;
               }
             } else if (widget.avatar.selectedButtonIndex == 3) {
               if (widget.avatar.sleep + item.fillAmount < 1) {
                 updateFillAmount(
                     widget.avatar.sleep + item.fillAmount, 'sleep');
-                //widget.avatar.food = widget.avatar.food + item.fillAmount;
               } else {
                 updateFillAmount(1, 'sleep');
-                //widget.avatar.food = 1;
               }
             }
           }, builder:

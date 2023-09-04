@@ -298,15 +298,15 @@ class _MainScreenState extends State<_MainScreen>
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('You lost!'),
-            content: Text("You didn't fill the honeycomb. What a pity!"),
+            title: const Text('You lost!'),
+            content: const Text("You didn't fill the honeycomb. What a pity!"),
             actions: [
               TextButton(
                 onPressed: () {
                   reset();
                   Navigator.of(context).pop();
                 },
-                child: Text("Restart", style: TextStyle(fontSize: 22)),
+                child: const Text("Restart", style: TextStyle(fontSize: 22)),
               )
             ],
           );
@@ -318,15 +318,15 @@ class _MainScreenState extends State<_MainScreen>
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('You Won!'),
-            content: Text("You filled all the honeycomb. Congratulations!"),
+            title: const Text('You Won!'),
+            content: const Text("You filled all the honeycomb. Congratulations!"),
             actions: [
               TextButton(
                 onPressed: () {
                   reset();
                   Navigator.of(context).pop();
                 },
-                child: Text("Restart", style: TextStyle(fontSize: 22)),
+                child: const Text("Restart", style: TextStyle(fontSize: 22)),
               )
             ],
           );
@@ -404,7 +404,7 @@ class _MainScreenState extends State<_MainScreen>
               BacklogScreen(
                   userUID: widget.userUID, updatePoints: updatePoints),
               IssuesScreen(userUID: widget.userUID),
-              AvatarScreen(userUID: widget.userUID,/*avatar: avatar, */updatePoints: updatePoints),
+              AvatarScreen(userUID: widget.userUID, updatePoints: updatePoints),
               HoneyScreen(
                   updatePoints: updatePoints,
                   userUID: widget.userUID,

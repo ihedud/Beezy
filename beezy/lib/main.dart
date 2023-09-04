@@ -29,7 +29,7 @@ class Beezy extends StatelessWidget {
           title: 'Beezy!',
           userEmail: user.email!,
           userUID: user
-              .uid), //fer condicio, on si s'acaba de registrar, que aparegui la pagina de userinfo, si ja estava registrat, apareix la mainscreen
+              .uid)
     );
   }
 }

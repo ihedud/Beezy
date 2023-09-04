@@ -7,28 +7,19 @@ class Avatar {
   List<Item> hygieneList = <Item>[];
   List<Item> toysList = <Item>[];
   List<Item> sleepList = <Item>[];
-  // int foodID = 0;
-  // int hygieneID = 0;
-  // int toyID = 0;
-  //int sleepID = 0;
   double food = 0;
   double hygiene = 0;
   double toys = 0;
   double sleep = 0;
   int selectedButtonIndex = 0;
 
-  Avatar.fromFirestore(
-      Map<String, dynamic> json, List<Item> foodList, List<Item> hygieneList, List<Item> toysList, List<Item> sleepList)
+  Avatar.fromFirestore(Map<String, dynamic> json, this.foodList,
+      this.hygieneList, this.toysList, this.sleepList)
       : food = json['food'],
         hygiene = json['hygiene'],
         toys = json['toys'],
         sleep = json['sleep'],
-        selectedButtonIndex = json['selectedButtonIndex'] {
-this.foodList = foodList;
-this.hygieneList = hygieneList;
-this.toysList = toysList;
-this.sleepList = sleepList;
-        }
+        selectedButtonIndex = json['selectedButtonIndex'];
 }
 
 Stream<Avatar> userBeeboSnapshot(String userUID) {
@@ -37,13 +28,13 @@ Stream<Avatar> userBeeboSnapshot(String userUID) {
   final foodStream =
       db.collection("/users/$userUID/beebo/beebo/foodList").snapshots();
 
-      final hygieneStream =
+  final hygieneStream =
       db.collection("/users/$userUID/beebo/beebo/hygieneList").snapshots();
 
-      final toysStream =
+  final toysStream =
       db.collection("/users/$userUID/beebo/beebo/toysList").snapshots();
 
-      final sleepStream =
+  final sleepStream =
       db.collection("/users/$userUID/beebo/beebo/sleepList").snapshots();
 
   final controller = StreamController<Avatar>();
@@ -58,7 +49,8 @@ Stream<Avatar> userBeeboSnapshot(String userUID) {
     for (final foodDoc in queryFood.docs) {
       foodList.add(Item.fromFirestore(foodDoc.id, foodDoc.data()));
     }
-    updateController(controller, foodList, hygieneList, toysList, sleepList, userUID);
+    updateController(
+        controller, foodList, hygieneList, toysList, sleepList, userUID);
   });
 
   hygieneStream.listen((queryHygiene) {
@@ -66,7 +58,8 @@ Stream<Avatar> userBeeboSnapshot(String userUID) {
     for (final hygieneDoc in queryHygiene.docs) {
       hygieneList.add(Item.fromFirestore(hygieneDoc.id, hygieneDoc.data()));
     }
-    updateController(controller, foodList, hygieneList, toysList, sleepList, userUID);
+    updateController(
+        controller, foodList, hygieneList, toysList, sleepList, userUID);
   });
 
   toysStream.listen((queryToys) {
@@ -74,7 +67,8 @@ Stream<Avatar> userBeeboSnapshot(String userUID) {
     for (final toysDoc in queryToys.docs) {
       toysList.add(Item.fromFirestore(toysDoc.id, toysDoc.data()));
     }
-    updateController(controller, foodList, hygieneList, toysList, sleepList, userUID);
+    updateController(
+        controller, foodList, hygieneList, toysList, sleepList, userUID);
   });
 
   sleepStream.listen((querySleep) {
@@ -82,41 +76,33 @@ Stream<Avatar> userBeeboSnapshot(String userUID) {
     for (final sleepDoc in querySleep.docs) {
       sleepList.add(Item.fromFirestore(sleepDoc.id, sleepDoc.data()));
     }
-    updateController(controller, foodList, hygieneList, toysList, sleepList, userUID);
+    updateController(
+        controller, foodList, hygieneList, toysList, sleepList, userUID);
   });
 
   return controller.stream;
 }
 
-void updateController(StreamController<Avatar> controller,
-    List<Item> foodList, List<Item> hygieneList, List<Item> toysList, List<Item> sleepList, String userUID) {
+void updateController(
+    StreamController<Avatar> controller,
+    List<Item> foodList,
+    List<Item> hygieneList,
+    List<Item> toysList,
+    List<Item> sleepList,
+    String userUID) {
   final db = FirebaseFirestore.instance;
 
   db.collection("/users/$userUID/beebo").get().then((query) {
     late Avatar beebo;
     for (final doc in query.docs) {
-      beebo = Avatar.fromFirestore(doc.data(), foodList, hygieneList, toysList, sleepList);
+      beebo = Avatar.fromFirestore(
+          doc.data(), foodList, hygieneList, toysList, sleepList);
     }
     controller.add(beebo);
   }).catchError((error) {
     print(error);
   });
 }
-
-// Stream<Avatar?> userBeeboSnapshot(String userUID) {
-//   final db = FirebaseFirestore.instance;
-//   final stream =
-//       db.doc("/users/$userUID/beebo/beebo").snapshots();
-//   return stream.map((doc) {
-//     if (doc.exists) {
-//       Map<String, dynamic>? data = doc.data();
-//       if (data != null) {
-//         return Avatar.fromFirestore(data);
-//       }
-//     }
-//     return null;
-//   });
-// }
 
 class Item {
   String id = '';
@@ -125,26 +111,9 @@ class Item {
   String name = '';
   String assetPath = '';
 
-  Item.fromFirestore(this.id, 
-      Map<String, dynamic> json)
+  Item.fromFirestore(this.id, Map<String, dynamic> json)
       : amount = json['amount'],
         fillAmount = json['fillAmount'],
         name = json['name'],
         assetPath = json['assetPath'];
 }
-
-// class Food extends Item {
-//   int foodID = 0;
-// }
-
-// class Hygiene extends Item {
-//   int hygieneID = 0;
-// }
-
-// class Toy extends Item {
-//   int toyID = 0;
-// }
-
-// class Sleep extends Item {
-//   int sleepID = 0;
-// }

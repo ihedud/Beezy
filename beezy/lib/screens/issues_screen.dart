@@ -8,10 +8,9 @@ const List<String> statusFilter = <String>['all', 'open', 'closed', 'reopened'];
 const List<String> priorityFilter = <String>['all', 'low', 'medium', 'high'];
 
 class IssuesScreen extends StatelessWidget {
-  //final Board board;
   final String userUID;
 
-  const IssuesScreen({Key? key, /*required this.board,*/ required this.userUID})
+  const IssuesScreen({Key? key, required this.userUID})
       : super(key: key);
 
   @override
@@ -28,7 +27,7 @@ class IssuesScreen extends StatelessWidget {
               body: Center(child: CircularProgressIndicator()),
             );
           case ConnectionState.active:
-            return _IssuesScreen(info: snapshot.data!/*, allTasks: snapshot.data!*/);
+            return _IssuesScreen(info: snapshot.data!);
           case ConnectionState.none:
             return ErrorWidget("The stream was wrong (connectionState.none)");
           case ConnectionState.done:
@@ -40,10 +39,9 @@ class IssuesScreen extends StatelessWidget {
 }
 
 class _IssuesScreen extends StatefulWidget {
-  const _IssuesScreen({required this.info/*, required this.allTasks*/});
+  const _IssuesScreen({required this.info});
 
   final PMTinfo info;
-  //final List<Task> allTasks;
 
   @override
   State<_IssuesScreen> createState() => _IssuesScreenState();
@@ -231,7 +229,7 @@ class _IssuesScreenState extends State<_IssuesScreen> {
           style: const TextStyle(color: Colors.black),
           underline: Container(
             height: 2,
-            color: Color.fromARGB(255, 230, 146, 38),
+            color: const Color.fromARGB(255, 230, 146, 38),
           ),
           onChanged: (String? value) {
             setState(() {
@@ -252,7 +250,7 @@ class _IssuesScreenState extends State<_IssuesScreen> {
           style: const TextStyle(color: Colors.black),
           underline: Container(
             height: 2,
-            color: Color.fromARGB(255, 230, 146, 38),
+            color: const Color.fromARGB(255, 230, 146, 38),
           ),
           onChanged: (String? value) {
             setState(() {
@@ -273,7 +271,7 @@ class _IssuesScreenState extends State<_IssuesScreen> {
           style: const TextStyle(color: Colors.black),
           underline: Container(
             height: 2,
-            color: Color.fromARGB(255, 230, 146, 38),
+            color: const Color.fromARGB(255, 230, 146, 38),
           ),
           onChanged: (String? value) {
             setState(() {
@@ -294,7 +292,7 @@ class _IssuesScreenState extends State<_IssuesScreen> {
           style: const TextStyle(color: Colors.black),
           underline: Container(
             height: 2,
-            color: Color.fromARGB(255, 230, 146, 38),
+            color: const Color.fromARGB(255, 230, 146, 38),
           ),
           onChanged: (String? value) {
             setState(() {

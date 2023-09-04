@@ -215,8 +215,7 @@ class _TaskScreenState extends State<_TaskScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 230, 146, 38),
-        //backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: const Color.fromARGB(255, 230, 146, 38),
         title: _editTaskName(context),
       ),
       body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -239,7 +238,7 @@ class _TaskScreenState extends State<_TaskScreen> {
             style: const TextStyle(color: Colors.black),
             underline: Container(
               height: 2,
-              color: Color.fromARGB(255, 230, 146, 38),
+              color: const Color.fromARGB(255, 230, 146, 38),
             ),
             onChanged: (String? value) {
               updatePriority(value!);
