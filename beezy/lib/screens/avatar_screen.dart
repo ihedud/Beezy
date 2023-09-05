@@ -295,7 +295,7 @@ class _AvatarScreenState extends State<_AvatarScreen> {
                     child: Column(
                       children: [
                         Text('Shop',
-                            style: Theme.of(context).textTheme.headlineSmall),
+                            style: Theme.of(context).textTheme.bodyLarge),
                         Row(
                             children: widget.avatar.selectedButtonIndex == 0
                                 ? _getFoodShop()
@@ -334,7 +334,7 @@ class _AvatarScreenState extends State<_AvatarScreen> {
       int foodID, String name, String assetPath, int price, double fillAmount) {
     return Container(
         width: 75,
-        height: 75,
+        height: 70,
         padding: const EdgeInsets.all(5),
         child: DecoratedBox(
             decoration: BoxDecoration(
@@ -362,7 +362,7 @@ class _AvatarScreenState extends State<_AvatarScreen> {
       int price, double fillAmount) {
     return Container(
         width: 75,
-        height: 75,
+        height: 70,
         padding: const EdgeInsets.all(5),
         child: DecoratedBox(
             decoration: BoxDecoration(
@@ -393,7 +393,7 @@ class _AvatarScreenState extends State<_AvatarScreen> {
       int toyID, String name, String assetPath, int price, double fillAmount) {
     return Container(
         width: 75,
-        height: 75,
+        height: 70,
         padding: const EdgeInsets.all(5),
         child: DecoratedBox(
             decoration: BoxDecoration(
@@ -421,7 +421,7 @@ class _AvatarScreenState extends State<_AvatarScreen> {
       double fillAmount) {
     return Container(
         width: 75,
-        height: 75,
+        height: 70,
         padding: const EdgeInsets.all(5),
         child: DecoratedBox(
             decoration: BoxDecoration(
@@ -448,7 +448,7 @@ class _AvatarScreenState extends State<_AvatarScreen> {
   Widget _getEmptySpot() {
     return Container(
         width: 75,
-        height: 75,
+        height: 70,
         padding: const EdgeInsets.all(5),
         child: DecoratedBox(
             decoration: BoxDecoration(
