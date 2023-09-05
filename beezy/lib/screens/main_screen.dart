@@ -216,7 +216,7 @@ class _MainScreenState extends State<_MainScreen>
         honeyRush.doc(honeyRush.id).collection("profiles");
     profiles.add({
       'name': 'Laura',
-      'avatarTypePath': 'bee_avatar_2.png',
+      'avatarTypePath': 'assets/bee_avatar_2.png',
       'lifes': Random().nextInt(3) + 1,
       'playedCards': Random().nextInt(4),
       'hasHoneyFever': false,
@@ -224,7 +224,7 @@ class _MainScreenState extends State<_MainScreen>
     });
     profiles.add({
       'name': 'Pol',
-      'avatarTypePath': 'bee_avatar_3.png',
+      'avatarTypePath': 'assets/bee_avatar_3.png',
       'lifes': Random().nextInt(3) + 1,
       'playedCards': Random().nextInt(4),
       'hasHoneyFever': false,
@@ -232,7 +232,7 @@ class _MainScreenState extends State<_MainScreen>
     });
     profiles.add({
       'name': 'Laia',
-      'avatarTypePath': 'bee_avatar_4.png',
+      'avatarTypePath': 'assets/bee_avatar_4.png',
       'lifes': Random().nextInt(3) + 1,
       'playedCards': Random().nextInt(4),
       'hasHoneyFever': false,
@@ -240,7 +240,7 @@ class _MainScreenState extends State<_MainScreen>
     });
     profiles.add({
       'name': 'Júlia',
-      'avatarTypePath': 'bee_avatar_5.png',
+      'avatarTypePath': 'assets/bee_avatar_5.png',
       'lifes': Random().nextInt(3) + 1,
       'playedCards': Random().nextInt(4),
       'hasHoneyFever': false,
@@ -248,7 +248,7 @@ class _MainScreenState extends State<_MainScreen>
     });
     profiles.add({
       'name': 'Biel',
-      'avatarTypePath': 'bee_avatar_6.png',
+      'avatarTypePath': 'assets/bee_avatar_6.png',
       'lifes': Random().nextInt(3) + 1,
       'playedCards': Random().nextInt(4),
       'hasHoneyFever': false,
@@ -256,7 +256,7 @@ class _MainScreenState extends State<_MainScreen>
     });
     profiles.add({
       'name': 'Nora',
-      'avatarTypePath': 'bee_avatar_7.png',
+      'avatarTypePath': 'assets/bee_avatar_7.png',
       'lifes': Random().nextInt(3) + 1,
       'playedCards': Random().nextInt(4),
       'hasHoneyFever': false,
@@ -386,7 +386,7 @@ class _MainScreenState extends State<_MainScreen>
                         style: TextStyle(color: Colors.black))),
                 const Spacer(),
                 Text(widget.userInfo.points.toString()),
-                SizedBox(width: 35, child: Image.asset("points.png"))
+                SizedBox(width: 35, child: Image.asset("assets/points.png"))
               ]),
               bottom: TabBar(controller: _tabController, tabs: const [
                 Tab(icon: Icon(Icons.table_view)),

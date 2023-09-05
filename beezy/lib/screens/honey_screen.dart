@@ -243,7 +243,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
     super.initState();
     allCards = [
       HoneyCard(
-          imagePath: "cards/flower_patch.png",
+          imagePath: "assets/cards/flower_patch.png",
           description: "Generate 2 honey.",
           price: 2,
           effect: () {
@@ -251,7 +251,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
             widget.honeyRush.honey += 2;
           }),
       HoneyCard(
-          imagePath: "cards/flower_field.png",
+          imagePath: "assets/cards/flower_field.png",
           description: "Generate 3 honey.",
           price: 3,
           effect: () {
@@ -259,7 +259,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
             widget.honeyRush.honey += 3;
           }),
       HoneyCard(
-          imagePath: "cards/pollen.png",
+          imagePath: "assets/cards/pollen.png",
           description: "Generate 1 honey.",
           price: 1,
           effect: () {
@@ -267,21 +267,21 @@ class _HoneyScreenState extends State<_HoneyScreen> {
             widget.honeyRush.honey += 1;
           }),
           HoneyCard(
-          imagePath: "cards/nectar_card.png",
+          imagePath: "assets/cards/nectar_card.png",
           description: "Your nectar is increased by 1.",
           price: 0,
           effect: () {
             updateMyNectar(1);
           }),
           HoneyCard(
-          imagePath: "cards/honey_stash.png",
+          imagePath: "assets/cards/honey_stash.png",
           description: "Your nectar is increased by 2.",
           price: 0,
           effect: () {
             updateMyNectar(2);
           }),
           HoneyCard(
-          imagePath: "cards/honeycomb.png",
+          imagePath: "assets/cards/honeycomb.png",
           description: "Your nectar is increased by 3.",
           price: 0,
           effect: () {
@@ -375,18 +375,18 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                             SizedBox(
                                 width: 30,
                                 child: Image.asset(profile.lifes == 0
-                                    ? 'heart_empty.png'
-                                    : 'heart_full.png')),
+                                    ? 'assets/heart_empty.png'
+                                    : 'assets/heart_full.png')),
                             SizedBox(
                                 width: 30,
                                 child: Image.asset(profile.lifes >= 2
-                                    ? 'heart_full.png'
-                                    : 'heart_empty.png')),
+                                    ? 'assets/heart_full.png'
+                                    : 'assets/heart_empty.png')),
                             SizedBox(
                                 width: 30,
                                 child: Image.asset(profile.lifes == 3
-                                    ? 'heart_full.png'
-                                    : 'heart_empty.png'))
+                                    ? 'assets/heart_full.png'
+                                    : 'assets/heart_empty.png'))
                           ])),
                       getNPCPlayedCards(profile.playedCards)
                     ])
@@ -394,18 +394,18 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                       SizedBox(
                           width: 30,
                           child: Image.asset(profile.lifes == 0
-                              ? 'heart_empty.png'
-                              : 'heart_full.png')),
+                              ? 'assets/heart_empty.png'
+                              : 'assets/heart_full.png')),
                       SizedBox(
                           width: 30,
                           child: Image.asset(profile.lifes >= 2
-                              ? 'heart_full.png'
-                              : 'heart_empty.png')),
+                              ? 'assets/heart_full.png'
+                              : 'assets/heart_empty.png')),
                       SizedBox(
                           width: 30,
                           child: Image.asset(profile.lifes == 3
-                              ? 'heart_full.png'
-                              : 'heart_empty.png'))
+                              ? 'assets/heart_full.png'
+                              : 'assets/heart_empty.png'))
                     ]),
               const Spacer()
             ])));
@@ -437,13 +437,13 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Row(children: [
                           const SizedBox(width: 3),
-                          Image.asset('bee_avatar_1.png'),
+                          Image.asset('assets/bee_avatar_1.png'),
                           SizedBox(
-                              width: 49, child: Image.asset('heart_full.png')),
+                              width: 49, child: Image.asset('assets/heart_full.png')),
                           SizedBox(
-                              width: 49, child: Image.asset('heart_full.png')),
+                              width: 49, child: Image.asset('assets/heart_full.png')),
                           SizedBox(
-                              width: 49, child: Image.asset('heart_full.png'))
+                              width: 49, child: Image.asset('assets/heart_full.png'))
                         ])),
                     const SizedBox(height: 5),
                     Expanded(
@@ -680,7 +680,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
             widget.honeyRush.daytime
                 ? Positioned(
                     left: 90,
-                    child: SizedBox(width: 70, child: Image.asset('sun.png')))
+                    child: SizedBox(width: 70, child: Image.asset('assets/sun.png')))
                 : Container()
           ])),
       SizedBox(
@@ -723,7 +723,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                 ? Container()
                 : Positioned(
                     right: 95,
-                    child: SizedBox(width: 60, child: Image.asset('moon.png')))
+                    child: SizedBox(width: 60, child: Image.asset('assets/moon.png')))
           ]))
     ]);
   }
@@ -905,7 +905,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
           const SizedBox(width: 30),
           Text(widget.honeyRush.nectar.toString(),
               style: const TextStyle(fontSize: 22)),
-          SizedBox(width: 40, child: Image.asset("nectar.png"))
+          SizedBox(width: 40, child: Image.asset("assets/nectar.png"))
         ]),
       )
     ]);
@@ -975,15 +975,15 @@ class _HoneyScreenState extends State<_HoneyScreen> {
           width: 50,
           height: 50,
           child: Stack(children: [
-            Image.asset("restart.png"),
+            Image.asset("assets/restart.png"),
             Positioned(
                 top: 10,
                 right: 10,
-                child: SizedBox(width: 30, child: Image.asset("cards.png")))
+                child: SizedBox(width: 30, child: Image.asset("assets/cards.png")))
           ])),
       const SizedBox(width: 15),
       const Text("2", style: TextStyle(fontSize: 20)),
-      SizedBox(width: 40, child: Image.asset("points.png"))
+      SizedBox(width: 40, child: Image.asset("assets/points.png"))
     ]);
   }
 
@@ -993,15 +993,15 @@ class _HoneyScreenState extends State<_HoneyScreen> {
           width: 50,
           height: 50,
           child: Stack(children: [
-            Image.asset("restart.png"),
+            Image.asset("assets/restart.png"),
             Positioned(
                 top: 12,
                 right: 12,
-                child: SizedBox(width: 25, child: Image.asset("dices.png")))
+                child: SizedBox(width: 25, child: Image.asset("assets/dices.png")))
           ])),
       const SizedBox(width: 15),
       const Text("2", style: TextStyle(fontSize: 20)),
-      SizedBox(width: 40, child: Image.asset("points.png")),
+      SizedBox(width: 40, child: Image.asset("assets/points.png")),
     ]);
   }
 
@@ -1102,7 +1102,7 @@ class _HoneyScreenState extends State<_HoneyScreen> {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(width: 90, child: Image.asset("dices.png")),
+                      SizedBox(width: 90, child: Image.asset("assets/dices.png")),
                       Text(widget.honeyRush.temporaryNectar.toString(),
                           style: const TextStyle(fontSize: 30))
                     ])),
